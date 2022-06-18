@@ -14,15 +14,18 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 externalIncludes = 
 {
     "Titan/vendor/spdlog/include",
-    "Titan/vendor/GLFW/include"
+    "Titan/vendor/GLFW/include",
+    "Titan/vendor/glm",
 }
 
 externalLinks = 
 {
     "GLFW",
+    "glm",
 }
 
 include "Titan/vendor/GLFW"
+include "Titan/vendor/glm"
 
 project "SandBox"
     location "SandBox"
@@ -91,15 +94,24 @@ project "Titan"
     files
     {
         "Titan/src/**.cpp",
-        "Titan/src/**.h"
+        "Titan/src/**.h", 
+        "Titan/vendor/vkbootstrap/VkBootstrap.h",
+        "Titan/vendor/vkbootstrap/VkBootstrap.cpp",
     }
     
+    
+
     includedirs
     {
         "Titan/src",
+        "Titan/vendor/Vulkan/Include/",
+        "Titan/vendor/vkbootstrap/",
         externalIncludes
     }
-    
+    libdirs
+    {
+        "Titan/vendor/Vulkan/Lib/",
+    }
     links
     {
         externalLinks

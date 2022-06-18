@@ -1,17 +1,33 @@
 #include "Titan.h"
-#include "GLFW/glfw3.h"
 
+
+class TestLayer : public Titan::Layer
+{
+public:
+	void OnAttach() override {}
+	void OnUpdate() override
+	{
+	}
+	void OnDetach() override
+	{
+	}
+	void OnEvent(Titan::Event& e) override
+	{
+	}
+};
 class SandBox : public Titan::Application
 {
 public:
-	
+	SandBox()
+	{
+		m_LayerStack.Push(new TestLayer());
+	}
 
 	~SandBox()
 	{
 
 	}
 private:
-	GLFWwindow* window;
 };
 
 Titan::Application* Titan::CreateApplication()

@@ -1,46 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Titan">
-      <UniqueIdentifier>{A5982A0E-11AD-52BF-DA2E-F61E46024FF0}</UniqueIdentifier>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Titan\Core">
-      <UniqueIdentifier>{1DECE58C-09A4-27DA-72AB-00365E82C2CA}</UniqueIdentifier>
+    <Filter Include="src\Titan">
+      <UniqueIdentifier>{FCA6E7B3-6811-9C2A-B14F-4DD01DF9797F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Titan\Events">
-      <UniqueIdentifier>{E9783363-D5DB-C207-7E61-FBBD6AA38E8A}</UniqueIdentifier>
+    <Filter Include="src\Titan\Core">
+      <UniqueIdentifier>{D488ECC3-C056-E0C9-A9EA-50F09557BC2E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Titan\Events">
+      <UniqueIdentifier>{601F5476-4C18-73C8-754A-584D61A252D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Titan\Platform">
+      <UniqueIdentifier>{D07EF777-BC62-B8CD-25C3-B22011C6A24F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Titan\Rendering">
+      <UniqueIdentifier>{495B65AD-B5BC-42BB-3E2A-896DAA8A797A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Titan\Rendering\VulkanAPI">
+      <UniqueIdentifier>{23079ABF-8F1F-81E9-58CC-1083C4A31583}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor">
+      <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\vkbootstrap">
+      <UniqueIdentifier>{21D235C2-0DB6-F617-7616-F16A6219E199}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan.h" />
+    <ClInclude Include="src\Titan.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Application.h">
-      <Filter>Titan</Filter>
+      <Filter>src\Titan</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Core.h">
-      <Filter>Titan</Filter>
+      <Filter>src\Titan</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Core\Log.h">
-      <Filter>Titan\Core</Filter>
+      <Filter>src\Titan\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\EntryPoint.h">
-      <Filter>Titan</Filter>
+      <Filter>src\Titan</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Events\ApplicationEvent.h">
-      <Filter>Titan\Events</Filter>
+      <Filter>src\Titan\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Events\Event.h">
-      <Filter>Titan\Events</Filter>
+      <Filter>src\Titan\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Window.h" />
-    <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
+    <ClInclude Include="src\Titan\Layer.h">
+      <Filter>src\Titan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\LayerStack.h">
+      <Filter>src\Titan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Platform\WindowsWindow.h">
+      <Filter>src\Titan\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Window.h">
+      <Filter>src\Titan</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h">
+      <Filter>vendor\vkbootstrap</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
-      <Filter>Titan</Filter>
+      <Filter>src\Titan</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Core\Log.cpp">
-      <Filter>Titan\Core</Filter>
+      <Filter>src\Titan\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp" />
+    <ClCompile Include="src\Titan\Layer.cpp">
+      <Filter>src\Titan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\LayerStack.cpp">
+      <Filter>src\Titan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp">
+      <Filter>src\Titan\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\vkbootstrap\VkBootstrap.cpp">
+      <Filter>vendor\vkbootstrap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp" />
   </ItemGroup>
 </Project>
