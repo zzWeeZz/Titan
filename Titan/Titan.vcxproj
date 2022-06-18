@@ -143,10 +143,13 @@
     <ClInclude Include="src\Titan\EntryPoint.h" />
     <ClInclude Include="src\Titan\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Titan\Events\Event.h" />
+    <ClInclude Include="src\Titan\Window.h" />
+    <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />
+    <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

@@ -31,6 +31,8 @@
     <ClInclude Include="src\Titan\Events\Event.h">
       <Filter>Titan\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Window.h" />
+    <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
@@ -39,5 +41,6 @@
     <ClCompile Include="src\Titan\Core\Log.cpp">
       <Filter>Titan\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp" />
   </ItemGroup>
 </Project>
