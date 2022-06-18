@@ -145,27 +145,35 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
-    <ClInclude Include="src\Titan\Core.h" />
+    <ClInclude Include="src\Titan\Core\Core.h" />
     <ClInclude Include="src\Titan\Core\Log.h" />
+    <ClInclude Include="src\Titan\Core\TitanMemory.h" />
     <ClInclude Include="src\Titan\EntryPoint.h" />
     <ClInclude Include="src\Titan\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Titan\Events\Event.h" />
     <ClInclude Include="src\Titan\Layer.h" />
     <ClInclude Include="src\Titan\LayerStack.h" />
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
+    <ClInclude Include="src\Titan\Rendering\RenderAPI.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Swapchain.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanUtils\VulkanStructs.h" />
     <ClInclude Include="src\Titan\Window.h" />
     <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp" />
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />
     <ClCompile Include="src\Titan\Layer.cpp" />
     <ClCompile Include="src\Titan\LayerStack.cpp" />
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp" />
+    <ClCompile Include="src\Titan\Rendering\RenderAPI.cpp" />
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.cpp" />
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp" />
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Swapchain.cpp" />
     <ClCompile Include="vendor\vkbootstrap\VkBootstrap.cpp" />
   </ItemGroup>
   <ItemGroup>

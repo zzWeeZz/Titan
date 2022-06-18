@@ -4,12 +4,14 @@
 
 #include "Core/Log.h"
 #include "Events/ApplicationEvent.h"
+#include "Rendering/RenderAPI.h"
 
 Titan::Application::Application()
 {
-	m_Window = Scope<Window>(Window::Create());
-	m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+	s_Window = Ref<Window>(Window::Create());
+	s_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
 	m_Running = true;
+	RenderAPI::Initialize(API::Vulkan);
 }
 
 void Titan::Application::Run()
@@ -20,7 +22,7 @@ void Titan::Application::Run()
 		{
 			layer->OnUpdate();
 		}
-		m_Window->OnUpdate();
+		s_Window->OnUpdate();
 	}
 }
 

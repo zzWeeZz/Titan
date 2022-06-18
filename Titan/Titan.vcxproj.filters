@@ -22,6 +22,9 @@
     <Filter Include="src\Titan\Rendering\VulkanAPI">
       <UniqueIdentifier>{23079ABF-8F1F-81E9-58CC-1083C4A31583}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Rendering\VulkanAPI\VulkanUtils">
+      <UniqueIdentifier>{F4DC3122-60F7-94C3-A919-A5571573BCCA}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
@@ -36,10 +39,13 @@
     <ClInclude Include="src\Titan\Application.h">
       <Filter>src\Titan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Core.h">
-      <Filter>src\Titan</Filter>
+    <ClInclude Include="src\Titan\Core\Core.h">
+      <Filter>src\Titan\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Core\Log.h">
+      <Filter>src\Titan\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Core\TitanMemory.h">
       <Filter>src\Titan\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\EntryPoint.h">
@@ -60,13 +66,27 @@
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h">
       <Filter>src\Titan\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\RenderAPI.h">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.h">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.h">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Swapchain.h">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanUtils\VulkanStructs.h">
+      <Filter>src\Titan\Rendering\VulkanAPI\VulkanUtils</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Window.h">
       <Filter>src\Titan</Filter>
     </ClInclude>
     <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h">
       <Filter>vendor\vkbootstrap</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
@@ -84,9 +104,20 @@
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp">
       <Filter>src\Titan\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\RenderAPI.cpp">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.cpp">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Swapchain.cpp">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\vkbootstrap\VkBootstrap.cpp">
       <Filter>vendor\vkbootstrap</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp" />
   </ItemGroup>
 </Project>

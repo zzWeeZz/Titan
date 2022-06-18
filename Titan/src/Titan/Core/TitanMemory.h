@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+
 namespace Titan
 {
 	template<typename T>
