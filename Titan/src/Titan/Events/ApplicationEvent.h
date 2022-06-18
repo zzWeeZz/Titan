@@ -4,7 +4,8 @@
 
 #include "Titan/Events/Event.h"
 
-namespace Titan {
+namespace Titan
+{
 
 	class WindowResizeEvent : public Event
 	{
