@@ -1,0 +1,6 @@
+[submodule "Titan/Titan/vendor/spdlog"]
+	path = Titan/Titan/vendor/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "Titan/vendor/GLFW"]
+	path = Titan/vendor/GLFW
+	url = https://github.com/TheCherno/glfw
