@@ -16,6 +16,7 @@ namespace Titan
 		inline static VkPhysicalDevice& GetPhysicalDevice() { return m_PhysicalDevice; }
 		inline static VkSurfaceKHR& GetSurface() { return m_Surface; }
 		inline static Swapchain& GetSwapChain() { return *m_Swapchain.get(); }
+		inline static VkQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
 		static void ShutDown();
 	private:
 		inline static Ref<CommandBuffer> m_CommandBuffer;

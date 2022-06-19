@@ -165,6 +165,7 @@
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanUtils\VulkanStructs.h" />
     <ClInclude Include="src\Titan\Window.h" />
     <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.cpp" />
@@ -179,6 +180,7 @@
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\Swapchain.cpp" />
     <ClCompile Include="vendor\vkbootstrap\VkBootstrap.cpp" />
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

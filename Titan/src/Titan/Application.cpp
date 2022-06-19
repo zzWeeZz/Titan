@@ -5,6 +5,7 @@
 #include "Core/Log.h"
 #include "Events/ApplicationEvent.h"
 #include "Rendering/RenderAPI.h"
+#include "Rendering/VulkanAPI/GraphicsContext.h"
 
 Titan::Application::Application()
 {
@@ -23,6 +24,7 @@ void Titan::Application::Run()
 			layer->OnUpdate();
 		}
 		s_Window->OnUpdate();
+		GraphicsContext::GetSwapChain().Present();
 	}
 }
 

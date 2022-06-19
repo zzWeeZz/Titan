@@ -91,6 +91,7 @@
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
@@ -127,5 +128,6 @@
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.cpp" />
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.cpp" />
   </ItemGroup>
 </Project>

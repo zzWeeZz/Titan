@@ -6,17 +6,19 @@ namespace Titan
 {
 	struct FrameBufferInfo
 	{
+		bool shouldResize;
 		uint32_t Width;
 		uint32_t Height;
+		VkRenderPass RenderPass;
 	};
 
 	class FrameBuffer
 	{
 	public:
-		FrameBuffer();
-
+		explicit FrameBuffer(const FrameBufferInfo& spec);
+		void Shutdown();
 		static Ref<FrameBuffer> Create(const FrameBufferInfo& spec);
 	private:
-		VkFramebuffer m_FrameBuffer;
+		std::vector<VkFramebuffer> m_FrameBuffers;
 	};
 }

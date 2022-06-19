@@ -26,28 +26,6 @@ namespace Titan
 		return VK_FALSE;
 	}
 
-	static VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger)
-	{
-		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-
-		if (func != nullptr)
-		{
-			return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
-		}
-		else
-		{
-			return VK_ERROR_EXTENSION_NOT_PRESENT;
-		}
-	}
-	static void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator)
-	{
-		auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
-
-		if (func != nullptr)
-		{
-			func(instance, debugMessenger, pAllocator);
-		}
-	}
 	void GraphicsContext::Initialize()
 	{
 		if (glfwVulkanSupported() == GLFW_FALSE)
@@ -57,6 +35,7 @@ namespace Titan
 		vkb::InstanceBuilder builder;
 		auto instanceRect = builder.set_app_name("Titan")
 			.request_validation_layers(true)
+		.set_debug_callback(VulkanDebugCallback)
 			.require_api_version(1, 1).build();
 
 		vkb::Instance vkbinstance = instanceRect.value();
@@ -72,16 +51,7 @@ namespace Titan
 
 		m_Device = device.device;
 		m_PhysicalDevice = physicalDevice.physical_device;
-		VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-		createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-		createInfo.pfnUserCallback = VulkanDebugCallback;
-		createInfo.pUserData = nullptr;
-		createInfo.pNext = nullptr;
-
-		TN_VK_CHECK(CreateDebugUtilsMessengerEXT(m_Instance, &createInfo, nullptr, &m_DebugMessenger));
-		
+		m_DebugMessenger = instanceRect->debug_messenger;
 
 		m_GraphicsQueue = device.get_queue(vkb::QueueType::graphics).value();
 		m_GraphicsQueueFamily = device.get_queue_index(vkb::QueueType::graphics).value();
@@ -91,7 +61,6 @@ namespace Titan
 
 		m_MainDeletionQueue.PushFunction([=]
 			{
-				DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);
 				m_CommandBuffer->Shutdown();
 			});
 	}
