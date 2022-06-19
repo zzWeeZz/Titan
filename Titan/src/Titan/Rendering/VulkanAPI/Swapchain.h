@@ -12,7 +12,9 @@ namespace Titan
 	public:
 		Swapchain();
 		inline VkSwapchainKHR& Get() { return m_SwapChain; }
-
+		inline VkFormat& GetFormat() { return m_SwapchainImageFormat; }
+		inline std::vector<VkImage>& GetImages() { return m_SwapchainImages; }
+		inline std::vector<VkImageView>& GetViews() { return m_SwapchainImageViews; }
 		void ShutDown();
 		static Ref<Swapchain> Create();
 	private:
