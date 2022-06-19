@@ -1,6 +1,7 @@
 #pragma once
 #include <vulkan/vulkan.h>
 
+#include "CommandBuffer.h"
 #include "Swapchain.h"
 #include "VulkanUtils/VulkanStructs.h"
 #include "Titan/Core/Core.h"
@@ -17,6 +18,10 @@ namespace Titan
 		inline static Swapchain& GetSwapchain() { return *m_Swapchain.get(); }
 		static void ShutDown();
 	private:
+		inline static Ref<CommandBuffer> m_CommandBuffer;
+
+		inline static VkDebugUtilsMessengerEXT m_DebugMessenger;
+
 		inline static DeletionQueue m_MainDeletionQueue;
 
 		inline static VkDevice m_Device;

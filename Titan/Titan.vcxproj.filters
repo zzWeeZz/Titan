@@ -87,6 +87,7 @@
     <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h">
       <Filter>vendor\vkbootstrap</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\RenderPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
@@ -119,5 +120,6 @@
     <ClCompile Include="vendor\vkbootstrap\VkBootstrap.cpp">
       <Filter>vendor\vkbootstrap</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\RenderPass.cpp" />
   </ItemGroup>
 </Project>

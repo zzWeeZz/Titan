@@ -145,6 +145,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\RenderPass.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
     <ClInclude Include="src\Titan\Core\Core.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\RenderPass.cpp" />
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />
     <ClCompile Include="src\Titan\Layer.cpp" />

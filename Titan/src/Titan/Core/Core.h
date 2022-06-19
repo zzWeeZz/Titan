@@ -13,7 +13,7 @@
 #define TN_WARN(...) ::Titan::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define TN_ERROR(...) ::Titan::Log::GetClientLogger()->error(__VA_ARGS__)
 
-#define TN_VK_CHECK(X) do { VkResult error = X; if(error) { TN_CORE_ERROR("SEVERE VULKAN ERROR: {0}. forcing shutdown.", error) exit(1); } } while(0)
+#define TN_VK_CHECK(X) do { VkResult error = X; if(error) { TN_CORE_ERROR("SEVERE VULKAN ERROR: {0}. forcing shutdown.", error); exit(1); } } while(0)
 
 #define TN_CORE_ASSERT(X, ...) if(!(X)) { TN_CORE_ERROR(__VA_ARGS__); TN_CORE_ERROR("Assertion failed: {0}", #X); exit(1); }
 
