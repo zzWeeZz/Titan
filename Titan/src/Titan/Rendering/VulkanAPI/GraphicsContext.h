@@ -12,6 +12,7 @@ namespace Titan
 	{
 	public:
 		static void Initialize();
+		void static CreateCommandBuffer(Ref<CommandBuffer>& outCommandBuffer);
 		inline static VkDevice& GetDevice() { return m_Device; }
 		inline static VkPhysicalDevice& GetPhysicalDevice() { return m_PhysicalDevice; }
 		inline static VkSurfaceKHR& GetSurface() { return m_Surface; }
@@ -19,8 +20,6 @@ namespace Titan
 		inline static VkQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
 		static void ShutDown();
 	private:
-		inline static Ref<CommandBuffer> m_CommandBuffer;
-
 		inline static VkDebugUtilsMessengerEXT m_DebugMessenger;
 
 		inline static DeletionQueue m_MainDeletionQueue;

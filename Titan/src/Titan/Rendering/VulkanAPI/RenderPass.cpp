@@ -84,11 +84,20 @@ namespace Titan
 		renderPassInfo.pDependencies = dependencies.data();
 
 		TN_VK_CHECK(vkCreateRenderPass(GraphicsContext::GetDevice(), &renderPassInfo, nullptr, &m_RenderPass));
+
+		FrameBufferInfo frameInfo{};
+		frameInfo.Width = info.width;
+		frameInfo.Height = info.height;
+		frameInfo.RenderPass = m_RenderPass;
+		m_FrameBuffer = FrameBuffer::Create(frameInfo);
+		GlobalDeletionQueue.PushFunction([=]
+			{
+				vkDestroyRenderPass(GraphicsContext::GetDevice(), m_RenderPass, nullptr);
+			});
 	}
 
 	void RenderPass::Shutdown()
 	{
-		vkDestroyRenderPass(GraphicsContext::GetDevice(), m_RenderPass, nullptr);
 	}
 
 	Ref<RenderPass> RenderPass::Create(const RenderPassCreateInfo& info)

@@ -16,6 +16,7 @@ namespace Titan
 	{
 	public:
 		explicit FrameBuffer(const FrameBufferInfo& spec);
+		VkFramebuffer& GetFrameBuffer(uint32_t imageIndex) { return m_FrameBuffers[imageIndex]; }
 		void Shutdown();
 		static Ref<FrameBuffer> Create(const FrameBufferInfo& spec);
 	private:

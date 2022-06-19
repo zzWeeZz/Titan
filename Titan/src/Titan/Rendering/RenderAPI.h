@@ -11,8 +11,12 @@ namespace Titan
 	{
 	public:
 		static void Initialize(const API& api);
+		static void Begin();
+		static void Shutdown();
 	private:
 		static void InitializeVulkan();
+		static void BeginVulkanRender();
+		static void ShutdownVulkan();
 
 	 	inline static API s_CurrentAPI;
 	};

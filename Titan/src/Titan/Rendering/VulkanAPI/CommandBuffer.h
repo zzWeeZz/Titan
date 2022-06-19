@@ -8,6 +8,13 @@ namespace Titan
 	{
 	public:
 		explicit CommandBuffer(VkQueue& queue, uint32_t familyIndex);
+		void Reset();
+
+		VkCommandBuffer& GetHandle() { return m_CommandBuffer; }
+
+		void Bind();
+		void UnBind();
+
 		void Shutdown();
 		static Ref<CommandBuffer> Create(VkQueue& queue, uint32_t familyIndex);
 	private:

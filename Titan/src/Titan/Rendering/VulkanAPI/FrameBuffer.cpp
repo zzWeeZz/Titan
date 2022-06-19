@@ -20,15 +20,16 @@ namespace Titan
 		{
 			framebufferInfo.pAttachments = &GraphicsContext::GetSwapChain().GetViews()[i];
 			TN_VK_CHECK(vkCreateFramebuffer(GraphicsContext::GetDevice(), &framebufferInfo, nullptr, &m_FrameBuffers[i]));
+			GlobalDeletionQueue.PushFunction([=]
+				{
+					vkDestroyFramebuffer(GraphicsContext::GetDevice(), m_FrameBuffers[i], nullptr);
+				});
 		}
 	}
 
 	void FrameBuffer::Shutdown()
 	{
-		for (auto mFrameBuffer : m_FrameBuffers)
-		{
-			vkDestroyFramebuffer(GraphicsContext::GetDevice(), mFrameBuffer, nullptr);
-		}
+		
 	}
 
 	Ref<FrameBuffer> FrameBuffer::Create(const FrameBufferInfo& spec)

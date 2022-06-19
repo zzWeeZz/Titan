@@ -1,6 +1,9 @@
 #pragma once
 #include "Titan/Core/Core.h"
 #include <vulkan/vulkan.h>
+
+#include "FrameBuffer.h"
+
 namespace Titan
 {
 	struct RenderPassCreateInfo
@@ -15,10 +18,13 @@ namespace Titan
 	class RenderPass
 	{
 	public:
-		explicit RenderPass(const RenderPassCreateInfo& info);
+		RenderPass(const RenderPassCreateInfo& info);
+		Ref<FrameBuffer> GetFrameBuffer() { return m_FrameBuffer; }
+		VkRenderPass& GetRenderPass() { return m_RenderPass; }
 		void Shutdown();
 		static Ref<RenderPass> Create(const RenderPassCreateInfo& info);
 	private:
 		VkRenderPass m_RenderPass;
+		Ref<FrameBuffer> m_FrameBuffer;
 	};
 }

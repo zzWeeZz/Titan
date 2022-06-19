@@ -13,11 +13,33 @@ namespace Titan
 		VkCommandBufferAllocateInfo allocInfo = CommandBufferAllocateInfo(m_CommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1);
 
 		TN_VK_CHECK(vkAllocateCommandBuffers(GraphicsContext::GetDevice(), &allocInfo, &m_CommandBuffer));
+		GlobalDeletionQueue.PushFunction([=]
+			{
+				vkDestroyCommandPool(GraphicsContext::GetDevice(), m_CommandPool, nullptr);
+			});
+	}
+
+	void CommandBuffer::Reset()
+	{
+		TN_VK_CHECK(vkResetCommandBuffer(m_CommandBuffer, 0));
+	}
+
+	void CommandBuffer::Bind()
+	{
+		VkCommandBufferBeginInfo beginInfo = {};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+		TN_VK_CHECK(vkBeginCommandBuffer(m_CommandBuffer, &beginInfo));
+	}
+
+	void CommandBuffer::UnBind()
+	{
+
 	}
 
 	void CommandBuffer::Shutdown()
 	{
-		vkDestroyCommandPool(GraphicsContext::GetDevice(), m_CommandPool, nullptr);
 	}
 
 	Ref<CommandBuffer> CommandBuffer::Create(VkQueue& queue, uint32_t familyIndex)

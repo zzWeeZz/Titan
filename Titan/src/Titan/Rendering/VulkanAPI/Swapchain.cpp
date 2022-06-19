@@ -26,15 +26,49 @@ Titan::Swapchain::Swapchain()
 
 	for (size_t i = 0; i < m_SwapchainImageViews.size(); ++i)
 	{
-		m_DeletionQueue.PushFunction([=]
+		GlobalDeletionQueue.PushFunction([=]
 			{
 				vkDestroyImageView(device, m_SwapchainImageViews[i], nullptr);
 			});
 	}
-	m_DeletionQueue.PushFunction([=]
+	GlobalDeletionQueue.PushFunction([=]
 		{
 			vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 		});
+}
+
+void Titan::Swapchain::Submit(std::vector<Ref<CommandBuffer>>& commandBuffers)
+{
+	std::vector<VkCommandBuffer> vkCommandBuffers;
+	for (auto& commandBuffer : commandBuffers)
+	{
+		vkCommandBuffers.push_back(commandBuffer->GetHandle());
+	}
+	VkSubmitInfo submit = {};
+
+	VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+	submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submit.commandBufferCount = vkCommandBuffers.size();
+	submit.pCommandBuffers = vkCommandBuffers.data();
+	submit.pWaitSemaphores = &m_PresentSemaphore;
+	submit.waitSemaphoreCount = 1;
+	submit.signalSemaphoreCount = 1;
+	submit.pSignalSemaphores = &m_RenderSemaphore;
+	submit.pWaitDstStageMask = &waitStage;
+
+
+	TN_VK_CHECK(vkQueueSubmit(GraphicsContext::GetGraphicsQueue(), 1, &submit, m_RenderFence));
+}
+
+void Titan::Swapchain::WaitOnFences(bool waitAndReset)
+{
+	TN_VK_CHECK(vkWaitForFences(GraphicsContext::GetDevice(), 1, &m_RenderFence, true, UINTMAX_MAX));
+	if (waitAndReset)
+	{
+		TN_VK_CHECK(vkResetFences(GraphicsContext::GetDevice(), 1, &m_RenderFence));
+		TN_VK_CHECK(vkAcquireNextImageKHR(GraphicsContext::GetDevice(), m_SwapChain, UINTMAX_MAX, m_PresentSemaphore, nullptr, &m_ImageCount));
+	}
 }
 
 void Titan::Swapchain::Present()
@@ -56,7 +90,7 @@ void Titan::Swapchain::Present()
 
 void Titan::Swapchain::ShutDown()
 {
-	m_DeletionQueue.Flush();
+
 }
 
 Titan::Ref<Titan::Swapchain> Titan::Swapchain::Create()
@@ -81,4 +115,11 @@ void Titan::Swapchain::InitializeSyncStructure()
 
 	TN_VK_CHECK(vkCreateSemaphore(GraphicsContext::GetDevice(), &semaphoreCreateInfo, nullptr, &m_PresentSemaphore));
 	TN_VK_CHECK(vkCreateSemaphore(GraphicsContext::GetDevice(), &semaphoreCreateInfo, nullptr, &m_RenderSemaphore));
+
+	GlobalDeletionQueue.PushFunction([=]
+		{
+			vkDestroyFence(GraphicsContext::GetDevice(), m_RenderFence, nullptr);
+			vkDestroySemaphore(GraphicsContext::GetDevice(), m_PresentSemaphore, nullptr);
+			vkDestroySemaphore(GraphicsContext::GetDevice(), m_RenderSemaphore, nullptr);
+		});
 }

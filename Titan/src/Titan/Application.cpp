@@ -24,8 +24,9 @@ void Titan::Application::Run()
 			layer->OnUpdate();
 		}
 		s_Window->OnUpdate();
-		GraphicsContext::GetSwapChain().Present();
+		RenderAPI::Begin();
 	}
+	RenderAPI::Shutdown();
 }
 
 void Titan::Application::OnEvent(Event& e)

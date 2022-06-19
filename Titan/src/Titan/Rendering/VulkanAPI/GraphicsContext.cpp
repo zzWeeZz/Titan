@@ -57,20 +57,27 @@ namespace Titan
 		m_GraphicsQueueFamily = device.get_queue_index(vkb::QueueType::graphics).value();
 
 		m_Swapchain = Swapchain::Create();
-		m_CommandBuffer = CommandBuffer::Create(m_GraphicsQueue, m_GraphicsQueueFamily);
+		
+	}
 
-		m_MainDeletionQueue.PushFunction([=]
+	void GraphicsContext::CreateCommandBuffer(Ref<CommandBuffer>& outCommandBuffer)
+	{
+		outCommandBuffer = CommandBuffer::Create(m_GraphicsQueue, m_GraphicsQueueFamily);
+		GlobalDeletionQueue.PushFunction([=]
 			{
-				m_CommandBuffer->Shutdown();
+				outCommandBuffer->Shutdown();
 			});
 	}
 
 
 	void GraphicsContext::ShutDown()
 	{
-		m_MainDeletionQueue.Flush();
-		m_Swapchain->ShutDown();
+		m_Swapchain->WaitOnFences(false);
+
+		GlobalDeletionQueue.Flush();
+		vkb::destroy_debug_utils_messenger(m_Instance, m_DebugMessenger);
 		vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
+
 		vkDestroyDevice(m_Device, nullptr);
 		vkDestroyInstance(m_Instance, nullptr);
 	}

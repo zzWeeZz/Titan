@@ -3,6 +3,7 @@
 #include "VulkanUtils/VulkanStructs.h"
 #include <vulkan/vulkan.h>
 
+#include "CommandBuffer.h"
 #include "Titan/Window.h"
 
 namespace Titan
@@ -15,6 +16,9 @@ namespace Titan
 		inline VkFormat& GetFormat() { return m_SwapchainImageFormat; }
 		inline std::vector<VkImage>& GetImages() { return m_SwapchainImages; }
 		inline std::vector<VkImageView>& GetViews() { return m_SwapchainImageViews; }
+		inline uint32_t& GetImageCount() { return m_ImageCount; }
+		void Submit(std::vector<Ref<CommandBuffer>>& commandBuffers);
+		void WaitOnFences(bool waitAndReset = true);
 		void Present();
 		void ShutDown();
 		static Ref<Swapchain> Create();

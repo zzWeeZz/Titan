@@ -22,6 +22,9 @@
     <Filter Include="src\Titan\Rendering\VulkanAPI">
       <UniqueIdentifier>{23079ABF-8F1F-81E9-58CC-1083C4A31583}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Rendering\VulkanAPI\ShaderClass">
+      <UniqueIdentifier>{9F096022-0B24-C3C3-5446-D357C09FEACA}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Rendering\VulkanAPI\VulkanUtils">
       <UniqueIdentifier>{F4DC3122-60F7-94C3-A919-A5571573BCCA}</UniqueIdentifier>
     </Filter>
@@ -72,10 +75,22 @@
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.h">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.h">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.h">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\RenderPass.h">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\ShaderClass\Shader.h">
+      <Filter>src\Titan\Rendering\VulkanAPI\ShaderClass</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Swapchain.h">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.h">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanUtils\VulkanStructs.h">
@@ -87,11 +102,7 @@
     <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h">
       <Filter>vendor\vkbootstrap</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\RenderPass.h">
-      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.h" />
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Pipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
@@ -115,19 +126,27 @@
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.cpp">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.cpp">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\RenderPass.cpp">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\ShaderClass\Shader.cpp">
+      <Filter>src\Titan\Rendering\VulkanAPI\ShaderClass</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\Swapchain.cpp">
+      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.cpp">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClCompile>
     <ClCompile Include="vendor\vkbootstrap\VkBootstrap.cpp">
       <Filter>vendor\vkbootstrap</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\VulkanAPI\RenderPass.cpp">
-      <Filter>src\Titan\Rendering\VulkanAPI</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.cpp" />
-    <ClCompile Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.cpp" />
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Pipeline.cpp" />
   </ItemGroup>
 </Project>
