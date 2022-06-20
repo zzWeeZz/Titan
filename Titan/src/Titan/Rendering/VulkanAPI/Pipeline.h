@@ -1,16 +1,17 @@
 #pragma once
 #include "Titan/Core/Core.h"
 #include <vulkan/vulkan.h>
+
+#include "CommandBuffer.h"
+#include "RenderPass.h"
+#include "ShaderClass/Shader.h"
+
 namespace Titan
 {
-	class Pipeline
-	{
-	};
-
 	class PipelineBuilder
 	{
 	public:
-		std::vector<VkPipelineShaderStageCreateInfo> m_ShaderStages;
+		std::vector<Ref<Shader>> m_ShaderStages;
 		VkPipelineVertexInputStateCreateInfo m_VertexInputState;
 		VkPipelineInputAssemblyStateCreateInfo m_InputAssemblyState;
 		VkViewport m_Viewport;
@@ -21,6 +22,20 @@ namespace Titan
 		VkPipelineLayout m_PipelineLayout;
 		VkPipelineDepthStencilStateCreateInfo m_DepthStencilState;
 
-		VkPipeline BuildPipeline(VkDevice device, VkRenderPass renderPass);
+		VkPipeline BuildPipeline(VkRenderPass renderPass);
 	};
+
+	class Pipeline
+	{
+	public:
+		Pipeline(PipelineBuilder& builder, Ref<RenderPass> renderPass);
+		void Bind(Ref<CommandBuffer> commandBuffer);
+		void UnBind();
+		static Ref<Pipeline> Create(PipelineBuilder& builder, Ref<RenderPass> renderPass);
+	private:
+		VkPipeline m_Pipeline;
+		VkPipelineLayout m_PipelineLayout;
+	};
+
+	
 }

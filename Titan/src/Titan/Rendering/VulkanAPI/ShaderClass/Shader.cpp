@@ -53,4 +53,41 @@ namespace Titan
 	{
 		return CreateRef<Shader>(filepath, type);
 	}
+
+	VkPipelineShaderStageCreateInfo Shader::GetCreateInfo()
+	{
+		VkShaderStageFlagBits stage;
+		switch (m_Type)
+		{
+		case ShaderType::Vertex:
+			stage = VK_SHADER_STAGE_VERTEX_BIT;
+			break;
+		case ShaderType::Fragment:
+			stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+			break;
+		case ShaderType::Geometry:
+			stage = VK_SHADER_STAGE_GEOMETRY_BIT;
+			break;
+		case ShaderType::Compute:
+			stage = VK_SHADER_STAGE_COMPUTE_BIT;
+			break;
+		case ShaderType::TessellationControl:
+			stage = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+			break;
+		case ShaderType::TessellationEvaluation:
+			stage = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+			break;
+		default:;
+		}
+
+		VkPipelineShaderStageCreateInfo info{};
+		info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		info.pNext = nullptr;
+
+		info.stage = stage;
+		info.module = m_ShaderModule;
+		info.pName = "main";
+		return info;
+	
+		}
 }

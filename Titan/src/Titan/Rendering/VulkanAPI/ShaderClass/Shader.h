@@ -20,13 +20,15 @@ namespace Titan
 
 	class Shader
 	{
+		friend class PipelineBuilder;
 	public:
 		Shader(const std::string& filepath, ShaderType type);
 
 		void Bind();
-
 		static Ref<Shader> Create(const std::string& filepath, ShaderType type);
 	private:
+		VkPipelineShaderStageCreateInfo GetCreateInfo();
+
 		VkShaderModule m_ShaderModule;
 		ShaderType m_Type;
 	};

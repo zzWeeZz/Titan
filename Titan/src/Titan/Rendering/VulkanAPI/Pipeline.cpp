@@ -1,8 +1,10 @@
 #include "Pipeline.h"
 
+#include "GraphicsContext.h"
+
 namespace Titan
 {
-	VkPipeline PipelineBuilder::BuildPipeline(VkDevice device, VkRenderPass renderPass)
+	VkPipeline PipelineBuilder::BuildPipeline(VkRenderPass renderPass)
 	{
 		VkPipelineViewportStateCreateInfo viewportState{};
 		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -25,8 +27,14 @@ namespace Titan
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineInfo.pNext = nullptr;
 
-		pipelineInfo.stageCount = m_ShaderStages.size();
-		pipelineInfo.pStages = m_ShaderStages.data();
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+		for (auto& shader : m_ShaderStages)
+		{
+			shaderStages.push_back(shader->GetCreateInfo());
+		}
+
+		pipelineInfo.stageCount = shaderStages.size();
+		pipelineInfo.pStages = shaderStages.data();
 		pipelineInfo.pVertexInputState = &m_VertexInputState;
 		pipelineInfo.pInputAssemblyState = &m_InputAssemblyState;
 		pipelineInfo.pViewportState = &viewportState;
@@ -38,17 +46,51 @@ namespace Titan
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-		pipelineInfo.pDepthStencilState = &m_DepthStencilState;
+		/*pipelineInfo.pDepthStencilState = &m_DepthStencilState;*/
 
 		VkPipeline newPipeline;
-		if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &newPipeline) != VK_SUCCESS)
+		if (vkCreateGraphicsPipelines(GraphicsContext::GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &newPipeline) != VK_SUCCESS)
 		{
 			TN_CORE_ERROR("Failed to create graphics pipeline!");
 			return VK_NULL_HANDLE;
 		}
-		else
-		{
-			return newPipeline;
-		}
+
+
+		return newPipeline;
 	}
+
+	Pipeline::Pipeline(PipelineBuilder& builder, Ref<RenderPass> renderPass)
+	{
+		VkPipelineLayoutCreateInfo info{};
+		info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		info.pNext = nullptr;
+
+		//empty defaults
+		info.flags = 0;
+		info.setLayoutCount = 0;
+		info.pSetLayouts = nullptr;
+		info.pushConstantRangeCount = 0;
+		info.pPushConstantRanges = nullptr;
+		TN_VK_CHECK(vkCreatePipelineLayout(GraphicsContext::GetDevice(), &info, nullptr, &m_PipelineLayout));
+
+
+		builder.m_PipelineLayout = m_PipelineLayout;
+		m_Pipeline = builder.BuildPipeline(renderPass->GetRenderPass());
+		GlobalDeletionQueue.PushFunction([=]() {
+			vkDestroyPipeline(GraphicsContext::GetDevice(), m_Pipeline, nullptr);
+			vkDestroyPipelineLayout(GraphicsContext::GetDevice(), m_PipelineLayout, nullptr);
+		});
+	}
+
+	void Pipeline::Bind(Ref<CommandBuffer> commandBuffer)
+	{
+		vkCmdBindPipeline(commandBuffer->GetHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+	}
+
+	Ref<Pipeline> Pipeline::Create(PipelineBuilder& builder, Ref<RenderPass> renderPass)
+	{
+		return CreateRef<Pipeline>(builder, renderPass);
+	}
+
+
 }
