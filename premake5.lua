@@ -47,12 +47,17 @@ project "SandBox"
     {
         "SandBox/src/",
         "Titan/src",
-
+        "Titan/vendor/vkbootstrap/",
+        "Titan/vendor/Vulkan/Include/",
         externalIncludes
     }
-
+    libdirs
+    {
+        "Titan/vendor/Vulkan/Lib/",
+    }
     links
     {
+        "Titan/vendor/Vulkan/Lib/**.lib",
         "Titan",
         externalLinks
     }
@@ -110,6 +115,7 @@ project "Titan"
     }
     libdirs
     {
+        "Titan/vendor/Vulkan/Lib/**.lib",
         "Titan/vendor/Vulkan/Lib/",
     }
     links

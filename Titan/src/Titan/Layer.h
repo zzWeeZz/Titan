@@ -13,7 +13,7 @@ namespace Titan
 
 		inline const std::string& GetName() const { return m_DebugName; }
 
-		virtual ~Layer(){}
+		virtual ~Layer();
 	protected:
 		std::string m_DebugName;
 	};

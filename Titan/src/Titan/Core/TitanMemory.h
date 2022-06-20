@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#include "Titan/Rendering/VulkanAPI/VulkanUtils/VulkanStructs.h"
+
 namespace Titan
 {
 	template<typename T>
@@ -19,4 +21,6 @@ namespace Titan
 	{
 		return std::make_shared<T>(std::forward<Args>(args)...);
 	}
+
+	inline DeletionQueue GlobalDeletionQueue;
 }

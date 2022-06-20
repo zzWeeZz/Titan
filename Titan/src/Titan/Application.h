@@ -1,5 +1,5 @@
 #pragma once
-#include "Core.h"
+#include "Core/Core.h"
 #include "LayerStack.h"
 #include "Titan/Window.h"
 #include <sstream>
@@ -16,9 +16,11 @@ namespace Titan
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
 
+		inline static Window& GetWindow() { return *s_Window.get(); }
+
 		virtual ~Application(){}
 	protected:
-		Scope<Window> m_Window;
+		inline static Ref<Window> s_Window;
 		bool m_Running;
 		LayerStack m_LayerStack;
 	};

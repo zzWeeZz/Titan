@@ -17,10 +17,11 @@ namespace Titan
 		inline bool IsVSync() const override {return m_WindowInfo.VSync;}
 
 		void SetEventCallback(const EventCallbackFn& callback) override { m_WindowInfo.EventCallback = callback; }
+		inline void* GetNativeWindow() override { return m_Window; }
 	private:
 		virtual void Initialize(const WindowCreateInfo& createInfo);
 		virtual void Shutdown();
-
+	private:
 		GLFWwindow* m_Window;
 
 		struct WindowInfo

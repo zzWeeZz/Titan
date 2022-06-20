@@ -11,11 +11,13 @@ namespace Titan
 	void LayerStack::Push(Layer* layer)
 	{
 		m_LayerStackIterator = m_LayerStack.emplace(m_LayerStackIterator, layer);
+		layer->OnAttach();
 	}
 
 	void LayerStack::PushOverlay(Layer* layer)
 	{
 		m_LayerStack.emplace_back(layer);
+		layer->OnAttach();
 	}
 
 	void LayerStack::Pop(Layer* layer)
@@ -24,6 +26,7 @@ namespace Titan
 		if (it != m_LayerStack.end())
 		{
 			m_LayerStack.erase(it);
+			layer->OnDetach();
 			--m_LayerStackIterator;
 		}
 	}
@@ -34,6 +37,7 @@ namespace Titan
 		if (it != m_LayerStack.end())
 		{
 			m_LayerStack.erase(it);
+			layer->OnDetach();
 		}
 	}
 

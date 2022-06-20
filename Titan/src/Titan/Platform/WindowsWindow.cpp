@@ -1,4 +1,6 @@
 #include "WindowsWindow.h"
+
+#include "Titan/Core/Core.h"
 #include "Titan/Core/Log.h"
 #include "Titan/Events/ApplicationEvent.h"
 
@@ -28,14 +30,15 @@ namespace Titan
 		m_WindowInfo.Height = createInfo.Height;
 		m_WindowInfo.VSync = createInfo.VSync;
 
-		TITAN_CORE_INFO("Creating window {0}x{1}", m_WindowInfo.Width, m_WindowInfo.Height);
+		TN_CORE_INFO("Creating window {0}x{1}", m_WindowInfo.Width, m_WindowInfo.Height);
 
 		if (!s_Initialized)
 		{
 			int success = glfwInit();
+			TN_CORE_ASSERT(success, "Could not initialize GLFW!");
 			s_Initialized = true;
 		}
-
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		m_Window = glfwCreateWindow(m_WindowInfo.Width, m_WindowInfo.Height, m_WindowInfo.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, &m_WindowInfo);
