@@ -76,7 +76,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -97,7 +97,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -123,7 +123,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -145,12 +145,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.h" />
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h" />
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\PushConstant.h" />
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Pipeline.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
+    <ClInclude Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.h" />
     <ClInclude Include="src\Titan\Core\Core.h" />
     <ClInclude Include="src\Titan\Core\Log.h" />
     <ClInclude Include="src\Titan\Core\TitanMemory.h" />
@@ -161,21 +158,27 @@
     <ClInclude Include="src\Titan\LayerStack.h" />
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
     <ClInclude Include="src\Titan\Rendering\RenderAPI.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\PushConstant.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Pipeline.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\RenderPass.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\ShaderClass\Shader.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Swapchain.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanUtils\VulkanStructs.h" />
     <ClInclude Include="src\Titan\Window.h" />
+    <ClInclude Include="vendor\tinygltf\json.hpp" />
+    <ClInclude Include="vendor\tinygltf\stb_image.h" />
+    <ClInclude Include="vendor\tinygltf\stb_image_write.h" />
+    <ClInclude Include="vendor\tinygltf\tiny_gltf.h" />
     <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp" />
-    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Pipeline.cpp" />
     <ClCompile Include="src\Titan\Application.cpp" />
+    <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />
     <ClCompile Include="src\Titan\Layer.cpp" />
     <ClCompile Include="src\Titan\LayerStack.cpp" />
@@ -184,6 +187,7 @@
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp" />
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Pipeline.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\RenderPass.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\ShaderClass\Shader.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\Swapchain.cpp" />

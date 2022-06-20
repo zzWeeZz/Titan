@@ -4,7 +4,10 @@
 class TestLayer : public Titan::Layer
 {
 public:
-	void OnAttach() override {}
+	void OnAttach() override
+	{
+		Titan::GLTFImporter::Import("Models/Cube.bin");
+	}
 	void OnUpdate() override
 	{
 	}

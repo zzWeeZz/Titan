@@ -49,6 +49,7 @@ project "SandBox"
         "Titan/src",
         "Titan/vendor/vkbootstrap/",
         "Titan/vendor/Vulkan/Include/",
+        "Titan/vendor/tinygltf/",
         externalIncludes
     }
     libdirs
@@ -102,6 +103,8 @@ project "Titan"
         "Titan/src/**.h", 
         "Titan/vendor/vkbootstrap/VkBootstrap.h",
         "Titan/vendor/vkbootstrap/VkBootstrap.cpp",
+        "Titan/vendor/tinygltf/**.h",
+        "Titan/vendor/tinygltf/**.hpp",
     }
     
     
@@ -111,6 +114,7 @@ project "Titan"
         "Titan/src",
         "Titan/vendor/Vulkan/Include/",
         "Titan/vendor/vkbootstrap/",
+        "Titan/vendor/tinygltf/",
         externalIncludes
     }
     libdirs
