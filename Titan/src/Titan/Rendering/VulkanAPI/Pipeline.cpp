@@ -1,6 +1,7 @@
 #include "Pipeline.h"
 
 #include "GraphicsContext.h"
+#include "Buffers/Buffers.h"
 
 namespace Titan
 {
@@ -65,12 +66,17 @@ namespace Titan
 		info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		info.pNext = nullptr;
 
+		VkPushConstantRange pushConstantRange{};
+		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		pushConstantRange.offset = 0;
+		pushConstantRange.size = sizeof(MeshConstant);
+
 		//empty defaults
 		info.flags = 0;
 		info.setLayoutCount = 0;
 		info.pSetLayouts = nullptr;
-		info.pushConstantRangeCount = 0;
-		info.pPushConstantRanges = nullptr;
+		info.pushConstantRangeCount = 1;
+		info.pPushConstantRanges = &pushConstantRange;
 		TN_VK_CHECK(vkCreatePipelineLayout(GraphicsContext::GetDevice(), &info, nullptr, &m_PipelineLayout));
 
 
@@ -91,6 +97,4 @@ namespace Titan
 	{
 		return CreateRef<Pipeline>(builder, renderPass);
 	}
-
-
 }

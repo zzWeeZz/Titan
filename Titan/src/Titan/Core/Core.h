@@ -17,3 +17,4 @@
 
 #define TN_CORE_ASSERT(X, ...) if(!(X)) { TN_CORE_ERROR(__VA_ARGS__); TN_CORE_ERROR("Assertion failed: {0}", #X); exit(1); }
 
+#define BIT(x) (1 << x)

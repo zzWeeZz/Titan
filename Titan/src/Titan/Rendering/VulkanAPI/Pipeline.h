@@ -31,6 +31,7 @@ namespace Titan
 		Pipeline(PipelineBuilder& builder, Ref<RenderPass> renderPass);
 		void Bind(Ref<CommandBuffer> commandBuffer);
 		void UnBind();
+		VkPipelineLayout& GetPipelineLayout() { return m_PipelineLayout; }
 		static Ref<Pipeline> Create(PipelineBuilder& builder, Ref<RenderPass> renderPass);
 	private:
 		VkPipeline m_Pipeline;

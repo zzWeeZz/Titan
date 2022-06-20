@@ -3,6 +3,9 @@
 #include "GraphicsContext.h"
 #include "Titan/Application.h"
 
+#include <glm/gtx/transform.hpp>
+
+
 namespace Titan
 {
 	void VulkanRenderer::Initialize()
@@ -18,11 +21,15 @@ namespace Titan
 		}
 		m_FragShader = Shader::Create("Shaders/triangle.frag.spv", ShaderType::Fragment);
 		m_VertShader = Shader::Create("Shaders/triangle.vert.spv", ShaderType::Vertex);
+
+		m_PushConstant = PushConstant<MeshConstant>::Create();
 		CreateTrianglePipeline();
 	}
 
 	void VulkanRenderer::Begin()
 	{
+		static int time = 0;
+		time++;
 		GraphicsContext::GetSwapChain().WaitOnFences();
 		m_CommandBuffer->Reset();
 		m_CommandBuffer->Bind();
@@ -39,9 +46,20 @@ namespace Titan
 		rpInfo.pClearValues = &clearValue;
 		vkCmdBeginRenderPass(m_CommandBuffer->GetHandle(), &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
 
+		glm::vec3 camPos = { 0.f, 0.f, -2.f };
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), camPos);
+		glm::mat4 projection = glm::perspective(glm::radians(70.f), 1700.f / 900.f, 0.1f, 200.f);
+		projection[1][1] *= -1;
+
+		glm::mat4 model = glm::rotate(glm::mat4(1.f), glm::radians(time * 0.05f), glm::vec3(0.0, 1, 0));
+
+		glm::mat4 mvp = projection * view * model;
+
+		auto& data = m_PushConstant->GetData();
+		data.transform = mvp;
+		m_PushConstant->PushToGpu(m_CommandBuffer, m_TrianglePipeline, VK_SHADER_STAGE_VERTEX_BIT);
 		m_TrianglePipeline->Bind(m_CommandBuffer);
 		vkCmdDraw(m_CommandBuffer->GetHandle(), 3, 1, 0, 0);
-
 		vkCmdEndRenderPass(m_CommandBuffer->GetHandle());
 		TN_VK_CHECK(vkEndCommandBuffer(m_CommandBuffer->GetHandle()));
 

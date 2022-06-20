@@ -103,6 +103,8 @@
       <Filter>vendor\vkbootstrap</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Pipeline.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\PushConstant.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">

@@ -1,6 +1,12 @@
 #version 450
 
 layout (location = 0) out vec4 outColor;
+
+layout (push_constant) uniform constants
+{
+	mat4 transform;
+} PushConstant;
+
 void main()
 {
 	const vec3 positions[3] = vec3[3](
@@ -14,6 +20,6 @@ void main()
 		vec4(0.f,1.f, 0.f, 1),
 		vec4(1.f,0.f, 0.f, 1)
 	);
-	gl_Position = vec4(positions[gl_VertexIndex], 1.0 );
+	gl_Position = PushConstant.transform * vec4(positions[gl_VertexIndex], 1.0 );
 	outColor = colors[gl_VertexIndex];
 }

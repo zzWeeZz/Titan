@@ -8,13 +8,13 @@ namespace Titan
 
 	enum class ShaderType
 	{
-		Vertex,
-		Fragment,
-		Geometry,
-		Compute,
-		TessellationControl,
-		TessellationEvaluation,
-		Count
+		Vertex = BIT(0),
+		Fragment = BIT(1),
+		Geometry = BIT(2),
+		Compute = BIT(3),
+		TessellationControl = BIT(4),
+		TessellationEvaluation = BIT(5),
+		Count = BIT(6)
 	};
 
 

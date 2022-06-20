@@ -145,6 +145,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\PushConstant.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Pipeline.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
