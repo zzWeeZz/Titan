@@ -22,9 +22,8 @@ namespace Titan
 	};
 
 	template <typename T>
-	PushConstant<T>::PushConstant()
+	PushConstant<T>::PushConstant() : m_Data(T())
 	{
-		m_Data = T();
 	}
 
 	template <typename T>

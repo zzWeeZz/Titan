@@ -145,6 +145,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\PushConstant.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Pipeline.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\Pipeline.cpp" />
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />

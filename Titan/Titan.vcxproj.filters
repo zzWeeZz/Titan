@@ -105,6 +105,7 @@
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Pipeline.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\PushConstant.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h" />
+    <ClInclude Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
@@ -150,5 +151,6 @@
       <Filter>vendor\vkbootstrap</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\Pipeline.cpp" />
+    <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp" />
   </ItemGroup>
 </Project>
