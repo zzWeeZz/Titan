@@ -35,7 +35,7 @@ namespace Titan
 		vkb::InstanceBuilder builder;
 		auto instanceRect = builder.set_app_name("Titan")
 			.request_validation_layers(true)
-		.set_debug_callback(VulkanDebugCallback)
+			.set_debug_callback(VulkanDebugCallback)
 			.require_api_version(1, 1).build();
 
 		vkb::Instance vkbinstance = instanceRect.value();
@@ -57,7 +57,13 @@ namespace Titan
 		m_GraphicsQueueFamily = device.get_queue_index(vkb::QueueType::graphics).value();
 
 		m_Swapchain = Swapchain::Create();
-		
+
+
+		VmaAllocatorCreateInfo allocatorInfo = {};
+		allocatorInfo.physicalDevice = m_PhysicalDevice;
+		allocatorInfo.device = m_Device;
+		allocatorInfo.instance = m_Instance;
+		vmaCreateAllocator(&allocatorInfo, &m_Allocator);
 	}
 
 	void GraphicsContext::CreateCommandBuffer(Ref<CommandBuffer>& outCommandBuffer)
@@ -70,12 +76,42 @@ namespace Titan
 	}
 
 
+	void GraphicsContext::UploadMesh(Mesh& mesh)
+	{
+		VkBufferCreateInfo bufferInfo = {};
+		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		bufferInfo.size = mesh.m_Vertices.size() * sizeof(Vertex);
+		bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+
+
+		VmaAllocationCreateInfo vmaallocInfo = {};
+		vmaallocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+
+		//allocate the buffer
+		TN_VK_CHECK(vmaCreateBuffer(m_Allocator, &bufferInfo, &vmaallocInfo,
+			&mesh.m_VertexBuffer.Buffer,
+			&mesh.m_VertexBuffer.Allocation,
+			nullptr));
+
+		GlobalDeletionQueue.PushFunction([=]()
+			{
+				vmaDestroyBuffer(m_Allocator, mesh.m_VertexBuffer.Buffer, mesh.m_VertexBuffer.Allocation);
+			});
+
+		void* data;
+
+		vmaMapMemory(m_Allocator, mesh.m_VertexBuffer.Allocation, &data);
+		memcpy(data, mesh.m_Vertices.data(), mesh.m_Vertices.size() * sizeof(Vertex));
+		vmaUnmapMemory(m_Allocator, mesh.m_VertexBuffer.Allocation);
+	}
+
 	void GraphicsContext::ShutDown()
 	{
 		m_Swapchain->WaitOnFences(false);
 
 		GlobalDeletionQueue.Flush();
 		vkb::destroy_debug_utils_messenger(m_Instance, m_DebugMessenger);
+		vmaDestroyAllocator(m_Allocator);
 		vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
 
 		vkDestroyDevice(m_Device, nullptr);

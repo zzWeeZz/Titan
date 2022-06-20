@@ -4,6 +4,7 @@
 #include <vulkan/vulkan.h>
 
 #include "CommandBuffer.h"
+#include "Buffers/Buffers.h"
 #include "Titan/Window.h"
 
 namespace Titan
@@ -31,6 +32,11 @@ namespace Titan
 		VkFormat m_SwapchainImageFormat;
 		std::vector<VkImage> m_SwapchainImages;
 		std::vector<VkImageView> m_SwapchainImageViews;
+
+		VkImageView m_DepthImageView;
+		AllocatedImage m_DepthImage;
+		VkFormat m_DepthFormat;
+
 
 		VkSemaphore m_PresentSemaphore;
 		VkSemaphore m_RenderSemaphore;

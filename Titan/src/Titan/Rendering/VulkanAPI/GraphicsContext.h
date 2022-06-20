@@ -3,6 +3,7 @@
 
 #include "CommandBuffer.h"
 #include "Swapchain.h"
+#include "Buffers/Buffers.h"
 #include "VulkanUtils/VulkanStructs.h"
 #include "Titan/Core/Core.h"
 #include "Titan/Window.h"
@@ -18,6 +19,9 @@ namespace Titan
 		inline static VkSurfaceKHR& GetSurface() { return m_Surface; }
 		inline static Swapchain& GetSwapChain() { return *m_Swapchain.get(); }
 		inline static VkQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
+
+		void static UploadMesh(Mesh& mesh);
+
 		static void ShutDown();
 	private:
 		inline static VkDebugUtilsMessengerEXT m_DebugMessenger;
@@ -34,5 +38,7 @@ namespace Titan
 		inline static uint32_t m_GraphicsQueueFamily;
 
 		inline static Ref<Swapchain> m_Swapchain;
+
+		inline static VmaAllocator m_Allocator;
 	};
 }

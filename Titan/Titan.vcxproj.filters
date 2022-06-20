@@ -46,6 +46,9 @@
     <Filter Include="vendor\vkbootstrap">
       <UniqueIdentifier>{21D235C2-0DB6-F617-7616-F16A6219E199}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\vma">
+      <UniqueIdentifier>{66DFC5A8-5297-07F6-BB9E-E051A775A2E6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Titan.h">
@@ -53,6 +56,9 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Application.h">
       <Filter>src\Titan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\AssetImporter\AssetImporter.h">
+      <Filter>src\Titan\AssetImporter</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.h">
       <Filter>src\Titan\AssetImporter\ModelImporters</Filter>
@@ -138,10 +144,16 @@
     <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h">
       <Filter>vendor\vkbootstrap</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\vma\vk_mem_alloc.h">
+      <Filter>vendor\vma</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
       <Filter>src\Titan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\AssetImporter\AssetImporter.cpp">
+      <Filter>src\Titan\AssetImporter</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp">
       <Filter>src\Titan\AssetImporter\ModelImporters</Filter>

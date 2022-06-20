@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titan\vendor\vkbootstrap;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\tinygltf;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titan\vendor\vkbootstrap;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\tinygltf;..\Titan\vendor\vma;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -99,7 +99,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titan\vendor\vkbootstrap;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\tinygltf;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titan\vendor\vkbootstrap;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\tinygltf;..\Titan\vendor\vma;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -124,7 +124,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titan\vendor\vkbootstrap;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\tinygltf;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titan\vendor\vkbootstrap;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\tinygltf;..\Titan\vendor\vma;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>

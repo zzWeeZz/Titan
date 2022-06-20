@@ -50,6 +50,7 @@ project "SandBox"
         "Titan/vendor/vkbootstrap/",
         "Titan/vendor/Vulkan/Include/",
         "Titan/vendor/tinygltf/",
+        "Titan/vendor/vma/",
         externalIncludes
     }
     libdirs
@@ -105,16 +106,16 @@ project "Titan"
         "Titan/vendor/vkbootstrap/VkBootstrap.cpp",
         "Titan/vendor/tinygltf/**.h",
         "Titan/vendor/tinygltf/**.hpp",
+        "Titan/vendor/vma/vk_mem_alloc.h",
     }
     
-    
-
     includedirs
     {
         "Titan/src",
         "Titan/vendor/Vulkan/Include/",
         "Titan/vendor/vkbootstrap/",
         "Titan/vendor/tinygltf/",
+        "Titan/vendor/vma/",
         externalIncludes
     }
     libdirs

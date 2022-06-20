@@ -2,18 +2,20 @@
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <iostream>
+
 #include "tiny_gltf.h"
 #include "Titan/Core/Core.h"
 
 namespace Titan
 {
-	void GLTFImporter::Import(const std::string& filepath)
+	void GLTFImporter::Import(const std::string& filepath, std::vector<Vertex>& outVertex)
 	{
 		tinygltf::Model model;
 		tinygltf::TinyGLTF loader;
 		std::string err;
 		std::string warn;
-		bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, filepath);
+		bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, filepath);
 		if (!warn.empty())
 		{
 			TN_CORE_WARN("{0}", warn);
@@ -42,33 +44,41 @@ namespace Titan
 						const tinygltf::Primitive& primitive = mesh.primitives[k];
 						if (primitive.indices >= 0)
 						{
-							const tinygltf::Accessor& accessor = model.accessors[primitive.indices];
+							/*const tinygltf::Accessor& accessor = model.accessors[primitive.indices];
 							const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
 							const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
-							const std::string& bufferData = std::string(std::string::size_type(buffer.data.data()), buffer.data.size());
-							const std::string& indicesData = std::string(bufferData.data() + bufferView.byteOffset + accessor.byteOffset, accessor.count * accessor.ByteStride(bufferView));
-							TN_CORE_INFO("{0}", indicesData);
+						
+							const float* positions = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);*/
+							/*TN_CORE_INFO("{0}", positions);*/
 
 							const tinygltf::Accessor& accessor2 = model.accessors[primitive.attributes.find("POSITION")->second];
 							const tinygltf::BufferView& bufferView2 = model.bufferViews[accessor2.bufferView];
 							const tinygltf::Buffer& buffer2 = model.buffers[bufferView2.buffer];
-							const std::string& bufferData2 = std::string(std::string::size_type(buffer2.data.data()), buffer2.data.size());
-							const std::string& positionsData = std::string(bufferData2.data() + bufferView2.byteOffset + accessor2.byteOffset, accessor2.count * accessor2.ByteStride(bufferView2));
-							TN_CORE_INFO("{0}", positionsData);
+							const float* positions = reinterpret_cast<const float*>(&buffer2.data[bufferView2.byteOffset + accessor2.byteOffset]);
+							
 
 							const tinygltf::Accessor& accessor3 = model.accessors[primitive.attributes.find("NORMAL")->second];
 							const tinygltf::BufferView& bufferView3 = model.bufferViews[accessor3.bufferView];
 							const tinygltf::Buffer& buffer3 = model.buffers[bufferView3.buffer];
-							const std::string& bufferData3 = std::string(std::string::size_type(buffer3.data.data()), buffer3.data.size());
-							const std::string& normalsData = std::string(bufferData3.data() + bufferView3.byteOffset + accessor3.byteOffset, accessor3.count * accessor3.ByteStride(bufferView3));
-							TN_CORE_INFO("{0}", normalsData);
+							const float* normals = reinterpret_cast<const float*>(&buffer3.data[bufferView3.byteOffset + accessor3.byteOffset]);
 
 							const tinygltf::Accessor& accessor4 = model.accessors[primitive.attributes.find("TEXCOORD_0")->second];
 							const tinygltf::BufferView& bufferView4 = model.bufferViews[accessor4.bufferView];
 							const tinygltf::Buffer& buffer4 = model.buffers[bufferView4.buffer];
-							const std::string& bufferData4 = std::string(std::string::size_type(buffer4.data.data()), buffer4.data.size());
-							const std::string& texCoordsData = std::string(bufferData4.data() + bufferView4.byteOffset + accessor4.byteOffset, accessor4.count * accessor4.ByteStride(bufferView4));
-							TN_CORE_INFO("{0}", texCoordsData);
+							const float* texCoord = reinterpret_cast<const float*>(&buffer4.data[bufferView4.byteOffset + accessor4.byteOffset]);
+							for (size_t i = 0; i < accessor2.count; ++i) {
+								// Positions are Vec3 components, so for each vec3 stride, offset for x, y, and z.
+								Vertex vertex;
+								vertex.Position.x = positions[i * 3 + 0];
+								vertex.Position.y = positions[i * 3 + 1];
+								vertex.Position.z = positions[i * 3 + 2];
+								vertex.Normal.x = normals[i * 3 + 0];
+								vertex.Normal.y = normals[i * 3 + 1];
+								vertex.Normal.z = normals[i * 3 + 2];
+								vertex.TexCoords = glm::vec2(texCoord[i * 2 + 0], texCoord[i * 2 + 1]);
+								outVertex.push_back(vertex);
+
+							}
 						}
 					}
 				}

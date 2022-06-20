@@ -4,12 +4,18 @@
 class TestLayer : public Titan::Layer
 {
 public:
+	Titan::Mesh mesh;
 	void OnAttach() override
 	{
-		Titan::GLTFImporter::Import("Models/Cube.bin");
+		std::vector<Titan::Vertex> vex;
+		Titan::AssetImporter::ImportModel("Models/Cube.gltf", vex);
+		mesh.m_Vertices = vex;
+
+		Titan::GraphicsContext::UploadMesh(mesh);
 	}
 	void OnUpdate() override
 	{
+		Titan::VulkanRenderer::SubmitMesh(mesh);
 	}
 	void OnDetach() override
 	{

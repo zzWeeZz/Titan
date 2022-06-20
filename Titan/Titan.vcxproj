@@ -76,7 +76,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\vma;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -97,7 +97,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\vma;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -123,7 +123,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\vma;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
+    <ClInclude Include="src\Titan\AssetImporter\AssetImporter.h" />
     <ClInclude Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.h" />
     <ClInclude Include="src\Titan\Core\Core.h" />
     <ClInclude Include="src\Titan\Core\Log.h" />
@@ -175,9 +176,11 @@
     <ClInclude Include="vendor\tinygltf\stb_image_write.h" />
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h" />
     <ClInclude Include="vendor\vkbootstrap\VkBootstrap.h" />
+    <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp" />
+    <ClCompile Include="src\Titan\AssetImporter\AssetImporter.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />
     <ClCompile Include="src\Titan\Layer.cpp" />

@@ -8,6 +8,7 @@
 
 namespace Titan
 {
+	static Scope<RenderData> s_Data = CreateScope<RenderData>();
 	void VulkanRenderer::Initialize()
 	{
 		GraphicsContext::CreateCommandBuffer(m_CommandBuffer);
@@ -24,6 +25,11 @@ namespace Titan
 
 		m_PushConstant = PushConstant<MeshConstant>::Create();
 		CreateTrianglePipeline();
+	}
+
+	void VulkanRenderer::SubmitMesh(Mesh mesh)
+	{
+		s_Data->models.push_back(mesh);
 	}
 
 	void VulkanRenderer::Begin()
@@ -46,7 +52,7 @@ namespace Titan
 		rpInfo.pClearValues = &clearValue;
 		vkCmdBeginRenderPass(m_CommandBuffer->GetHandle(), &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-		glm::vec3 camPos = { 0.f, 0.f, -2.f };
+		glm::vec3 camPos = { 0.f, 0.f, -10.f };
 		glm::mat4 view = glm::translate(glm::mat4(1.0f), camPos);
 		glm::mat4 projection = glm::perspective(glm::radians(70.f), 1700.f / 900.f, 0.1f, 200.f);
 		projection[1][1] *= -1;
@@ -59,15 +65,22 @@ namespace Titan
 		data.transform = mvp;
 		m_PushConstant->PushToGpu(m_CommandBuffer, m_TrianglePipeline, VK_SHADER_STAGE_VERTEX_BIT);
 		m_TrianglePipeline->Bind(m_CommandBuffer);
-		vkCmdDraw(m_CommandBuffer->GetHandle(), 3, 1, 0, 0);
+		for (auto& model : s_Data->models)
+		{
+			VkDeviceSize offset = 0;
+			vkCmdBindVertexBuffers(m_CommandBuffer->GetHandle(), 0, 1, &model.m_VertexBuffer.Buffer, &offset);
+			vkCmdDraw(m_CommandBuffer->GetHandle(), model.m_Vertices.size(), 1, 0, 0);
+		}
+
+
 		vkCmdEndRenderPass(m_CommandBuffer->GetHandle());
 		TN_VK_CHECK(vkEndCommandBuffer(m_CommandBuffer->GetHandle()));
 
 		std::vector<Ref<CommandBuffer>> commandBuffers;
 		commandBuffers.push_back(m_CommandBuffer);
 		GraphicsContext::GetSwapChain().Submit(commandBuffers);
-
 		GraphicsContext::GetSwapChain().Present();
+		s_Data->models.clear();
 	}
 
 	void VulkanRenderer::Shutdown()
@@ -105,6 +118,13 @@ namespace Titan
 
 		builder.m_Scissor.offset = { 0, 0 };
 		builder.m_Scissor.extent = { Application::GetWindow().GetWidth(), Application::GetWindow().GetHeight() };
+
+		VertexInputDescription vertexDescription = Vertex::GetInputDescription();
+		builder.m_VertexInputState.pVertexAttributeDescriptions = vertexDescription.Attributes.data();
+		builder.m_VertexInputState.pVertexBindingDescriptions = vertexDescription.Bindings.data();
+
+		builder.m_VertexInputState.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexDescription.Attributes.size());
+		builder.m_VertexInputState.vertexBindingDescriptionCount = static_cast<uint32_t>(vertexDescription.Bindings.size());
 
 		{
 			VkPipelineRasterizationStateCreateInfo info{};

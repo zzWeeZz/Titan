@@ -9,11 +9,15 @@
 
 namespace Titan
 {
-	
+	struct RenderData
+	{
+		std::vector<Mesh> models;
+	};
 	class VulkanRenderer
 	{
 	public:
 		static void Initialize();
+		static void SubmitMesh(Mesh mesh);
 		static void Begin();
 		static void Shutdown();
 	private:
