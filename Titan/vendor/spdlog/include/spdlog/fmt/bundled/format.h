@@ -3026,12 +3026,12 @@ inline namespace literals {
   \endrst
  */
 #  if FMT_USE_NONTYPE_TEMPLATE_PARAMETERS
-template <detail_exported::fixed_string Str>
-constexpr auto operator""_a()
-    -> detail::udl_arg<remove_cvref_t<decltype(Str.data[0])>,
-                       sizeof(Str.data) / sizeof(decltype(Str.data[0])), Str> {
-  return {};
-}
+//template <detail_exported::fixed_string Str>
+//constexpr auto operator""_a()
+//    -> detail::udl_arg<remove_cvref_t<decltype(Str.data[0])>,
+//                       sizeof(Str.data) / sizeof(decltype(Str.data[0])), Str> {
+//  return {};
+//}
 #  else
 constexpr auto operator"" _a(const char* s, size_t) -> detail::udl_arg<char> {
   return {s};

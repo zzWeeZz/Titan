@@ -19,8 +19,7 @@ namespace Titan
 		inline static VkSurfaceKHR& GetSurface() { return m_Surface; }
 		inline static Swapchain& GetSwapChain() { return *m_Swapchain.get(); }
 		inline static VkQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
-
-		void static UploadMesh(Mesh& mesh);
+		inline static VmaAllocator& GetAllocator() { return m_Allocator; }
 
 		static void ShutDown();
 	private:

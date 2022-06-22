@@ -5,6 +5,8 @@
 
 #include <glm/gtx/transform.hpp>
 
+#include "Mesh/Mesh.h"
+
 
 namespace Titan
 {
@@ -27,9 +29,10 @@ namespace Titan
 		CreateTrianglePipeline();
 	}
 
-	void VulkanRenderer::SubmitMesh(Mesh mesh)
+	void VulkanRenderer::SubmitMesh(Ref<Mesh> mesh)
 	{
-		s_Data->models.push_back(mesh);
+		s_Data->models.push_back(mesh.get());
+
 	}
 
 	void VulkanRenderer::Begin()
@@ -65,11 +68,12 @@ namespace Titan
 		data.transform = mvp;
 		m_PushConstant->PushToGpu(m_CommandBuffer, m_TrianglePipeline, VK_SHADER_STAGE_VERTEX_BIT);
 		m_TrianglePipeline->Bind(m_CommandBuffer);
-		for (auto& model : s_Data->models)
+		for (auto model : s_Data->models)
 		{
 			VkDeviceSize offset = 0;
-			vkCmdBindVertexBuffers(m_CommandBuffer->GetHandle(), 0, 1, &model.m_VertexBuffer.Buffer, &offset);
-			vkCmdDraw(m_CommandBuffer->GetHandle(), model.m_Vertices.size(), 1, 0, 0);
+			model->m_VertexArray->GetVertexBuffer()->Bind(m_CommandBuffer);
+			model->m_VertexArray->GetIndexBuffer()->Bind(m_CommandBuffer);
+			vkCmdDrawIndexed(m_CommandBuffer->GetHandle(), model->m_VertexArray->GetIndexArray().size(), 1, 0, 0, 0);
 		}
 
 

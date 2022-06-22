@@ -147,6 +147,10 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\IndexBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexArray.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
@@ -200,5 +204,6 @@
     <ClCompile Include="vendor\vkbootstrap\VkBootstrap.cpp">
       <Filter>vendor\vkbootstrap</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.cpp" />
   </ItemGroup>
 </Project>

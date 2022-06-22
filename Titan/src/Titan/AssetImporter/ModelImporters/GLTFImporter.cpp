@@ -2,6 +2,7 @@
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <filesystem>
 #include <iostream>
 
 #include "tiny_gltf.h"
@@ -9,27 +10,48 @@
 
 namespace Titan
 {
-	void GLTFImporter::Import(const std::string& filepath, std::vector<Vertex>& outVertex)
+	void GLTFImporter::Import(const std::filesystem::path& filepath, Ref<VertexArray>& outVertex)
 	{
 		tinygltf::Model model;
 		tinygltf::TinyGLTF loader;
 		std::string err;
 		std::string warn;
-		bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, filepath);
-		if (!warn.empty())
+		if (filepath.extension() == ".glb")
 		{
-			TN_CORE_WARN("{0}", warn);
+			bool ret = loader.LoadBinaryFromFile(&model, &err, &warn, filepath.string());
+			if (!warn.empty())
+			{
+				TN_CORE_WARN("{0}", warn);
+			}
+			if (!err.empty())
+			{
+				TN_CORE_ERROR("{0}", err);
+			}
+			if (!ret)
+			{
+				TN_CORE_ERROR("Failed to load gltf file {0}", filepath.string());
+				return;
+			}
 		}
-		if (!err.empty())
+		else if (filepath.extension() == ".gltf")
 		{
-			TN_CORE_ERROR("{0}", err);
+			bool ret = loader.LoadASCIIFromFile(&model, &err, &warn, filepath.string());
+			if (!warn.empty())
+			{
+				TN_CORE_WARN("{0}", warn);
+			}
+			if (!err.empty())
+			{
+				TN_CORE_ERROR("{0}", err);
+			}
+			if (!ret)
+			{
+				TN_CORE_ERROR("Failed to load gltf file {0}", filepath.string());
+				return;
+			}
 		}
-		if (!ret)
-		{
-			TN_CORE_ERROR("Failed to load gltf file {0}", filepath);
-			return;
-		}
-
+		std::vector<Vertex> tempVertices;
+		std::vector<uint16_t> tempIndex;
 		for (int i = 0; i < model.scenes.size(); i++)
 		{
 			const tinygltf::Scene& scene = model.scenes[i];
@@ -44,18 +66,17 @@ namespace Titan
 						const tinygltf::Primitive& primitive = mesh.primitives[k];
 						if (primitive.indices >= 0)
 						{
-							/*const tinygltf::Accessor& accessor = model.accessors[primitive.indices];
+							const tinygltf::Accessor& accessor = model.accessors[primitive.indices];
 							const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
 							const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
-						
-							const float* positions = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);*/
-							/*TN_CORE_INFO("{0}", positions);*/
+
+							const uint16_t* indices = reinterpret_cast<const uint16_t*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 
 							const tinygltf::Accessor& accessor2 = model.accessors[primitive.attributes.find("POSITION")->second];
 							const tinygltf::BufferView& bufferView2 = model.bufferViews[accessor2.bufferView];
 							const tinygltf::Buffer& buffer2 = model.buffers[bufferView2.buffer];
 							const float* positions = reinterpret_cast<const float*>(&buffer2.data[bufferView2.byteOffset + accessor2.byteOffset]);
-							
+
 
 							const tinygltf::Accessor& accessor3 = model.accessors[primitive.attributes.find("NORMAL")->second];
 							const tinygltf::BufferView& bufferView3 = model.bufferViews[accessor3.bufferView];
@@ -76,8 +97,11 @@ namespace Titan
 								vertex.Normal.y = normals[i * 3 + 1];
 								vertex.Normal.z = normals[i * 3 + 2];
 								vertex.TexCoords = glm::vec2(texCoord[i * 2 + 0], texCoord[i * 2 + 1]);
-								outVertex.push_back(vertex);
-
+								tempVertices.push_back(vertex);
+							}
+							for (size_t i = 0; i < accessor.count; ++i)
+							{
+								tempIndex.push_back(indices[i]);
 							}
 						}
 					}
@@ -85,6 +109,8 @@ namespace Titan
 			}
 		}
 
-		TN_CORE_INFO("Done Loading {0}", filepath);
+		outVertex = VertexArray::Create(tempVertices, tempIndex);
+
+		TN_CORE_INFO("Done Loading {0}", filepath.string());
 	}
 }

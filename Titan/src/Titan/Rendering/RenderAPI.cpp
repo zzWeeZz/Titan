@@ -1,4 +1,6 @@
 #include "RenderAPI.h"
+
+#include "Titan/AssetImporter/AssetImporter.h"
 #include "VulkanAPI/GraphicsContext.h"
 #include "VulkanAPI/VulkanRenderer.h"
 namespace Titan
@@ -71,6 +73,7 @@ namespace Titan
 
 	void RenderAPI::ShutdownVulkan()
 	{
+		AssetImporter::Shutdown();
 		VulkanRenderer::Shutdown();
 	}
 }

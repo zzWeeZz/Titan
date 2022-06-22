@@ -145,6 +145,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\IndexBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexArray.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
     <ClInclude Include="src\Titan\AssetImporter\AssetImporter.h" />
@@ -161,6 +164,7 @@
     <ClInclude Include="src\Titan\Rendering\RenderAPI.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\PushConstant.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.h" />
@@ -179,6 +183,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\AssetImporter.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp" />

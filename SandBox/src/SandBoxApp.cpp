@@ -4,18 +4,20 @@
 class TestLayer : public Titan::Layer
 {
 public:
-	Titan::Mesh mesh;
+	Titan::Ref<Titan::Mesh> mesh;
+	Titan::Ref<Titan::Mesh> mesh2;
+	Titan::Ref<Titan::Mesh> mesh3;
 	void OnAttach() override
 	{
-		std::vector<Titan::Vertex> vex;
-		Titan::AssetImporter::ImportModel("Models/Cube.gltf", vex);
-		mesh.m_Vertices = vex;
-
-		Titan::GraphicsContext::UploadMesh(mesh);
+		mesh = Titan::Mesh::Create("Models/Cube.gltf");
+		mesh2 = Titan::Mesh::Create("Models/Cube.gltf");
+		mesh3 = Titan::Mesh::Create("Models/box01.glb");
 	}
 	void OnUpdate() override
 	{
 		Titan::VulkanRenderer::SubmitMesh(mesh);
+		Titan::VulkanRenderer::SubmitMesh(mesh2);
+		Titan::VulkanRenderer::SubmitMesh(mesh3);
 	}
 	void OnDetach() override
 	{

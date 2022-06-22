@@ -75,12 +75,6 @@ namespace Titan
 		VmaAllocation Allocation;
 	};
 
-	//TODO: move to its own class
-	struct Mesh
-	{
-		std::vector<Vertex> m_Vertices;
-		AllocatedBuffer m_VertexBuffer;
-	};
 
 	// PUSH CONSTANT
 	struct MeshConstant

@@ -41,7 +41,5 @@ namespace Titan
 		VkSemaphore m_PresentSemaphore;
 		VkSemaphore m_RenderSemaphore;
 		VkFence m_RenderFence;
-
-		DeletionQueue m_DeletionQueue;
 	};
 }

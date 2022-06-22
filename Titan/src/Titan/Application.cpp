@@ -7,11 +7,10 @@
 #include "Rendering/RenderAPI.h"
 #include "Rendering/VulkanAPI/GraphicsContext.h"
 
-Titan::Application::Application()
+Titan::Application::Application() : m_Running(true)
 {
 	s_Window = Ref<Window>(Window::Create());
 	s_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
-	m_Running = true;
 	RenderAPI::Initialize(API::Vulkan);
 }
 

@@ -76,35 +76,6 @@ namespace Titan
 	}
 
 
-	void GraphicsContext::UploadMesh(Mesh& mesh)
-	{
-		VkBufferCreateInfo bufferInfo = {};
-		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		bufferInfo.size = mesh.m_Vertices.size() * sizeof(Vertex);
-		bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-
-
-		VmaAllocationCreateInfo vmaallocInfo = {};
-		vmaallocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-
-		//allocate the buffer
-		TN_VK_CHECK(vmaCreateBuffer(m_Allocator, &bufferInfo, &vmaallocInfo,
-			&mesh.m_VertexBuffer.Buffer,
-			&mesh.m_VertexBuffer.Allocation,
-			nullptr));
-
-		GlobalDeletionQueue.PushFunction([=]()
-			{
-				vmaDestroyBuffer(m_Allocator, mesh.m_VertexBuffer.Buffer, mesh.m_VertexBuffer.Allocation);
-			});
-
-		void* data;
-
-		vmaMapMemory(m_Allocator, mesh.m_VertexBuffer.Allocation, &data);
-		memcpy(data, mesh.m_Vertices.data(), mesh.m_Vertices.size() * sizeof(Vertex));
-		vmaUnmapMemory(m_Allocator, mesh.m_VertexBuffer.Allocation);
-	}
-
 	void GraphicsContext::ShutDown()
 	{
 		m_Swapchain->WaitOnFences(false);
