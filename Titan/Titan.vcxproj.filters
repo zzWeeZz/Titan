@@ -31,6 +31,9 @@
     <Filter Include="src\Titan\Rendering\VulkanAPI\Buffers">
       <UniqueIdentifier>{9F39A95E-0BFE-A74E-D463-D81840E74384}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Rendering\VulkanAPI\Mesh">
+      <UniqueIdentifier>{BF6A1939-ABA6-1CA3-14B9-349A0014C5BD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Rendering\VulkanAPI\ShaderClass">
       <UniqueIdentifier>{9F096022-0B24-C3C3-5446-D357C09FEACA}</UniqueIdentifier>
     </Filter>
@@ -39,6 +42,9 @@
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\Snowflake">
+      <UniqueIdentifier>{2C921B61-188B-3AB3-41BD-1F382D151ABF}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\tinygltf">
       <UniqueIdentifier>{53CDE522-BF58-53E7-C869-D6DB3474AFE7}</UniqueIdentifier>
@@ -96,7 +102,16 @@
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h">
       <Filter>src\Titan\Rendering\VulkanAPI\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\IndexBuffer.h">
+      <Filter>src\Titan\Rendering\VulkanAPI\Buffers</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\PushConstant.h">
+      <Filter>src\Titan\Rendering\VulkanAPI\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexArray.h">
+      <Filter>src\Titan\Rendering\VulkanAPI\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexBuffer.h">
       <Filter>src\Titan\Rendering\VulkanAPI\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.h">
@@ -107,6 +122,9 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.h">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.h">
+      <Filter>src\Titan\Rendering\VulkanAPI\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Pipeline.h">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
@@ -129,6 +147,15 @@
     <ClInclude Include="src\Titan\Window.h">
       <Filter>src\Titan</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\Snowflake\Serializer.hpp">
+      <Filter>vendor\Snowflake</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Snowflake\SnowID.h">
+      <Filter>vendor\Snowflake</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Snowflake\Snowflake.hpp">
+      <Filter>vendor\Snowflake</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\tinygltf\json.hpp">
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
@@ -147,10 +174,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexBuffer.h" />
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.h" />
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\IndexBuffer.h" />
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexArray.h" />
+    <ClInclude Include="src\Titan\Scene\Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
@@ -186,6 +210,9 @@
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.cpp">
+      <Filter>src\Titan\Rendering\VulkanAPI\Mesh</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\Pipeline.cpp">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClCompile>
@@ -204,6 +231,6 @@
     <ClCompile Include="vendor\vkbootstrap\VkBootstrap.cpp">
       <Filter>vendor\vkbootstrap</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.cpp" />
+    <ClCompile Include="src\Titan\Scene\Scene.cpp" />
   </ItemGroup>
 </Project>

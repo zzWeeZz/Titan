@@ -145,9 +145,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\IndexBuffer.h" />
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexArray.h" />
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.h" />
+    <ClInclude Include="src\Titan\Scene\Scene.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
     <ClInclude Include="src\Titan\AssetImporter\AssetImporter.h" />
@@ -163,11 +161,14 @@
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
     <ClInclude Include="src\Titan\Rendering\RenderAPI.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\IndexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\PushConstant.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexArray.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Pipeline.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\RenderPass.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\ShaderClass\Shader.h" />
@@ -175,6 +176,9 @@
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanUtils\VulkanStructs.h" />
     <ClInclude Include="src\Titan\Window.h" />
+    <ClInclude Include="vendor\Snowflake\Serializer.hpp" />
+    <ClInclude Include="vendor\Snowflake\SnowID.h" />
+    <ClInclude Include="vendor\Snowflake\Snowflake.hpp" />
     <ClInclude Include="vendor\tinygltf\json.hpp" />
     <ClInclude Include="vendor\tinygltf\stb_image.h" />
     <ClInclude Include="vendor\tinygltf\stb_image_write.h" />
@@ -183,7 +187,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.cpp" />
+    <ClCompile Include="src\Titan\Scene\Scene.cpp" />
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\AssetImporter.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp" />
@@ -195,6 +199,7 @@
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp" />
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Mesh\Mesh.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\Pipeline.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\RenderPass.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\ShaderClass\Shader.cpp" />

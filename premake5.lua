@@ -51,6 +51,8 @@ project "SandBox"
         "Titan/vendor/Vulkan/Include/",
         "Titan/vendor/tinygltf/",
         "Titan/vendor/vma/",
+        "Titan/vendor/Snowflake/**.hpp",
+        "Titan/vendor/Snowflake/**.h",
         externalIncludes
     }
     libdirs
@@ -107,6 +109,8 @@ project "Titan"
         "Titan/vendor/tinygltf/**.h",
         "Titan/vendor/tinygltf/**.hpp",
         "Titan/vendor/vma/vk_mem_alloc.h",
+        "Titan/vendor/Snowflake/**.hpp",
+        "Titan/vendor/Snowflake/**.h",
     }
     
     includedirs

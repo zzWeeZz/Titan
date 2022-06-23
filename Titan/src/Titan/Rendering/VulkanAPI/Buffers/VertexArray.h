@@ -20,9 +20,9 @@ namespace Titan
 		Ref<IndexBuffer> m_IndexBuffer;
 	};
 
-	inline VertexArray::VertexArray(std::vector<Vertex>& vertices, std::vector<uint16_t>& indices)
+	inline VertexArray::VertexArray(std::vector<Vertex>& vertices, std::vector<uint16_t>& indices) : m_Vertices(
+		vertices)
 	{
-		m_Vertices = vertices;
 		m_Indices = indices;
 		m_VertexBuffer = VertexBuffer<Vertex>::Create(vertices);
 		m_IndexBuffer = IndexBuffer::Create(indices);
