@@ -36,7 +36,7 @@ Titan::Swapchain::Swapchain()
 			vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 		});
 
-	
+
 }
 
 void Titan::Swapchain::Submit(std::vector<Ref<CommandBuffer>>& commandBuffers)

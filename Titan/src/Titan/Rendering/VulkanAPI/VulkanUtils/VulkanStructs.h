@@ -1,8 +1,17 @@
 #pragma once
 #include <deque>
 #include <functional>
+#include <vulkan/vulkan_core.h>
+
+VkImageCreateInfo ImageCreateInfo(VkFormat format, VkImageUsageFlags flags, VkExtent3D extent); 
 
 
+struct UploadContext
+{
+	VkFence uploadFence;
+	VkCommandPool commandPool;
+	VkCommandBuffer commandBuffer;
+};
 
 struct DeletionQueue
 {

@@ -1,12 +1,10 @@
 #pragma once
 #include <functional>
 
-#define BIT(x) (1 << (x))
+#include "Titan/Core/Core.h"
 
 namespace Titan
 {
-	
-
 	enum class EventType
 	{
 		None = 0,

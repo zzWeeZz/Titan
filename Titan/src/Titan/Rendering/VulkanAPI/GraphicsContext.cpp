@@ -76,6 +76,11 @@ namespace Titan
 	}
 
 
+	void GraphicsContext::ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function)
+	{
+		
+	}
+
 	void GraphicsContext::ShutDown()
 	{
 		m_Swapchain->WaitOnFences(false);

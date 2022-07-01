@@ -84,6 +84,7 @@ namespace Titan
 		commandBuffers.push_back(m_CommandBuffer);
 		GraphicsContext::GetSwapChain().Submit(commandBuffers);
 		GraphicsContext::GetSwapChain().Present();
+		
 		s_Data->models.clear();
 	}
 

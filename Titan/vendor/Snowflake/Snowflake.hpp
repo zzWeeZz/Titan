@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <functional>
 #include "SnowID.h"
+#include <stdexcept>
 #define COMPONENT(comp) struct comp \
 						
 #define REGISTER_COMPONENT(GUID) const SnowID hashID = GUID
@@ -79,9 +80,7 @@ namespace Snowflake
 
 	class Registry
 	{
-#ifdef USE_SERIALIZER
 		friend class RegistrySerializer;
-#endif
 	public:
 		Entity CreateEntity()
 		{

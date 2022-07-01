@@ -21,6 +21,8 @@ namespace Titan
 		inline static VkQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
 		inline static VmaAllocator& GetAllocator() { return m_Allocator; }
 
+		void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
+
 		static void ShutDown();
 	private:
 		inline static VkDebugUtilsMessengerEXT m_DebugMessenger;

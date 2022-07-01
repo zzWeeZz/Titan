@@ -51,8 +51,9 @@ project "SandBox"
         "Titan/vendor/Vulkan/Include/",
         "Titan/vendor/tinygltf/",
         "Titan/vendor/vma/",
-        "Titan/vendor/Snowflake/**.hpp",
-        "Titan/vendor/Snowflake/**.h",
+        "Titan/vendor/Snowflake/",
+        "Titan/vendor/ImGui/",
+        "Titan/vendor/freetype/Include/",
         externalIncludes
     }
     libdirs
@@ -71,15 +72,27 @@ project "SandBox"
     filter "configurations:Debug"
 		runtime "Debug"
 		symbols "on"
+        links
+        {
+            "Titan/vendor/freetype/lib/freetyped.lib",
+        }
 
 	filter "configurations:Release"
 		runtime "Release"
 		optimize "on"
+        links
+        {
+            "Titan/vendor/freetype/lib/freetype.lib",
+        }
 
 	filter "configurations:Dist"
 		runtime "Release"
 		optimize "on"
         symbols "off"
+        links
+        {
+            "Titan/vendor/freetype/lib/freetype.lib",
+        }
     
     filter "system:windows"
 		symbols "On"		
@@ -111,6 +124,9 @@ project "Titan"
         "Titan/vendor/vma/vk_mem_alloc.h",
         "Titan/vendor/Snowflake/**.hpp",
         "Titan/vendor/Snowflake/**.h",
+        "Titan/vendor/ImGui/**.h",
+        "Titan/vendor/ImGui/**.cpp",
+        "Titan/vendor/freetype/Include/**.h",
     }
     
     includedirs
@@ -120,6 +136,9 @@ project "Titan"
         "Titan/vendor/vkbootstrap/",
         "Titan/vendor/tinygltf/",
         "Titan/vendor/vma/",
+        "Titan/vendor/Snowflake/",
+        "Titan/vendor/ImGui/",
+        "Titan/vendor/freetype/Include/",
         externalIncludes
     }
     libdirs
@@ -137,15 +156,27 @@ project "Titan"
     filter "configurations:Debug"
         runtime "Debug"
         symbols "on"
+        links
+        {
+            "Titan/vendor/freetype/lib/freetyped.lib",
+        }
     
     filter "configurations:Release"
         runtime "Release"
         optimize "on"
+        links
+        {
+            "Titan/vendor/freetype/lib/freetype.lib",
+        }
     
     filter "configurations:Dist"
         runtime "Release"
         optimize "on"
         symbols "off"
+        links
+        {
+            "Titan/vendor/freetype/lib/freetype.lib",
+        }
         
     filter "system:windows"
         symbols "On"		

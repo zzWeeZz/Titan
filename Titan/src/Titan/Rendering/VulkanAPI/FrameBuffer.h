@@ -2,6 +2,8 @@
 #include "Titan/Core/Core.h"
 #include <vulkan/vulkan.h>
 
+#include "Buffers/Buffers.h"
+
 namespace Titan
 {
 	struct FrameBufferInfo
@@ -16,10 +18,17 @@ namespace Titan
 	{
 	public:
 		explicit FrameBuffer(const FrameBufferInfo& spec);
-		VkFramebuffer& GetFrameBuffer(uint32_t imageIndex) { return m_FrameBuffers[imageIndex]; }
+		inline VkFramebuffer& GetFrameBuffer(uint32_t imageIndex) { return m_FrameBuffers[imageIndex]; }
+		inline VkImage& GetImage(uint32_t imageIndex) { return m_AllocatedImages[imageIndex].Image; }
+		inline VkImageView& GetImageView(uint32_t imageIndex) { return m_Views[imageIndex]; }
+		inline std::vector<AllocatedImage>& GetImages() { return m_AllocatedImages; }
+		inline std::vector<VkImageView>& GetViews() { return m_Views; }
 		void Shutdown();
 		static Ref<FrameBuffer> Create(const FrameBufferInfo& spec);
 	private:
 		std::vector<VkFramebuffer> m_FrameBuffers;
+		std::vector<VkImageView> m_Views;
+		std::vector<VkImage> m_Images;
+		std::vector<AllocatedImage> m_AllocatedImages;
 	};
 }

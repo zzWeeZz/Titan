@@ -7,7 +7,7 @@
 
 #include "Titan/Core/Log.h"
 #include "Titan/Core/TitanMemory.h"
-
+#include "ft2build.h"
 #include "Titan/AssetImporter/AssetImporter.h"
 
 #include "Titan/Rendering/VulkanAPI/VulkanRenderer.h"
