@@ -17,6 +17,7 @@ namespace Titan
 		inline VkFormat& GetFormat() { return m_SwapchainImageFormat; }
 		inline std::vector<VkImage>& GetImages() { return m_SwapchainImages; }
 		inline std::vector<VkImageView>& GetViews() { return m_SwapchainImageViews; }
+		inline VkImageView& GetDepthView() { return m_DepthImageView; }
 		inline uint32_t& GetImageCount() { return m_ImageCount; }
 		void Submit(std::vector<Ref<CommandBuffer>>& commandBuffers);
 		void WaitOnFences(bool waitAndReset = true);

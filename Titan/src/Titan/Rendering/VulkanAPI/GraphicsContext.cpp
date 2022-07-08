@@ -56,14 +56,16 @@ namespace Titan
 		m_GraphicsQueue = device.get_queue(vkb::QueueType::graphics).value();
 		m_GraphicsQueueFamily = device.get_queue_index(vkb::QueueType::graphics).value();
 
-		m_Swapchain = Swapchain::Create();
-
-
 		VmaAllocatorCreateInfo allocatorInfo = {};
 		allocatorInfo.physicalDevice = m_PhysicalDevice;
 		allocatorInfo.device = m_Device;
 		allocatorInfo.instance = m_Instance;
 		vmaCreateAllocator(&allocatorInfo, &m_Allocator);
+
+		m_Swapchain = Swapchain::Create();
+
+
+	
 	}
 
 	void GraphicsContext::CreateCommandBuffer(Ref<CommandBuffer>& outCommandBuffer)

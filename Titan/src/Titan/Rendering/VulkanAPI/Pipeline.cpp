@@ -42,6 +42,7 @@ namespace Titan
 		pipelineInfo.pRasterizationState = &m_Rasterizer;
 		pipelineInfo.pMultisampleState = &m_Multisampling;
 		pipelineInfo.pColorBlendState = &colorBlendState;
+		pipelineInfo.pDepthStencilState = &m_DepthStencilState;
 		pipelineInfo.layout = m_PipelineLayout;
 		pipelineInfo.renderPass = renderPass;
 		pipelineInfo.subpass = 0;

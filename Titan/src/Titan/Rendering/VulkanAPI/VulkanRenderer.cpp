@@ -19,7 +19,7 @@ namespace Titan
 			RenderPassCreateInfo info{};
 			info.width = 1280;
 			info.height = 720;
-			info.haveDepth = false;
+			info.haveDepth = true;
 			m_RenderPass = RenderPass::Create(info);
 		}
 		m_FragShader = Shader::Create("Shaders/triangle.frag.spv", ShaderType::Fragment);
@@ -45,14 +45,17 @@ namespace Titan
 		VkClearValue clearValue;
 		clearValue.color = { {0.3f, 0.3f, 0.3f, 1.f} };
 
+		VkClearValue DepthValue;
+		DepthValue.depthStencil.depth = 1.0f;
+		std::vector<VkClearValue> clears = { clearValue, DepthValue };
 		VkRenderPassBeginInfo rpInfo{};
 		rpInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		rpInfo.renderPass = m_RenderPass->GetRenderPass();
 		rpInfo.framebuffer = m_RenderPass->GetFrameBuffer()->GetFrameBuffer(GraphicsContext::GetSwapChain().GetImageCount());
 		rpInfo.renderArea.offset = { 0, 0 };
 		rpInfo.renderArea.extent = { 1280, 720 };
-		rpInfo.clearValueCount = 1;
-		rpInfo.pClearValues = &clearValue;
+		rpInfo.clearValueCount = clears.size();
+		rpInfo.pClearValues = clears.data();
 		vkCmdBeginRenderPass(m_CommandBuffer->GetHandle(), &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 		glm::vec3 camPos = { 0.f, 0.f, -10.f };
@@ -171,6 +174,18 @@ namespace Titan
 			info.blendEnable = VK_FALSE;
 			builder.m_ColorBlendAttachmentState = info;
 		}
+		VkPipelineDepthStencilStateCreateInfo info = {};
+		info.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		info.pNext = nullptr;
+
+		info.depthTestEnable =  VK_TRUE;
+		info.depthWriteEnable =VK_TRUE;
+		info.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+		info.depthBoundsTestEnable = VK_FALSE;
+		info.minDepthBounds = 0.0f; // Optional
+		info.maxDepthBounds = 1.0f; // Optional
+		info.stencilTestEnable = VK_FALSE;
+		builder.m_DepthStencilState = info;
 
 		m_TrianglePipeline = Pipeline::Create(builder, m_RenderPass);
 	}

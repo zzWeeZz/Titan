@@ -75,6 +75,7 @@ namespace Titan
 		}
 
 		VkRenderPassCreateInfo renderPassInfo{};
+		std::vector<VkSubpassDescription> sub = { subpass, depthSubpass };
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		renderPassInfo.attachmentCount = attachments.size();
 		renderPassInfo.pAttachments = attachments.data();

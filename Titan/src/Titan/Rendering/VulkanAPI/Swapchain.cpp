@@ -24,6 +24,50 @@ Titan::Swapchain::Swapchain()
 
 	InitializeSyncStructure();
 
+	VkExtent3D depthImageExtent = {
+		Application::GetWindow().GetWidth(),
+		Application::GetWindow().GetHeight(),
+		1
+	};
+
+	m_DepthFormat = VK_FORMAT_D32_SFLOAT;
+
+	VkImageCreateInfo depthImInfo{};
+	depthImInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	depthImInfo.pNext = nullptr;
+
+	depthImInfo.imageType = VK_IMAGE_TYPE_2D;
+	depthImInfo.format = m_DepthFormat;
+	depthImInfo.extent = depthImageExtent;
+
+	depthImInfo.mipLevels = 1;
+	depthImInfo.arrayLayers = 1;
+	depthImInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+	depthImInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+	depthImInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+
+	VmaAllocationCreateInfo depthAllocInfo{};
+	depthAllocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	depthAllocInfo.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+	TN_VK_CHECK(vmaCreateImage(GraphicsContext::GetAllocator(), &depthImInfo, &depthAllocInfo, &m_DepthImage.Image, &m_DepthImage.Allocation, nullptr));
+	
+	VkImageViewCreateInfo depthViewInfo{};
+	depthViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	depthViewInfo.pNext = nullptr;
+
+	depthViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	depthViewInfo.image = m_DepthImage.Image;
+	depthViewInfo.format = m_DepthFormat;
+	depthViewInfo.subresourceRange.baseMipLevel = 0;
+	depthViewInfo.subresourceRange.levelCount = 1;
+	depthViewInfo.subresourceRange.baseArrayLayer = 0;
+	depthViewInfo.subresourceRange.layerCount = 1;
+	depthViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+
+	TN_VK_CHECK(vkCreateImageView(GraphicsContext::GetDevice(), &depthViewInfo, nullptr, &m_DepthImageView));
+
+
 	for (size_t i = 0; i < m_SwapchainImageViews.size(); ++i)
 	{
 		GlobalDeletionQueue.PushFunction([=]
@@ -33,6 +77,8 @@ Titan::Swapchain::Swapchain()
 	}
 	GlobalDeletionQueue.PushFunction([=]
 		{
+			vkDestroyImageView(GraphicsContext::GetDevice(), m_DepthImageView, nullptr);
+			vmaDestroyImage(GraphicsContext::GetAllocator(), m_DepthImage.Image, m_DepthImage.Allocation);
 			vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 		});
 
