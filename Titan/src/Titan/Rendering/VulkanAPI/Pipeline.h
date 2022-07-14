@@ -21,7 +21,7 @@ namespace Titan
 		VkPipelineMultisampleStateCreateInfo m_Multisampling;
 		VkPipelineLayout m_PipelineLayout;
 		VkPipelineDepthStencilStateCreateInfo m_DepthStencilState;
-
+		std::vector<VkDescriptorSetLayout> m_DescriptorSetLayouts;
 		VkPipeline BuildPipeline(VkRenderPass renderPass);
 	};
 

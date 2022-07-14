@@ -78,6 +78,9 @@ namespace Titan
 		info.pSetLayouts = nullptr;
 		info.pushConstantRangeCount = 1;
 		info.pPushConstantRanges = &pushConstantRange;
+
+		info.setLayoutCount = builder.m_DescriptorSetLayouts.size();
+		info.pSetLayouts = builder.m_DescriptorSetLayouts.data();
 		TN_VK_CHECK(vkCreatePipelineLayout(GraphicsContext::GetDevice(), &info, nullptr, &m_PipelineLayout));
 
 

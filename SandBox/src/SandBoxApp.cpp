@@ -1,3 +1,4 @@
+#include "imgui.h"
 #include "Titan.h"
 
 
@@ -5,17 +6,25 @@ class TestLayer : public Titan::Layer
 {
 public:
 	Titan::Ref<Titan::Mesh> mesh;
-	Titan::Ref<Titan::Mesh> mesh2;
-	Titan::Ref<Titan::Mesh> mesh3;
+	Titan::Ref<Titan::Model> mesh2;
+	Titan::Ref<Titan::Model> mesh3;
 	void OnAttach() override
 	{
 		mesh = Titan::Mesh::Create("Models/Cube.gltf");
-		mesh2 = Titan::Mesh::Create("Models/Cube.gltf");
-		mesh3 = Titan::Mesh::Create("Models/box01.glb");
+		mesh2 = Titan::Model::Create("Models/Cube.gltf");
+		mesh3 = Titan::Model::Create("Models/box01.glb");
+		mesh2->SetPosition({ 5, 0, 0 });
 	}
 	void OnUpdate() override
 	{
-		Titan::VulkanRenderer::SubmitMesh(mesh);
+		//Titan::VulkanRenderer::SubmitMesh(mesh);
+		static float rotValue = 0;
+		rotValue += 0.05;
+		mesh3->SetRotation({ rotValue / 10, rotValue/20, rotValue / 30 });
+		mesh2->SetRotation({ rotValue / 10, 0,0 });
+		static float value = 0;
+		ImGui::DragFloat("Test", &value);
+		mesh2->SetPosition({ value, 0, 0 });
 		Titan::VulkanRenderer::SubmitMesh(mesh2);
 		Titan::VulkanRenderer::SubmitMesh(mesh3);
 	}
@@ -32,6 +41,7 @@ public:
 	SandBox()
 	{
 		m_LayerStack.Push(new TestLayer());
+		m_LayerStack.Push(new Titan::ImGuiLayer());
 	}
 
 	~SandBox()

@@ -27,7 +27,7 @@ namespace Titan
 		}
 		else if (path.extension() == ".fbx")
 		{
-
+			TN_CORE_ERROR("AssetImporter::ImportModel: File is not an .fbx file: {0}", path.string());
 		}
 	}
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <vulkan/vulkan_core.h>
 #include <vk_mem_alloc.h>
 #include "glm/glm.hpp"
@@ -75,6 +76,13 @@ namespace Titan
 		VmaAllocation Allocation;
 	};
 
+	//Uniform buffer
+	struct CameraUniform
+	{
+		glm::vec4 pos;
+		glm::mat4 view;
+		glm::mat4 proj;
+	};
 
 	// PUSH CONSTANT
 	struct MeshConstant

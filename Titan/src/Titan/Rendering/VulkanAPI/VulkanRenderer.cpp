@@ -5,7 +5,11 @@
 
 #include <glm/gtx/transform.hpp>
 
+#include "imgui.h"
+#include "imgui_impl_vulkan.h"
+#include "Buffers/Buffer.h"
 #include "Mesh/Mesh.h"
+#include "Titan/Assets/Models/Model.h"
 
 
 namespace Titan
@@ -26,13 +30,13 @@ namespace Titan
 		m_VertShader = Shader::Create("Shaders/triangle.vert.spv", ShaderType::Vertex);
 
 		m_PushConstant = PushConstant<MeshConstant>::Create();
+		InitializeDescriptors();
 		CreateTrianglePipeline();
 	}
 
-	void VulkanRenderer::SubmitMesh(Ref<Mesh> mesh)
+	void VulkanRenderer::SubmitMesh(Ref<Model> mesh)
 	{
-		s_Data->models.push_back(mesh.get());
-
+		s_Data->models.emplace_back(mesh.get());
 	}
 
 	void VulkanRenderer::Begin()
@@ -58,28 +62,35 @@ namespace Titan
 		rpInfo.pClearValues = clears.data();
 		vkCmdBeginRenderPass(m_CommandBuffer->GetHandle(), &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-		glm::vec3 camPos = { 0.f, 0.f, -10.f };
-		glm::mat4 view = glm::translate(glm::mat4(1.0f), camPos);
+		glm::vec4 camPos = { 0.f, 0.f, -10.f , 1};
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(camPos));
 		glm::mat4 projection = glm::perspective(glm::radians(70.f), 1700.f / 900.f, 0.1f, 200.f);
 		projection[1][1] *= -1;
 
-		glm::mat4 model = glm::rotate(glm::mat4(1.f), glm::radians(time * 0.05f), glm::vec3(0.0, 1, 0));
+		CameraUniform camData{};
+		camData.pos = camPos;
+		camData.proj = projection;
+		camData.view = view;
 
-		glm::mat4 mvp = projection * view * model;
+		void* data;
+		vmaMapMemory(GraphicsContext::GetAllocator(), s_Data->cameraBuffer->GetAllocation(), &data);
+		memcpy(data, &camData, sizeof(CameraUniform));
+		vmaUnmapMemory(GraphicsContext::GetAllocator(), s_Data->cameraBuffer->GetAllocation());
 
-		auto& data = m_PushConstant->GetData();
-		data.transform = mvp;
-		m_PushConstant->PushToGpu(m_CommandBuffer, m_TrianglePipeline, VK_SHADER_STAGE_VERTEX_BIT);
+		auto& Pushdata = m_PushConstant->GetData();
 		m_TrianglePipeline->Bind(m_CommandBuffer);
+		vkCmdBindDescriptorSets(m_CommandBuffer->GetHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_TrianglePipeline->GetPipelineLayout(), 0, 1, &m_DescriptorSet, 0, nullptr);
 		for (auto model : s_Data->models)
 		{
+			Pushdata.transform = model->GetMatrix();
+			m_PushConstant->PushToGpu(m_CommandBuffer, m_TrianglePipeline, VK_SHADER_STAGE_VERTEX_BIT);
 			VkDeviceSize offset = 0;
-			model->m_VertexArray->GetVertexBuffer()->Bind(m_CommandBuffer);
-			model->m_VertexArray->GetIndexBuffer()->Bind(m_CommandBuffer);
-			vkCmdDrawIndexed(m_CommandBuffer->GetHandle(), model->m_VertexArray->GetIndexArray().size(), 1, 0, 0, 0);
+			model->m_Mesh->m_VertexArray->GetVertexBuffer()->Bind(m_CommandBuffer);
+			model->m_Mesh->m_VertexArray->GetIndexBuffer()->Bind(m_CommandBuffer);
+			vkCmdDrawIndexed(m_CommandBuffer->GetHandle(), static_cast<uint32_t>(model->m_Mesh->m_VertexArray->GetIndexArray().size()), 1, 0, 0, 0);
 		}
 
-
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_CommandBuffer->GetHandle());
 		vkCmdEndRenderPass(m_CommandBuffer->GetHandle());
 		TN_VK_CHECK(vkEndCommandBuffer(m_CommandBuffer->GetHandle()));
 
@@ -87,7 +98,7 @@ namespace Titan
 		commandBuffers.push_back(m_CommandBuffer);
 		GraphicsContext::GetSwapChain().Submit(commandBuffers);
 		GraphicsContext::GetSwapChain().Present();
-		
+
 		s_Data->models.clear();
 	}
 
@@ -144,7 +155,7 @@ namespace Titan
 			info.polygonMode = VK_POLYGON_MODE_FILL;
 			info.lineWidth = 1.0f;
 
-			info.cullMode = VK_CULL_MODE_NONE;
+			info.cullMode = VK_CULL_MODE_FRONT_BIT;
 			info.frontFace = VK_FRONT_FACE_CLOCKWISE;
 
 			info.depthBiasEnable = VK_FALSE;
@@ -178,8 +189,8 @@ namespace Titan
 		info.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		info.pNext = nullptr;
 
-		info.depthTestEnable =  VK_TRUE;
-		info.depthWriteEnable =VK_TRUE;
+		info.depthTestEnable = VK_TRUE;
+		info.depthWriteEnable = VK_TRUE;
 		info.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
 		info.depthBoundsTestEnable = VK_FALSE;
 		info.minDepthBounds = 0.0f; // Optional
@@ -187,6 +198,79 @@ namespace Titan
 		info.stencilTestEnable = VK_FALSE;
 		builder.m_DepthStencilState = info;
 
+		builder.m_DescriptorSetLayouts = {m_SetLayout};
+
 		m_TrianglePipeline = Pipeline::Create(builder, m_RenderPass);
+	}
+
+	void VulkanRenderer::InitializeDescriptors()
+	{
+		std::vector<VkDescriptorPoolSize> sizes;
+		sizes = {
+			{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10}
+		};
+
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+
+		poolInfo.flags = 0;
+		poolInfo.maxSets = 10;
+		poolInfo.poolSizeCount = static_cast<uint32_t>(sizes.size());
+		poolInfo.pPoolSizes = sizes.data();
+
+		vkCreateDescriptorPool(GraphicsContext::GetDevice(), &poolInfo, nullptr, &m_DescriptorPool);
+
+		VkDescriptorSetLayoutBinding camBufferBinding{};
+		camBufferBinding.binding = 0;
+		camBufferBinding.descriptorCount = 1;
+
+		camBufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		camBufferBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+		VkDescriptorSetLayoutCreateInfo setInfo{};
+		setInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		setInfo.pNext = nullptr;
+
+		setInfo.bindingCount = 1;
+		setInfo.flags = 0;
+		setInfo.pBindings = &camBufferBinding;
+
+
+		vkCreateDescriptorSetLayout(GraphicsContext::GetDevice(), &setInfo, nullptr, &m_SetLayout);
+
+		GlobalDeletionQueue.PushFunction([&]
+			{
+				vkDestroyDescriptorSetLayout(GraphicsContext::GetDevice(), m_SetLayout, nullptr);
+				vkDestroyDescriptorPool(GraphicsContext::GetDevice(), m_DescriptorPool, nullptr);
+			});
+		s_Data->cameraBuffer = Buffer::Create(sizeof(CameraUniform), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
+
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.pNext = nullptr;
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+
+		allocInfo.descriptorPool = m_DescriptorPool;
+		allocInfo.descriptorSetCount = 1;
+		allocInfo.pSetLayouts = &m_SetLayout;
+
+		vkAllocateDescriptorSets(GraphicsContext::GetDevice(), &allocInfo, &m_DescriptorSet);
+
+		VkDescriptorBufferInfo bufferInfo{};
+		bufferInfo.buffer = s_Data->cameraBuffer->GetBuffer();
+		bufferInfo.offset = 0;
+		bufferInfo.range = sizeof(CameraUniform);
+
+		VkWriteDescriptorSet setWrite{};
+		setWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		setWrite.pNext = nullptr;
+
+		setWrite.dstBinding = 0;
+		setWrite.dstSet = m_DescriptorSet;
+
+		setWrite.descriptorCount = 1;
+		setWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		setWrite.pBufferInfo = &bufferInfo;
+
+		vkUpdateDescriptorSets(GraphicsContext::GetDevice(), 1, &setWrite, 0, nullptr);
 	}
 }

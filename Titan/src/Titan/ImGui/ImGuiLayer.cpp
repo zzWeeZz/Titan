@@ -7,12 +7,13 @@
 #include "Titan/Application.h"
 #include "Titan/Core/Core.h"
 #include "Titan/Rendering/VulkanAPI/GraphicsContext.h"
+#include "Titan/Rendering/VulkanAPI/VulkanRenderer.h"
 #include "vulkan/vulkan.h"
 namespace Titan
 {
 	void ImGuiLayer::OnAttach()
 	{
-		/*VkDescriptorPoolSize poolSizes[] =
+		VkDescriptorPoolSize poolSizes[] =
 		{
 			{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
 			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
@@ -36,17 +37,42 @@ namespace Titan
 		VkDescriptorPool imguiPool;
 		TN_VK_CHECK(vkCreateDescriptorPool(GraphicsContext::GetDevice(), &pool_info, nullptr, &imguiPool));
 
+		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
-		ImGui_ImplGlfw_InitForVulkan(static_cast<GLFWwindow*>(Application::GetWindow().GetNativeWindow()), false);
+		ImGui_ImplGlfw_InitForVulkan(static_cast<GLFWwindow*>(Application::GetWindow().GetNativeWindow()), true);
 		ImGui_ImplVulkan_InitInfo init_info = {};
-		init_info.Instance = GraphicsContext::get;
+		init_info.Instance = GraphicsContext::GetInstance();
 		init_info.PhysicalDevice = GraphicsContext::GetPhysicalDevice();
 		init_info.Device = GraphicsContext::GetDevice();
 		init_info.Queue = GraphicsContext::GetGraphicsQueue();
+		
 		init_info.DescriptorPool = imguiPool;
 		init_info.MinImageCount = 3;
 		init_info.ImageCount = 3;
-		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;*/
+		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+
+		ImGui_ImplVulkan_Init(&init_info, VulkanRenderer::GetRenderPass()->GetRenderPass());
+		ImGui_ImplVulkan_DestroyFontUploadObjects();
+		GlobalDeletionQueue.PushFunction([=]
+			{
+				vkDestroyDescriptorPool(GraphicsContext::GetDevice(), imguiPool, nullptr);
+				ImGui_ImplVulkan_Shutdown();
+			});
+		
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.Fonts->Clear();
+		io.Fonts->AddFontFromFileTTF("Fonts/OpenSans-Light.ttf", 16);
+		io.Fonts->AddFontFromFileTTF("Fonts/OpenSans-Regular.ttf", 16);
+		io.Fonts->AddFontFromFileTTF("Fonts/OpenSans-Light.ttf", 32);
+		io.Fonts->AddFontFromFileTTF("Fonts/OpenSans-Regular.ttf", 11);
+		io.Fonts->AddFontFromFileTTF("Fonts/OpenSans-Bold.ttf", 11);
+		io.Fonts->Build();
+	
+		GraphicsContext::ImmediateSubmit([&](VkCommandBuffer cmd)
+			{
+				ImGui_ImplVulkan_CreateFontsTexture(cmd);
+			});
 
 	}
 

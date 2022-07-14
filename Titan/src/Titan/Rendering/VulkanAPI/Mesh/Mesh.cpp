@@ -14,5 +14,3 @@ namespace Titan
 		return CreateRef<Mesh>(filePath);
 	}
 }
-
-

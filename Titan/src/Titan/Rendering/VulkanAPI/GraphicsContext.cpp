@@ -64,8 +64,19 @@ namespace Titan
 
 		m_Swapchain = Swapchain::Create();
 
+		VkFenceCreateInfo uploadFenceCreateInfo{};
+		uploadFenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		uploadFenceCreateInfo.pNext = nullptr;
 
-	
+		TN_VK_CHECK(vkCreateFence(m_Device, &uploadFenceCreateInfo, nullptr, &m_UploadContext.uploadFence));
+
+		GlobalDeletionQueue.PushFunction([=]
+			{
+				vkDestroyFence(m_Device, m_UploadContext.uploadFence, nullptr);
+			});
+		Ref<CommandBuffer> cmdBuff = CommandBuffer::Create(m_GraphicsQueue, m_GraphicsQueueFamily);
+		m_UploadContext.commandBuffer = cmdBuff->GetHandle();
+		m_UploadContext.commandPool = cmdBuff->GetPool();
 	}
 
 	void GraphicsContext::CreateCommandBuffer(Ref<CommandBuffer>& outCommandBuffer)
@@ -80,7 +91,35 @@ namespace Titan
 
 	void GraphicsContext::ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function)
 	{
-		
+		VkCommandBuffer cmd = m_UploadContext.commandBuffer;
+
+		VkCommandBufferBeginInfo cmdBeginInfo{};
+		cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		cmdBeginInfo.pNext = nullptr;
+		cmdBeginInfo.pInheritanceInfo = nullptr;
+		cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+		TN_VK_CHECK(vkBeginCommandBuffer(cmd, &cmdBeginInfo));
+		function(cmd);
+		TN_VK_CHECK(vkEndCommandBuffer(cmd));
+
+		VkSubmitInfo info = {};
+		info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		info.pNext = nullptr;
+
+		info.waitSemaphoreCount = 0;
+		info.pWaitSemaphores = nullptr;
+		info.pWaitDstStageMask = nullptr;
+		info.commandBufferCount = 1;
+		info.pCommandBuffers = &cmd;
+		info.signalSemaphoreCount = 0;
+		info.pSignalSemaphores = nullptr;
+
+		TN_VK_CHECK(vkQueueSubmit(m_GraphicsQueue, 1, &info, m_UploadContext.uploadFence));
+		vkWaitForFences(m_Device, 1, &m_UploadContext.uploadFence, true, UINTMAX_MAX);
+		vkResetFences(m_Device, 1, &m_UploadContext.uploadFence);
+
+		vkResetCommandPool(m_Device, m_UploadContext.commandPool, 0);
 	}
 
 	void GraphicsContext::ShutDown()

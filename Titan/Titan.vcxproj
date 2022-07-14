@@ -148,10 +148,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titan\Assets\Models\Model.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
     <ClInclude Include="src\Titan\AssetImporter\AssetImporter.h" />
     <ClInclude Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.h" />
+    <ClInclude Include="src\Titan\Assets\Asset.h" />
     <ClInclude Include="src\Titan\Core\Core.h" />
     <ClInclude Include="src\Titan\Core\Log.h" />
     <ClInclude Include="src\Titan\Core\TitanMemory.h" />
@@ -163,6 +165,7 @@
     <ClInclude Include="src\Titan\LayerStack.h" />
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
     <ClInclude Include="src\Titan\Rendering\RenderAPI.h" />
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\IndexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\PushConstant.h" />
@@ -293,6 +296,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titan\Assets\Models\Model.cpp" />
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\AssetImporter.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp" />
@@ -303,6 +307,7 @@
     <ClCompile Include="src\Titan\LayerStack.cpp" />
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp" />
     <ClCompile Include="src\Titan\Rendering\RenderAPI.cpp" />
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\FrameBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\GraphicsContext.cpp" />

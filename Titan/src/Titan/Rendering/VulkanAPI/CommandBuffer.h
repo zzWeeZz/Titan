@@ -11,6 +11,7 @@ namespace Titan
 		void Reset();
 
 		VkCommandBuffer& GetHandle() { return m_CommandBuffer; }
+		VkCommandPool& GetPool() { return m_CommandPool; }
 
 		void Bind();
 		void UnBind();

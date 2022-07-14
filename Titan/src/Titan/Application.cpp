@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
+
 #include "Core/Log.h"
 #include "Events/ApplicationEvent.h"
 #include "Rendering/RenderAPI.h"
@@ -18,11 +22,15 @@ void Titan::Application::Run()
 {
 	while (m_Running)
 	{
+		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 		for (auto& layer : m_LayerStack)
 		{
 			layer->OnUpdate();
 		}
 		s_Window->OnUpdate();
+		ImGui::Render();
 		RenderAPI::Begin();
 	}
 	RenderAPI::Shutdown();

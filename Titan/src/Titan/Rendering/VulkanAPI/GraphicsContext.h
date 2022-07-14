@@ -14,6 +14,7 @@ namespace Titan
 	public:
 		static void Initialize();
 		void static CreateCommandBuffer(Ref<CommandBuffer>& outCommandBuffer);
+		inline static VkInstance& GetInstance() { return m_Instance; }
 		inline static VkDevice& GetDevice() { return m_Device; }
 		inline static VkPhysicalDevice& GetPhysicalDevice() { return m_PhysicalDevice; }
 		inline static VkSurfaceKHR& GetSurface() { return m_Surface; }
@@ -21,13 +22,13 @@ namespace Titan
 		inline static VkQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
 		inline static VmaAllocator& GetAllocator() { return m_Allocator; }
 
-		void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
+		static void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
 
 		static void ShutDown();
 	private:
 		inline static VkDebugUtilsMessengerEXT m_DebugMessenger;
 
-		inline static DeletionQueue m_MainDeletionQueue;
+		inline static UploadContext m_UploadContext;
 
 		inline static VkDevice m_Device;
 		inline static VkPhysicalDevice m_PhysicalDevice;
