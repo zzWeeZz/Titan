@@ -27,6 +27,8 @@ externalLinks =
 include "Titan/vendor/GLFW"
 include "Titan/vendor/glm"
 
+
+
 project "SandBox"
     location "SandBox"
     kind "ConsoleApp"
@@ -47,6 +49,7 @@ project "SandBox"
     {
         "SandBox/src/",
         "Titan/src",
+        "Titanium/src",
         "Titan/vendor/vkbootstrap/",
         "Titan/vendor/Vulkan/Include/",
         "Titan/vendor/tinygltf/",
@@ -54,6 +57,7 @@ project "SandBox"
         "Titan/vendor/Snowflake/",
         "Titan/vendor/ImGui/",
         "Titan/vendor/freetype/Include/",
+        "Titan/vendor/stb_image/",
         externalIncludes
     }
     libdirs
@@ -64,6 +68,7 @@ project "SandBox"
     {
         "Titan/vendor/Vulkan/Lib/**.lib",
         "Titan",
+        "Titanium",
         externalLinks
     }
 
@@ -103,6 +108,15 @@ project "SandBox"
 			"MultiProcessorCompile"
 		}
 
+
+
+
+
+
+
+
+
+        
 project "Titan"
     location "Titan"
     kind "StaticLib"
@@ -127,6 +141,7 @@ project "Titan"
         "Titan/vendor/ImGui/**.h",
         "Titan/vendor/ImGui/**.cpp",
         "Titan/vendor/freetype/Include/**.h",
+        "Titan/vendor/stb_image/**.h",
     }
     
     includedirs
@@ -139,6 +154,7 @@ project "Titan"
         "Titan/vendor/Snowflake/",
         "Titan/vendor/ImGui/",
         "Titan/vendor/freetype/Include/",
+        "Titan/vendor/stb_image/",
         externalIncludes
     }
     libdirs
@@ -178,6 +194,90 @@ project "Titan"
             "Titan/vendor/freetype/lib/freetype.lib",
         }
         
+    filter "system:windows"
+        symbols "On"		
+        systemversion "latest"
+    
+        flags 
+        { 
+            "MultiProcessorCompile"
+        }
+
+
+
+
+
+
+
+
+ project "Titanium"
+    location "Titanium"
+    kind "StaticLib"
+    language "C++"
+    cppdialect "C++20"
+        
+    debugdir "Assets/"
+        
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    files
+    {
+        "Titanium/src/**.cpp",
+        "Titanium/src/**.h",  
+    }
+        
+    includedirs
+    {
+        "Titan/src",
+        "Titanium/src",
+        "Titan/vendor/Vulkan/Include/",
+        "Titan/vendor/vkbootstrap/",
+        "Titan/vendor/tinygltf/",
+        "Titan/vendor/vma/",
+        "Titan/vendor/Snowflake/",
+        "Titan/vendor/ImGui/",
+        "Titan/vendor/freetype/Include/",
+        "Titan/vendor/stb_image/",
+        externalIncludes
+    }
+    libdirs
+    {
+            "Titan/vendor/Vulkan/Lib/**.lib",
+            "Titan/vendor/Vulkan/Lib/",
+    }
+    links
+    {
+        "Titan",
+        externalLinks
+    }
+        
+    defines {"_CONSOLE"}
+        
+    filter "configurations:Debug"
+        runtime "Debug"
+        symbols "on"
+        links
+        {
+            "Titan/vendor/freetype/lib/freetyped.lib",
+        }
+        
+    filter "configurations:Release"
+        runtime "Release"
+        optimize "on"
+        links
+        {
+            "Titan/vendor/freetype/lib/freetype.lib",
+        }
+        
+    filter "configurations:Dist"
+        runtime "Release"
+        optimize "on"
+        symbols "off"
+        links
+        {
+            "Titan/vendor/freetype/lib/freetype.lib",
+        }
+            
     filter "system:windows"
         symbols "On"		
         systemversion "latest"

@@ -15,27 +15,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D43924E3-4019-A37E-4931-2E55B58F09E0}</ProjectGuid>
+    <ProjectGuid>{B0E09FA9-9CAD-FAB4-C5C6-E85CB1F22F43}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SandBox</RootNamespace>
+    <RootNamespace>Titanium</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
@@ -54,32 +54,29 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\bin\Debug-windows-x86_64\SandBox\</OutDir>
-    <IntDir>..\bin-int\Debug-windows-x86_64\SandBox\</IntDir>
-    <TargetName>SandBox</TargetName>
-    <TargetExt>.exe</TargetExt>
+    <OutDir>..\bin\Debug-windows-x86_64\Titanium\</OutDir>
+    <IntDir>..\bin-int\Debug-windows-x86_64\Titanium\</IntDir>
+    <TargetName>Titanium</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\bin\Release-windows-x86_64\SandBox\</OutDir>
-    <IntDir>..\bin-int\Release-windows-x86_64\SandBox\</IntDir>
-    <TargetName>SandBox</TargetName>
-    <TargetExt>.exe</TargetExt>
+    <OutDir>..\bin\Release-windows-x86_64\Titanium\</OutDir>
+    <IntDir>..\bin-int\Release-windows-x86_64\Titanium\</IntDir>
+    <TargetName>Titanium</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\bin\Dist-windows-x86_64\SandBox\</OutDir>
-    <IntDir>..\bin-int\Dist-windows-x86_64\SandBox\</IntDir>
-    <TargetName>SandBox</TargetName>
-    <TargetExt>.exe</TargetExt>
+    <OutDir>..\bin\Dist-windows-x86_64\Titanium\</OutDir>
+    <IntDir>..\bin-int\Dist-windows-x86_64\Titanium\</IntDir>
+    <TargetName>Titanium</TargetName>
+    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titanium\src;..\Titan\vendor\vkbootstrap;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\tinygltf;..\Titan\vendor\vma;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\vkbootstrap;..\Titan\vendor\tinygltf;..\Titan\vendor\vma;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -88,18 +85,20 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\Titan\vendor\Vulkan\Lib\**.lib;..\Titan\vendor\freetype\lib\freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Titan\vendor\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <Lib>
+      <AdditionalDependencies>..\Titan\vendor\freetype\lib\freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Titan\vendor\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titanium\src;..\Titan\vendor\vkbootstrap;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\tinygltf;..\Titan\vendor\vma;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\vkbootstrap;..\Titan\vendor\tinygltf;..\Titan\vendor\vma;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -111,20 +110,22 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>..\Titan\vendor\Vulkan\Lib\**.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Titan\vendor\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <Lib>
+      <AdditionalDependencies>..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Titan\vendor\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titanium\src;..\Titan\vendor\vkbootstrap;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\tinygltf;..\Titan\vendor\vma;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\Vulkan\Include;..\Titan\vendor\vkbootstrap;..\Titan\vendor\tinygltf;..\Titan\vendor\vma;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -136,23 +137,27 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>..\Titan\vendor\Vulkan\Lib\**.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Titan\vendor\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <Lib>
+      <AdditionalDependencies>..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Titan\vendor\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\SandBoxApp.cpp" />
+    <ClInclude Include="src\Titanium\Editorlayer\EditorLayer.h" />
+    <ClInclude Include="src\Titanium\Panels\SceneHierarchyPanel.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Titanium\Editorlayer\EditorLayer.cpp" />
+    <ClCompile Include="src\Titanium\Panels\SceneHierarchyPanel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Titan\Titan.vcxproj">
       <Project>{A5982A0E-11AD-52BF-DA2E-F61E46024FF0}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Titanium\Titanium.vcxproj">
-      <Project>{B0E09FA9-9CAD-FAB4-C5C6-E85CB1F22F43}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Titan\vendor\GLFW\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>

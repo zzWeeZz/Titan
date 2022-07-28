@@ -5,6 +5,7 @@ layout (location = 1) in vec3 inNormal;
 layout (location = 2) in vec2 inTexCoord;
 
 layout (location = 0) out vec4 outColor;
+layout (location = 1) out vec2 outTexCoord;
 
 layout (set = 0, binding = 0) uniform CameraBuffer
 {
@@ -23,4 +24,5 @@ void main()
 	mat4 mvp = CameraData.proj * CameraData.view * PushConstant.transform;
 	gl_Position = mvp * vec4(inPosition, 1.0 );
 	outColor = vec4(inTexCoord, 0.f, 1.0f);
+	outTexCoord = inTexCoord;
 }

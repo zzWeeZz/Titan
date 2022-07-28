@@ -18,18 +18,20 @@ namespace Titan
 	void VulkanRenderer::Initialize()
 	{
 		GraphicsContext::CreateCommandBuffer(m_CommandBuffer);
-
 		{
 			RenderPassCreateInfo info{};
 			info.width = 1280;
 			info.height = 720;
-			info.haveDepth = true;
+			info.haveDepth = false;
+			info.isSwapchain = false;
+			info.DepthView = GraphicsContext::GetSwapChain().GetDepthView();
 			m_RenderPass = RenderPass::Create(info);
 		}
 		m_FragShader = Shader::Create("Shaders/triangle.frag.spv", ShaderType::Fragment);
 		m_VertShader = Shader::Create("Shaders/triangle.vert.spv", ShaderType::Vertex);
 
 		m_PushConstant = PushConstant<MeshConstant>::Create();
+		m_Texture = Texture::Create("Texture/Titan.png");
 		InitializeDescriptors();
 		CreateTrianglePipeline();
 	}
@@ -39,30 +41,49 @@ namespace Titan
 		s_Data->models.emplace_back(mesh.get());
 	}
 
+	void VulkanRenderer::DebugImGuiStuff()
+	{
+		ImGui::Begin("viewPort");
+		/*const auto descriptor = ImGui_ImplVulkan_AddTexture(m_Sampler, m_RenderPass->GetFrameBuffer()->GetImageView(GraphicsContext::GetSwapChain().GetImageCount()), VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL);
+
+		ImGui::Image(descriptor, { 1280, 720 });*/
+		ImGui::End();
+	}
+
 	void VulkanRenderer::Begin()
 	{
 		static int time = 0;
 		time++;
 		GraphicsContext::GetSwapChain().WaitOnFences();
+		vkResetDescriptorPool(GraphicsContext::GetDevice(), m_ImGuiDescriptorPool, 0);
 		m_CommandBuffer->Reset();
 		m_CommandBuffer->Bind();
+
 		VkClearValue clearValue;
 		clearValue.color = { {0.3f, 0.3f, 0.3f, 1.f} };
 
 		VkClearValue DepthValue;
 		DepthValue.depthStencil.depth = 1.0f;
 		std::vector<VkClearValue> clears = { clearValue, DepthValue };
-		VkRenderPassBeginInfo rpInfo{};
-		rpInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		rpInfo.renderPass = m_RenderPass->GetRenderPass();
-		rpInfo.framebuffer = m_RenderPass->GetFrameBuffer()->GetFrameBuffer(GraphicsContext::GetSwapChain().GetImageCount());
-		rpInfo.renderArea.offset = { 0, 0 };
-		rpInfo.renderArea.extent = { 1280, 720 };
-		rpInfo.clearValueCount = clears.size();
-		rpInfo.pClearValues = clears.data();
-		vkCmdBeginRenderPass(m_CommandBuffer->GetHandle(), &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
+		VkRenderingAttachmentInfo colorAttachmentinfo{};
+		colorAttachmentinfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+		colorAttachmentinfo.imageView = GraphicsContext::GetSwapChain().GetViews()[GraphicsContext::GetSwapChain().GetImageCount()];
+		colorAttachmentinfo.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
+		colorAttachmentinfo.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		colorAttachmentinfo.storeOp = VK_ATTACHMENT_STORE_OP_NONE;
+		colorAttachmentinfo.clearValue = clearValue;
 
-		glm::vec4 camPos = { 0.f, 0.f, -10.f , 1};
+		VkRenderingInfo rendingInfo{};
+		rendingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
+		rendingInfo.renderArea.extent = { 1280, 720 };
+		rendingInfo.renderArea.offset = { 0, 0 };
+		rendingInfo.layerCount = 1;
+		rendingInfo.colorAttachmentCount = 1;
+		rendingInfo.pColorAttachments = &colorAttachmentinfo;
+
+		vkCmdBeginRendering(m_CommandBuffer->GetHandle(), &rendingInfo);
+
+		glm::vec4 camPos = { 0.f, 0.f, -10.f , 1 };
 		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(camPos));
 		glm::mat4 projection = glm::perspective(glm::radians(70.f), 1700.f / 900.f, 0.1f, 200.f);
 		projection[1][1] *= -1;
@@ -90,13 +111,18 @@ namespace Titan
 			vkCmdDrawIndexed(m_CommandBuffer->GetHandle(), static_cast<uint32_t>(model->m_Mesh->m_VertexArray->GetIndexArray().size()), 1, 0, 0, 0);
 		}
 
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_CommandBuffer->GetHandle());
-		vkCmdEndRenderPass(m_CommandBuffer->GetHandle());
-		TN_VK_CHECK(vkEndCommandBuffer(m_CommandBuffer->GetHandle()));
+		//ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_CommandBuffer->GetHandle());
 
+		vkCmdEndRendering(m_CommandBuffer->GetHandle());
+
+		TN_VK_CHECK(vkEndCommandBuffer(m_CommandBuffer->GetHandle()));
 		std::vector<Ref<CommandBuffer>> commandBuffers;
 		commandBuffers.push_back(m_CommandBuffer);
+
+
 		GraphicsContext::GetSwapChain().Submit(commandBuffers);
+
+
 		GraphicsContext::GetSwapChain().Present();
 
 		s_Data->models.clear();
@@ -198,7 +224,7 @@ namespace Titan
 		info.stencilTestEnable = VK_FALSE;
 		builder.m_DepthStencilState = info;
 
-		builder.m_DescriptorSetLayouts = {m_SetLayout};
+		builder.m_DescriptorSetLayouts.push_back(m_SetLayout);
 
 		m_TrianglePipeline = Pipeline::Create(builder, m_RenderPass);
 	}
@@ -207,7 +233,8 @@ namespace Titan
 	{
 		std::vector<VkDescriptorPoolSize> sizes;
 		sizes = {
-			{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10}
+			{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 10},
+			{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10}
 		};
 
 		VkDescriptorPoolCreateInfo poolInfo{};
@@ -223,17 +250,24 @@ namespace Titan
 		VkDescriptorSetLayoutBinding camBufferBinding{};
 		camBufferBinding.binding = 0;
 		camBufferBinding.descriptorCount = 1;
-
 		camBufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		camBufferBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+		VkDescriptorSetLayoutBinding textureBind{};
+		textureBind.binding = 1;
+		textureBind.descriptorCount = 1;
+		textureBind.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		textureBind.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+		std::vector<VkDescriptorSetLayoutBinding> binding = { camBufferBinding, textureBind };
 
 		VkDescriptorSetLayoutCreateInfo setInfo{};
 		setInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		setInfo.pNext = nullptr;
 
-		setInfo.bindingCount = 1;
+		setInfo.bindingCount = binding.size();
 		setInfo.flags = 0;
-		setInfo.pBindings = &camBufferBinding;
+		setInfo.pBindings = binding.data();
 
 
 		vkCreateDescriptorSetLayout(GraphicsContext::GetDevice(), &setInfo, nullptr, &m_SetLayout);
@@ -244,7 +278,10 @@ namespace Titan
 				vkDestroyDescriptorPool(GraphicsContext::GetDevice(), m_DescriptorPool, nullptr);
 			});
 		s_Data->cameraBuffer = Buffer::Create(sizeof(CameraUniform), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU);
-
+		GlobalDeletionQueue.PushFunction([&]
+			{
+				s_Data->cameraBuffer->Destroy();
+			});
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.pNext = nullptr;
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -254,6 +291,25 @@ namespace Titan
 		allocInfo.pSetLayouts = &m_SetLayout;
 
 		vkAllocateDescriptorSets(GraphicsContext::GetDevice(), &allocInfo, &m_DescriptorSet);
+
+		VkSamplerCreateInfo samplerInfo = {};
+		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+		samplerInfo.pNext = nullptr;
+
+		samplerInfo.magFilter = VK_FILTER_NEAREST;
+		samplerInfo.minFilter = VK_FILTER_NEAREST;
+		samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+
+		vkCreateSampler(GraphicsContext::GetDevice(), &samplerInfo, nullptr, &m_Sampler);
+
+		VkDescriptorImageInfo imageBufferInfo;
+		imageBufferInfo.sampler = m_Sampler;
+		imageBufferInfo.imageView = m_Texture->GetView();
+		imageBufferInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+
 
 		VkDescriptorBufferInfo bufferInfo{};
 		bufferInfo.buffer = s_Data->cameraBuffer->GetBuffer();
@@ -270,7 +326,32 @@ namespace Titan
 		setWrite.descriptorCount = 1;
 		setWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		setWrite.pBufferInfo = &bufferInfo;
-
 		vkUpdateDescriptorSets(GraphicsContext::GetDevice(), 1, &setWrite, 0, nullptr);
+
+		VkWriteDescriptorSet setTexWrite{};
+		setTexWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		setTexWrite.pNext = nullptr;
+		setTexWrite.dstBinding = 1;
+		setTexWrite.dstSet = m_DescriptorSet;
+		setTexWrite.descriptorCount = 1;
+		setTexWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		setTexWrite.pImageInfo = &imageBufferInfo;
+
+		vkUpdateDescriptorSets(GraphicsContext::GetDevice(), 1, &setTexWrite, 0, nullptr);
+		std::vector<VkDescriptorPoolSize> imguiSizes;
+		imguiSizes =
+		{
+			{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000}
+		};
+
+		VkDescriptorPoolCreateInfo imGuipoolInfo{};
+		imGuipoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+
+		imGuipoolInfo.flags = 0;
+		imGuipoolInfo.maxSets = 1000;
+		imGuipoolInfo.poolSizeCount = static_cast<uint32_t>(imguiSizes.size());
+		imGuipoolInfo.pPoolSizes = imguiSizes.data();
+
+		vkCreateDescriptorPool(GraphicsContext::GetDevice(), &poolInfo, nullptr, &m_ImGuiDescriptorPool);
 	}
 }

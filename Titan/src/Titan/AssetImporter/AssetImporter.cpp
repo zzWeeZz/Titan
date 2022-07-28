@@ -31,6 +31,27 @@ namespace Titan
 		}
 	}
 
+	void AssetImporter::ImportTexture(const std::filesystem::path& path, Ref<Texture>& texture)
+	{
+		if (!std::filesystem::exists(path))
+		{
+			TN_CORE_ERROR("AssetImporter::ImportTexture: File does not exist: {0}", path.string());
+			return;
+		}
+
+		if (path.extension() == ".dds")
+		{
+			TN_CORE_WARN("Does not support dds loading.");
+		}
+		else
+		{
+			if (CheckTextureRegistry(path.filename().string(), texture)) return;
+
+			texture = std::make_shared<Texture>(path);
+			s_TextureRegistry[path.filename().string()] = &texture;
+		}
+	}
+
 	void AssetImporter::Shutdown()
 	{
 		if (s_MeshRegistry.size() > 1)
@@ -50,6 +71,19 @@ namespace Titan
 		{
 			const auto& registryVArray = *s_MeshRegistry[key];
 			outVertex = VertexArray::Create(registryVArray->GetVertexArray(), registryVArray->GetIndexArray());
+			TN_CORE_INFO("Pulling {0} from registry", key);
+			return true;
+		}
+		TN_CORE_INFO("could not find {0} in registry, creating a new one.", key);
+		return false;
+	}
+
+	bool AssetImporter::CheckTextureRegistry(const std::string& key, Ref<Texture>& outTexture)
+	{
+		if (s_TextureRegistry.contains(key))
+		{
+			const auto& texture = *s_TextureRegistry[key];
+			outTexture = std::make_shared<Texture>(*texture.get());
 			TN_CORE_INFO("Pulling {0} from registry", key);
 			return true;
 		}

@@ -19,6 +19,14 @@ namespace Titan
 		TN_VK_CHECK(vmaCreateBuffer(GraphicsContext::GetAllocator(), &bufferInfo, &vmaAllocInfo, &m_Buffer.Buffer, &m_Buffer.Allocation, nullptr));
 	}
 
+	void Buffer::Bind(void* data, size_t size)
+	{
+		void* mem;
+		vmaMapMemory(GraphicsContext::GetAllocator(), m_Buffer.Allocation, &mem);
+		memcpy(mem, data, size);
+		vmaUnmapMemory(GraphicsContext::GetAllocator(), m_Buffer.Allocation);
+	}
+
 	void Buffer::Destroy() const
 	{
 		vmaDestroyBuffer(GraphicsContext::GetAllocator(), m_Buffer.Buffer, m_Buffer.Allocation);

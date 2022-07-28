@@ -13,6 +13,15 @@
     <Filter Include="src\Titan\AssetImporter\ModelImporters">
       <UniqueIdentifier>{821FF509-6E71-CCF9-5790-090A4381E5E2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Assets">
+      <UniqueIdentifier>{5EBAD06C-4AB3-EFBE-73E5-D4435F3DCFCA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Titan\Assets\Models">
+      <UniqueIdentifier>{51364755-BD6D-8FEC-C677-F30F322EB6E5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Titan\Assets\Textures">
+      <UniqueIdentifier>{F115B067-5DD8-E3F1-A688-727E128ABCCF}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Core">
       <UniqueIdentifier>{D488ECC3-C056-E0C9-A9EA-50F09557BC2E}</UniqueIdentifier>
     </Filter>
@@ -88,6 +97,9 @@
     <Filter Include="vendor\freetype\Include\freetype\internal\services">
       <UniqueIdentifier>{AB88CBA5-971C-C14D-00E1-1A02EC93FB3F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\stb_image">
+      <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\tinygltf">
       <UniqueIdentifier>{53CDE522-BF58-53E7-C869-D6DB3474AFE7}</UniqueIdentifier>
     </Filter>
@@ -110,6 +122,15 @@
     </ClInclude>
     <ClInclude Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.h">
       <Filter>src\Titan\AssetImporter\ModelImporters</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Asset.h">
+      <Filter>src\Titan\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Models\Model.h">
+      <Filter>src\Titan\Assets\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Textures\Texture.h">
+      <Filter>src\Titan\Assets\Textures</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Core\Core.h">
       <Filter>src\Titan\Core</Filter>
@@ -143,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\RenderAPI.h">
       <Filter>src\Titan\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffer.h">
+      <Filter>src\Titan\Rendering\VulkanAPI\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffers.h">
       <Filter>src\Titan\Rendering\VulkanAPI\Buffers</Filter>
@@ -189,10 +213,10 @@
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanUtils\VulkanStructs.h">
       <Filter>src\Titan\Rendering\VulkanAPI\VulkanUtils</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Scene\Entity.h">
+    <ClInclude Include="src\Titan\Scene\Components.h">
       <Filter>src\Titan\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Scene\RuntimeScene.h">
+    <ClInclude Include="src\Titan\Scene\Entity.h">
       <Filter>src\Titan\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Scene\Scene.h">
@@ -510,6 +534,9 @@
     <ClInclude Include="vendor\freetype\Include\ft2build.h">
       <Filter>vendor\freetype\Include</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\stb_image\stb_image.h">
+      <Filter>vendor\stb_image</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\tinygltf\json.hpp">
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
@@ -528,9 +555,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Assets\Asset.h" />
-    <ClInclude Include="src\Titan\Assets\Models\Model.h" />
-    <ClInclude Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffer.h" />
+    <ClInclude Include="src\Titan\Assets\Camera\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
@@ -541,6 +566,12 @@
     </ClCompile>
     <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp">
       <Filter>src\Titan\AssetImporter\ModelImporters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Assets\Models\Model.cpp">
+      <Filter>src\Titan\Assets\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Assets\Textures\Texture.cpp">
+      <Filter>src\Titan\Assets\Textures</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Core\Log.cpp">
       <Filter>src\Titan\Core</Filter>
@@ -562,6 +593,9 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\RenderAPI.cpp">
       <Filter>src\Titan\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffer.cpp">
+      <Filter>src\Titan\Rendering\VulkanAPI\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\CommandBuffer.cpp">
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
@@ -591,9 +625,6 @@
       <Filter>src\Titan\Rendering\VulkanAPI</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Scene\Entity.cpp">
-      <Filter>src\Titan\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Titan\Scene\RuntimeScene.cpp">
       <Filter>src\Titan\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Scene\Scene.cpp">
@@ -632,7 +663,6 @@
     <ClCompile Include="vendor\vkbootstrap\VkBootstrap.cpp">
       <Filter>vendor\vkbootstrap</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Assets\Models\Model.cpp" />
-    <ClCompile Include="src\Titan\Rendering\VulkanAPI\Buffers\Buffer.cpp" />
+    <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp" />
   </ItemGroup>
 </Project>

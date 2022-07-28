@@ -36,6 +36,7 @@ namespace Titan
 		auto instanceRect = builder.set_app_name("Titan")
 			.request_validation_layers(true)
 			.set_debug_callback(VulkanDebugCallback)
+			.enable_extension("VK_KHR_dynamic_rendering")
 			.require_api_version(1, 1).build();
 
 		vkb::Instance vkbinstance = instanceRect.value();
@@ -47,7 +48,12 @@ namespace Titan
 		vkb::PhysicalDeviceSelector selector{ vkbinstance };
 		vkb::PhysicalDevice physicalDevice = selector.set_minimum_version(1, 1).set_surface(m_Surface).select().value();
 		vkb::DeviceBuilder deviceBuilder{ physicalDevice };
-		vkb::Device device = deviceBuilder.build().value();
+		VkPhysicalDeviceDynamicRenderingFeatures DynamicRendering{};
+		DynamicRendering.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
+		DynamicRendering.pNext = nullptr;
+		DynamicRendering.dynamicRendering = VK_TRUE;
+
+		vkb::Device device = deviceBuilder.add_pNext(&DynamicRendering).build().value();
 
 		m_Device = device.device;
 		m_PhysicalDevice = physicalDevice.physical_device;

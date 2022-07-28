@@ -11,6 +11,7 @@ namespace Titan
 		Buffer(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
 		VmaAllocation& GetAllocation() { return m_Buffer.Allocation; }
 		VkBuffer& GetBuffer() { return m_Buffer.Buffer; }
+		void Bind(void* data, size_t size);
 		void Destroy() const;
 		static Ref<Buffer> Create(size_t allocSize, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage);
 	private:

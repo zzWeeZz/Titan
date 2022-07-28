@@ -1,22 +1,44 @@
 #include "Scene.h"
+#include "Entity.h"
+#include "Components.h"
+#include "Titan/Assets/Camera/Camera.h"
+#include "Titan/Rendering/VulkanAPI/VulkanRenderer.h"
 
 namespace Titan
 {
-	void Scene::OnStart()
+	void Scene::OnEditorStart()
 	{
 	}
 
-	void Scene::OnUpdate()
+	void Scene::OnEditorUpdate()
 	{
+		m_Registry.Execute<CameraComponent, TransformComponent>([&](auto& entity, CameraComponent& C, TransformComponent& tf)
+			{
+				CameraSystem(C, tf);
+			});
+		m_Registry.Execute<ModelComponent, TransformComponent>([&](auto& entity, ModelComponent& mdl, TransformComponent& tf)
+			{
+				if (!mdl.modelHandle)
+				{
+					mdl.modelHandle = Model::Create(mdl.filePath);
+				}
+				mdl.modelHandle->SetPosition(tf.position);
+				mdl.modelHandle->SetRotation(tf.quaternion);
+				mdl.modelHandle->SetScale(tf.scale);
+				VulkanRenderer::SubmitMesh(mdl.modelHandle);
+			});
 	}
 
-	void Scene::OnRender()
+	void Scene::OnEditorRender()
 	{
 	}
 
 	Entity Scene::CreateEntity()
 	{
-		return {m_Registry.CreateEntity(), this};
+		Entity ent = { m_Registry.CreateEntity(), this };
+		ent.AddComponent<TagComponent>();
+		ent.AddComponent<TransformComponent>();
+		return ent;
 	}
 
 	void Scene::DestroyEntity(Entity entity)

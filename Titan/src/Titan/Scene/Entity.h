@@ -1,6 +1,6 @@
 #pragma once
-#include "Snowflake.hpp"
 #include "Serializer.hpp"
+#include "Snowflake.hpp"
 #include "Titan/Scene/Scene.h"
 
 namespace Titan
@@ -12,7 +12,7 @@ namespace Titan
 		Entity() = default;
 		Entity(Snowflake::Entity entity, Scene* scene);
 
-		/*template<typename T>
+		template<typename T>
 		bool HasComponent()
 		{
 			return m_Scene->m_Registry.HasComponent<T>(m_EntityId);
@@ -54,7 +54,7 @@ namespace Titan
 		uint32_t GetId() const
 		{
 			return m_EntityId;
-		}*/
+		}
 
 	private:
 		Snowflake::Entity m_EntityId{ Snowflake::InvalidEntity };

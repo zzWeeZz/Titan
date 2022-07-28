@@ -30,6 +30,7 @@ Titan::Swapchain::Swapchain()
 		1
 	};
 
+
 	m_DepthFormat = VK_FORMAT_D32_SFLOAT;
 
 	VkImageCreateInfo depthImInfo{};
@@ -66,6 +67,15 @@ Titan::Swapchain::Swapchain()
 	depthViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
 	TN_VK_CHECK(vkCreateImageView(GraphicsContext::GetDevice(), &depthViewInfo, nullptr, &m_DepthImageView));
+
+	RenderPassCreateInfo info{};
+	info.width = depthImageExtent.width;
+	info.height = depthImageExtent.height;
+	info.haveDepth = true;
+	info.isSwapchain = true;
+	info.Views = m_SwapchainImageViews;
+	info.DepthView = m_DepthImageView;
+	m_SwapchainRenderPass = RenderPass::Create(info);
 
 
 	for (size_t i = 0; i < m_SwapchainImageViews.size(); ++i)
@@ -115,7 +125,7 @@ void Titan::Swapchain::WaitOnFences(bool waitAndReset)
 	if (waitAndReset)
 	{
 		TN_VK_CHECK(vkResetFences(GraphicsContext::GetDevice(), 1, &m_RenderFence));
-		TN_VK_CHECK(vkAcquireNextImageKHR(GraphicsContext::GetDevice(), m_SwapChain, UINTMAX_MAX, m_PresentSemaphore, nullptr, &m_ImageCount));
+		TN_VK_CHECK(vkAcquireNextImageKHR(GraphicsContext::GetDevice(), m_SwapChain, UINTMAX_MAX, m_PresentSemaphore, VK_NULL_HANDLE, &m_ImageCount));
 	}
 }
 

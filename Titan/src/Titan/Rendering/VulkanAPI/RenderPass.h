@@ -12,7 +12,10 @@ namespace Titan
 		uint32_t height = 1024;
 		VkFormat colorFormat = VK_FORMAT_B8G8R8A8_SRGB;
 		bool haveDepth = true;
+		bool isSwapchain = false;
 		VkFormat depthFormat = VK_FORMAT_D32_SFLOAT;
+		VkImageView DepthView;
+		std::vector<VkImageView> Views;
 	};
 
 	class RenderPass

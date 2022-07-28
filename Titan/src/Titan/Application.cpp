@@ -10,6 +10,7 @@
 #include "Events/ApplicationEvent.h"
 #include "Rendering/RenderAPI.h"
 #include "Rendering/VulkanAPI/GraphicsContext.h"
+#include "Rendering/VulkanAPI/VulkanRenderer.h"
 
 Titan::Application::Application() : m_Running(true)
 {
@@ -25,11 +26,12 @@ void Titan::Application::Run()
 		ImGui_ImplVulkan_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		for (auto& layer : m_LayerStack)
+		for (const auto& layer : m_LayerStack)
 		{
 			layer->OnUpdate();
 		}
 		s_Window->OnUpdate();
+		VulkanRenderer::DebugImGuiStuff();
 		ImGui::Render();
 		RenderAPI::Begin();
 	}

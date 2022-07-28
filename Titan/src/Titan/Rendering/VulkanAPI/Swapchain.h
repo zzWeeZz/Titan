@@ -4,6 +4,7 @@
 #include <vulkan/vulkan.h>
 
 #include "CommandBuffer.h"
+#include "RenderPass.h"
 #include "Buffers/Buffers.h"
 #include "Titan/Window.h"
 
@@ -19,6 +20,7 @@ namespace Titan
 		inline std::vector<VkImageView>& GetViews() { return m_SwapchainImageViews; }
 		inline VkImageView& GetDepthView() { return m_DepthImageView; }
 		inline uint32_t& GetImageCount() { return m_ImageCount; }
+		inline Ref<RenderPass> GetRenderPass() { return m_SwapchainRenderPass; }
 		void Submit(std::vector<Ref<CommandBuffer>>& commandBuffers);
 		void WaitOnFences(bool waitAndReset = true);
 		void Present();
@@ -28,6 +30,8 @@ namespace Titan
 		void InitializeSyncStructure();
 
 		uint32_t m_ImageCount = 0u;
+
+		Ref<RenderPass> m_SwapchainRenderPass;
 
 		VkSwapchainKHR m_SwapChain;
 		VkFormat m_SwapchainImageFormat;

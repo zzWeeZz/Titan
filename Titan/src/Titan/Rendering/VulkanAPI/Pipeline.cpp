@@ -24,9 +24,16 @@ namespace Titan
 		colorBlendState.attachmentCount = 1;
 		colorBlendState.pAttachments = &m_ColorBlendAttachmentState;
 
+		VkPipelineRenderingCreateInfo pipelineRenderingCreateInfo{};
+		pipelineRenderingCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
+		pipelineRenderingCreateInfo.colorAttachmentCount = 1;
+		pipelineRenderingCreateInfo.pColorAttachmentFormats = &GraphicsContext::GetSwapChain().GetFormat();
+
 		VkGraphicsPipelineCreateInfo pipelineInfo{};
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipelineInfo.pNext = nullptr;
+		pipelineInfo.pNext = &pipelineRenderingCreateInfo;
+
+	
 
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 		for (auto& shader : m_ShaderStages)
@@ -44,7 +51,7 @@ namespace Titan
 		pipelineInfo.pColorBlendState = &colorBlendState;
 		pipelineInfo.pDepthStencilState = &m_DepthStencilState;
 		pipelineInfo.layout = m_PipelineLayout;
-		pipelineInfo.renderPass = renderPass;
+		pipelineInfo.renderPass = nullptr;
 		pipelineInfo.subpass = 0;
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 

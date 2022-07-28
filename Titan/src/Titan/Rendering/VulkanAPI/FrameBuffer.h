@@ -12,6 +12,9 @@ namespace Titan
 		uint32_t Width;
 		uint32_t Height;
 		VkRenderPass RenderPass;
+		std::vector<VkImageView> Views;
+		VkImageView DepthViews;
+		bool isSwapchain = false;
 	};
 
 	class FrameBuffer
@@ -28,7 +31,6 @@ namespace Titan
 	private:
 		std::vector<VkFramebuffer> m_FrameBuffers;
 		std::vector<VkImageView> m_Views;
-		std::vector<VkImage> m_Images;
 		std::vector<AllocatedImage> m_AllocatedImages;
 	};
 }

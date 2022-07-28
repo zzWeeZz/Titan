@@ -13,6 +13,11 @@
 
 #include "Titan/Assets/Models/Model.h"
 
+//ECS SYSTEM
+#include "Titan/Scene/Scene.h"
+#include "Titan/Scene/Entity.h"
+#include "Titan/Scene/Components.h"
+
 //IMGUI STUFF
 #include "Titan/ImGui/ImGuiLayer.h"
 

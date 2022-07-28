@@ -76,7 +76,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\vma;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\vma;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -98,7 +98,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\vma;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\vma;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -125,7 +125,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\vma;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\Vulkan\Include;vendor\vkbootstrap;vendor\tinygltf;vendor\vma;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -148,12 +148,14 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan\Assets\Models\Model.h" />
+    <ClInclude Include="src\Titan\Assets\Camera\Camera.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
     <ClInclude Include="src\Titan\AssetImporter\AssetImporter.h" />
     <ClInclude Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.h" />
     <ClInclude Include="src\Titan\Assets\Asset.h" />
+    <ClInclude Include="src\Titan\Assets\Models\Model.h" />
+    <ClInclude Include="src\Titan\Assets\Textures\Texture.h" />
     <ClInclude Include="src\Titan\Core\Core.h" />
     <ClInclude Include="src\Titan\Core\Log.h" />
     <ClInclude Include="src\Titan\Core\TitanMemory.h" />
@@ -181,8 +183,8 @@
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\Swapchain.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.h" />
     <ClInclude Include="src\Titan\Rendering\VulkanAPI\VulkanUtils\VulkanStructs.h" />
+    <ClInclude Include="src\Titan\Scene\Components.h" />
     <ClInclude Include="src\Titan\Scene\Entity.h" />
-    <ClInclude Include="src\Titan\Scene\RuntimeScene.h" />
     <ClInclude Include="src\Titan\Scene\Scene.h" />
     <ClInclude Include="src\Titan\Window.h" />
     <ClInclude Include="vendor\ImGui\imconfig.h" />
@@ -288,6 +290,7 @@
     <ClInclude Include="vendor\freetype\Include\freetype\tttags.h" />
     <ClInclude Include="vendor\freetype\Include\freetype\ttunpat.h" />
     <ClInclude Include="vendor\freetype\Include\ft2build.h" />
+    <ClInclude Include="vendor\stb_image\stb_image.h" />
     <ClInclude Include="vendor\tinygltf\json.hpp" />
     <ClInclude Include="vendor\tinygltf\stb_image.h" />
     <ClInclude Include="vendor\tinygltf\stb_image_write.h" />
@@ -296,10 +299,12 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Titan\Assets\Models\Model.cpp" />
+    <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp" />
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\AssetImporter.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp" />
+    <ClCompile Include="src\Titan\Assets\Models\Model.cpp" />
+    <ClCompile Include="src\Titan\Assets\Textures\Texture.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />
     <ClCompile Include="src\Titan\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Titan\ImGui\ImGuiLayer.cpp" />
@@ -318,7 +323,6 @@
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\Swapchain.cpp" />
     <ClCompile Include="src\Titan\Rendering\VulkanAPI\VulkanRenderer.cpp" />
     <ClCompile Include="src\Titan\Scene\Entity.cpp" />
-    <ClCompile Include="src\Titan\Scene\RuntimeScene.cpp" />
     <ClCompile Include="src\Titan\Scene\Scene.cpp" />
     <ClCompile Include="vendor\ImGui\imgui.cpp" />
     <ClCompile Include="vendor\ImGui\imgui_demo.cpp" />

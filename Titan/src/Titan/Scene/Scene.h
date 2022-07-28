@@ -1,15 +1,17 @@
 #pragma once
-#include "Entity.h"
+#include "Snowflake.hpp"
 
 namespace Titan
 {
 	class Scene
 	{
 		friend class Entity;
+		friend class SceneHierarchyPanel;
 	public:
-		void OnStart();
-		void OnUpdate();
-		void OnRender();
+		Scene() = default;
+		void OnEditorStart();
+		void OnEditorUpdate();
+		void OnEditorRender();
 
 		Entity CreateEntity();
 		void DestroyEntity(Entity entity);

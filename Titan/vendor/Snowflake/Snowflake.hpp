@@ -36,7 +36,8 @@ namespace Snowflake
 			{
 				m_ComponentMap[entity] = ByteSet();
 				m_ComponentMap[entity].resize(sizeof(T));
-				memcpy(m_ComponentMap[entity].data(), &T(), sizeof(T));
+				T comp{};
+				memcpy(m_ComponentMap[entity].data(), &comp, sizeof(T));
 			}
 		}
 
