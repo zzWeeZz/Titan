@@ -9,9 +9,6 @@
 
 #include "Titan/Core/Log.h"
 #include "Titan/Core/TitanMemory.h"
-#include "Titan/AssetImporter/AssetImporter.h"
-
-#include "Titan/Assets/Models/Model.h"
 
 //ECS SYSTEM
 #include "Titan/Scene/Scene.h"
@@ -20,8 +17,4 @@
 
 //IMGUI STUFF
 #include "Titan/ImGui/ImGuiLayer.h"
-
-#include "Titan/Rendering/VulkanAPI/VulkanRenderer.h"
-#include "Titan/Rendering/VulkanAPI/GraphicsContext.h"
-
 #include "Titan/EntryPoint.h"

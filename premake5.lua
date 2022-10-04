@@ -50,10 +50,7 @@ project "SandBox"
         "SandBox/src/",
         "Titan/src",
         "Titanium/src",
-        "Titan/vendor/vkbootstrap/",
-        "Titan/vendor/Vulkan/Include/",
         "Titan/vendor/tinygltf/",
-        "Titan/vendor/vma/",
         "Titan/vendor/Snowflake/",
         "Titan/vendor/ImGui/",
         "Titan/vendor/freetype/Include/",
@@ -66,7 +63,6 @@ project "SandBox"
     }
     links
     {
-        "Titan/vendor/Vulkan/Lib/**.lib",
         "Titan",
         "Titanium",
         externalLinks
@@ -131,11 +127,8 @@ project "Titan"
     {
         "Titan/src/**.cpp",
         "Titan/src/**.h", 
-        "Titan/vendor/vkbootstrap/VkBootstrap.h",
-        "Titan/vendor/vkbootstrap/VkBootstrap.cpp",
         "Titan/vendor/tinygltf/**.h",
         "Titan/vendor/tinygltf/**.hpp",
-        "Titan/vendor/vma/vk_mem_alloc.h",
         "Titan/vendor/Snowflake/**.hpp",
         "Titan/vendor/Snowflake/**.h",
         "Titan/vendor/ImGui/**.h",
@@ -147,10 +140,7 @@ project "Titan"
     includedirs
     {
         "Titan/src",
-        "Titan/vendor/Vulkan/Include/",
-        "Titan/vendor/vkbootstrap/",
         "Titan/vendor/tinygltf/",
-        "Titan/vendor/vma/",
         "Titan/vendor/Snowflake/",
         "Titan/vendor/ImGui/",
         "Titan/vendor/freetype/Include/",
@@ -159,8 +149,6 @@ project "Titan"
     }
     libdirs
     {
-        "Titan/vendor/Vulkan/Lib/**.lib",
-        "Titan/vendor/Vulkan/Lib/",
     }
     links
     {
@@ -218,10 +206,7 @@ project "Titan"
     {
         "Titan/src",
         "Titanium/src",
-        "Titan/vendor/Vulkan/Include/",
-        "Titan/vendor/vkbootstrap/",
         "Titan/vendor/tinygltf/",
-        "Titan/vendor/vma/",
         "Titan/vendor/Snowflake/",
         "Titan/vendor/ImGui/",
         "Titan/vendor/freetype/Include/",
@@ -230,8 +215,6 @@ project "Titan"
     }
     libdirs
     {
-            "Titan/vendor/Vulkan/Lib/**.lib",
-            "Titan/vendor/Vulkan/Lib/",
     }
     links
     {

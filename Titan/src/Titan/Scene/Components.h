@@ -3,7 +3,6 @@
 #include "glm/gtc/quaternion.hpp"
 #include "Serializer.hpp"
 #include "Snowflake.hpp"
-#include "Titan/Assets/Models/Model.h"
 #include "Titan/Core/TitanMemory.h"
 
 COMPONENT(TagComponent)
@@ -24,5 +23,5 @@ COMPONENT(ModelComponent)
 {
 	REGISTER_COMPONENT("{EC4E0F57-123F-4EEF-BF9E-DA7A05E0052A}"_guid);
 	std::string filePath;
-	Titan::Ref<Titan::Model> modelHandle = nullptr;
+	//Titan::Ref<Titan::Model> modelHandle = nullptr;
 };
