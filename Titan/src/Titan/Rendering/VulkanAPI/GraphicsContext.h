@@ -26,6 +26,9 @@ namespace Titan
 
 		static void ShutDown();
 	private:
+		static void CreateInstance();
+		static void SetupDebugMessenger();
+		static bool CheckValidationLayerSupport(std::vector<const char*>& vector);
 		inline static VkDebugUtilsMessengerEXT m_DebugMessenger;
 
 		inline static UploadContext m_UploadContext;

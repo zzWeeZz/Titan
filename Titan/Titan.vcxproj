@@ -89,7 +89,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\freetype\lib\freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -116,7 +115,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -143,17 +141,16 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan\Assets\Camera\Camera.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
     <ClInclude Include="src\Titan\AssetImporter\AssetImporter.h" />
     <ClInclude Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.h" />
     <ClInclude Include="src\Titan\Assets\Asset.h" />
+    <ClInclude Include="src\Titan\Assets\Camera\Camera.h" />
     <ClInclude Include="src\Titan\Assets\Models\Model.h" />
     <ClInclude Include="src\Titan\Assets\Textures\Texture.h" />
     <ClInclude Include="src\Titan\Core\Core.h" />
@@ -299,10 +296,10 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp" />
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\AssetImporter.cpp" />
     <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp" />
+    <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp" />
     <ClCompile Include="src\Titan\Assets\Models\Model.cpp" />
     <ClCompile Include="src\Titan\Assets\Textures\Texture.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />
@@ -339,9 +336,6 @@
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
-    </ProjectReference>
-    <ProjectReference Include="vendor\glm\glm.vcxproj">
-      <Project>{6577880B-D180-887C-5AFC-9E7CC604947C}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -32,20 +32,25 @@ namespace Titan
 		{
 			TN_CORE_ASSERT(false, "Vulkan is not supported");
 		}
-		vkb::InstanceBuilder builder;
-		auto instanceRect = builder.set_app_name("Titan")
-			.request_validation_layers(true)
-			.set_debug_callback(VulkanDebugCallback)
-			.enable_extension("VK_KHR_dynamic_rendering")
-			.require_api_version(1, 1).build();
 
-		vkb::Instance vkbinstance = instanceRect.value();
-		m_Instance = vkbinstance.instance;
+
+		CreateInstance();
+		SetupDebugMessenger();
+		uint32_t extensionCount = 0;
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+		TN_CORE_INFO("available extensions:");
+		std::vector<VkExtensionProperties> extensions(extensionCount);
+		vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+		
+		for (const auto& extension : extensions) {
+			TN_CORE_INFO("{0}", extension.extensionName);
+		}
 
 		auto& glfwWindow = *static_cast<GLFWwindow*>(Application::GetWindow().GetNativeWindow());
 		glfwCreateWindowSurface(m_Instance, &glfwWindow, nullptr, &m_Surface);
+		
 
-		vkb::PhysicalDeviceSelector selector{ vkbinstance };
+		/*vkb::PhysicalDeviceSelector selector{ vkbinstance };
 		vkb::PhysicalDevice physicalDevice = selector.set_minimum_version(1, 1).set_surface(m_Surface).select().value();
 		vkb::DeviceBuilder deviceBuilder{ physicalDevice };
 		VkPhysicalDeviceDynamicRenderingFeatures DynamicRendering{};
@@ -57,9 +62,9 @@ namespace Titan
 
 		m_Device = device.device;
 		m_PhysicalDevice = physicalDevice.physical_device;
-		m_DebugMessenger = instanceRect->debug_messenger;
+		m_DebugMessenger = instanceRect->debug_messenger;*/
 
-		m_GraphicsQueue = device.get_queue(vkb::QueueType::graphics).value();
+	/*	m_GraphicsQueue = device.get_queue(vkb::QueueType::graphics).value();
 		m_GraphicsQueueFamily = device.get_queue_index(vkb::QueueType::graphics).value();
 
 		VmaAllocatorCreateInfo allocatorInfo = {};
@@ -82,7 +87,7 @@ namespace Titan
 			});
 		Ref<CommandBuffer> cmdBuff = CommandBuffer::Create(m_GraphicsQueue, m_GraphicsQueueFamily);
 		m_UploadContext.commandBuffer = cmdBuff->GetHandle();
-		m_UploadContext.commandPool = cmdBuff->GetPool();
+		m_UploadContext.commandPool = cmdBuff->GetPool();*/
 	}
 
 	void GraphicsContext::CreateCommandBuffer(Ref<CommandBuffer>& outCommandBuffer)
@@ -139,5 +144,92 @@ namespace Titan
 
 		vkDestroyDevice(m_Device, nullptr);
 		vkDestroyInstance(m_Instance, nullptr);
+	}
+	void GraphicsContext::CreateInstance()
+	{
+		const bool enableValidationLayers = true;
+		std::vector<const char*> validationLayers = {
+			"VK_LAYER_KHRONOS_validation"
+		};
+		if (enableValidationLayers && !CheckValidationLayerSupport(validationLayers))
+		{
+			TN_CORE_ERROR("validation layers requested, but not available!");
+		}
+
+		VkApplicationInfo appInfo{};
+		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		appInfo.pApplicationName = "Titan";
+		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+		appInfo.pEngineName = "Titan";
+		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+		appInfo.apiVersion = VK_API_VERSION_1_3;
+
+		VkInstanceCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		createInfo.pApplicationInfo = &appInfo;
+
+		uint32_t glfwExtentCount = 0;
+		const char** glfwExtensions;
+
+		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtentCount);
+		createInfo.enabledExtensionCount = glfwExtentCount;
+		createInfo.ppEnabledExtensionNames = glfwExtensions;
+		createInfo.enabledLayerCount = 0;
+
+		if (enableValidationLayers)
+		{
+			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames = validationLayers.data();
+		}
+		else
+		{
+			createInfo.enabledLayerCount = 0;
+		}
+
+		TN_VK_CHECK(vkCreateInstance(&createInfo, nullptr, &m_Instance));
+	}
+	inline VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger)
+	{
+		auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+		if (func != nullptr) {
+			return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
+		}
+		else {
+			return VK_ERROR_EXTENSION_NOT_PRESENT;
+		}
+	}
+	void GraphicsContext::SetupDebugMessenger()
+	{
+		VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+		createInfo.pfnUserCallback = VulkanDebugCallback;
+		createInfo.pUserData = nullptr;
+		
+		TN_VK_CHECK(CreateDebugUtilsMessengerEXT(m_Instance, &createInfo, nullptr, &m_DebugMessenger));
+	}
+	bool GraphicsContext::CheckValidationLayerSupport(std::vector<const char*>& vector)
+	{
+		uint32_t layerCount;
+		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+		std::vector<VkLayerProperties> availableLayers(layerCount);
+		vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+		for (const char* layerName : vector) {
+			bool layerFound = false;
+
+			for (const auto& layerProperties : availableLayers) {
+				if (strcmp(layerName, layerProperties.layerName) == 0) {
+					layerFound = true;
+					break;
+				}
+			}
+
+			if (!layerFound) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

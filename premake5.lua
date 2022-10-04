@@ -13,19 +13,19 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 externalIncludes = 
 {
-    "Titan/vendor/spdlog/include",
-    "Titan/vendor/GLFW/include",
-    "Titan/vendor/glm",
+    "Titan/vendor/spdlog/include/",
+    "Titan/vendor/GLFW/include/",
+    "Titan/vendor/glm/",
 }
 
 externalLinks = 
 {
     "GLFW",
-    "glm",
+    
 }
 
-include "Titan/vendor/GLFW"
-include "Titan/vendor/glm"
+include "Titan/vendor/GLFW/"
+include "Titan/vendor/glm/"
 
 
 
@@ -172,28 +172,16 @@ project "Titan"
     filter "configurations:Debug"
         runtime "Debug"
         symbols "on"
-        links
-        {
-            "Titan/vendor/freetype/lib/freetyped.lib",
-        }
     
     filter "configurations:Release"
         runtime "Release"
         optimize "on"
-        links
-        {
-            "Titan/vendor/freetype/lib/freetype.lib",
-        }
     
     filter "configurations:Dist"
         runtime "Release"
         optimize "on"
         symbols "off"
-        links
-        {
-            "Titan/vendor/freetype/lib/freetype.lib",
-        }
-        
+
     filter "system:windows"
         symbols "On"		
         systemversion "latest"

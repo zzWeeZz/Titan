@@ -16,6 +16,9 @@
     <Filter Include="src\Titan\Assets">
       <UniqueIdentifier>{5EBAD06C-4AB3-EFBE-73E5-D4435F3DCFCA}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Assets\Camera">
+      <UniqueIdentifier>{1639FB3C-8270-43D4-8B7A-A7F7F7306ACD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Assets\Models">
       <UniqueIdentifier>{51364755-BD6D-8FEC-C677-F30F322EB6E5}</UniqueIdentifier>
     </Filter>
@@ -125,6 +128,9 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Asset.h">
       <Filter>src\Titan\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Camera\Camera.h">
+      <Filter>src\Titan\Assets\Camera</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Models\Model.h">
       <Filter>src\Titan\Assets\Models</Filter>
@@ -555,7 +561,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Assets\Camera\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titan\Application.cpp">
@@ -566,6 +571,9 @@
     </ClCompile>
     <ClCompile Include="src\Titan\AssetImporter\ModelImporters\GLTFImporter.cpp">
       <Filter>src\Titan\AssetImporter\ModelImporters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp">
+      <Filter>src\Titan\Assets\Camera</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\Models\Model.cpp">
       <Filter>src\Titan\Assets\Models</Filter>
@@ -663,6 +671,5 @@
     <ClCompile Include="vendor\vkbootstrap\VkBootstrap.cpp">
       <Filter>vendor\vkbootstrap</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp" />
   </ItemGroup>
 </Project>
