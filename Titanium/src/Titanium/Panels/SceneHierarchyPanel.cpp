@@ -1,6 +1,5 @@
 #include "SceneHierarchyPanel.h"
 
-#include "imgui.h"
 #include "Titan/Scene/Components.h"
 
 namespace Titan
@@ -17,7 +16,7 @@ namespace Titan
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
-		ImGui::Begin("Hierarchy");
+		/*ImGui::Begin("Hierarchy");
 
 		m_Context->m_Registry.ForEach([&](Snowflake::Entity ent)
 			{
@@ -47,11 +46,11 @@ namespace Titan
 		{
 			DrawComponents(m_SelectedEntity);
 		}
-		ImGui::End();
+		ImGui::End();*/
 	}
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
-	{
+	{/*
 		auto& tag = entity.GetComponent<TagComponent>();
 		ImGuiTreeNodeFlags flags = ((m_SelectedEntity == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		bool isOpened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity.GetId(), flags, tag.tag.c_str());
@@ -80,7 +79,7 @@ namespace Titan
 			{
 				m_SelectedEntity = {};
 			}
-		}
+		}*/
 	}
 
 	void SceneHierarchyPanel::DrawComponents(Entity entity)

@@ -34,26 +34,11 @@
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
-    <Filter Include="vendor\ImGui">
-      <UniqueIdentifier>{1DA38CEE-0906-1C93-B28B-54499ECDE715}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vendor\ImGui\misc">
-      <UniqueIdentifier>{18302066-8446-1EFC-CDBD-A91D3913EF83}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vendor\ImGui\misc\cpp">
-      <UniqueIdentifier>{EAF585DC-5662-41D7-1F56-D9348B81633F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vendor\ImGui\misc\fonts">
-      <UniqueIdentifier>{71DC1016-DD13-59AD-E61D-BDD052D47FA6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vendor\ImGui\misc\freetype">
-      <UniqueIdentifier>{CBC9D465-B7D9-8036-2093-E5540CC26FCF}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vendor\ImGui\misc\single_file">
-      <UniqueIdentifier>{08DD8AEE-74F5-7118-3DA2-01B2A97906B2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="vendor\Snowflake">
       <UniqueIdentifier>{2C921B61-188B-3AB3-41BD-1F382D151ABF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\dx12helpers">
+      <UniqueIdentifier>{94FA62C0-80DE-2316-E93E-1E69D5410E98}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\freetype">
       <UniqueIdentifier>{C64BB7D5-32D7-249A-3BE8-A78EA7F2809A}</UniqueIdentifier>
@@ -81,6 +66,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\TNpch.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -123,6 +111,9 @@
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h">
       <Filter>src\Titan\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\GraphicsContext.h">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Renderer.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
@@ -138,36 +129,6 @@
     <ClInclude Include="src\Titan\Window.h">
       <Filter>src\Titan</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\ImGui\imconfig.h">
-      <Filter>vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imgui.h">
-      <Filter>vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imgui_impl_glfw.h">
-      <Filter>vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imgui_internal.h">
-      <Filter>vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imstb_rectpack.h">
-      <Filter>vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imstb_textedit.h">
-      <Filter>vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\imstb_truetype.h">
-      <Filter>vendor\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\misc\cpp\imgui_stdlib.h">
-      <Filter>vendor\ImGui\misc\cpp</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\misc\freetype\imgui_freetype.h">
-      <Filter>vendor\ImGui\misc\freetype</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\misc\single_file\imgui_single_file.h">
-      <Filter>vendor\ImGui\misc\single_file</Filter>
-    </ClInclude>
     <ClInclude Include="vendor\Snowflake\Serializer.hpp">
       <Filter>vendor\Snowflake</Filter>
     </ClInclude>
@@ -176,6 +137,9 @@
     </ClInclude>
     <ClInclude Include="vendor\Snowflake\Snowflake.hpp">
       <Filter>vendor\Snowflake</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\dx12helpers\d3dx12.h">
+      <Filter>vendor\dx12helpers</Filter>
     </ClInclude>
     <ClInclude Include="vendor\freetype\Include\freetype\config\ftconfig.h">
       <Filter>vendor\freetype\Include\freetype\config</Filter>
@@ -461,6 +425,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\TNpch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Application.cpp">
       <Filter>src\Titan</Filter>
     </ClCompile>
@@ -485,6 +452,9 @@
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp">
       <Filter>src\Titan\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\GraphicsContext.cpp">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Renderer.cpp">
       <Filter>src\Titan\Rendering</Filter>
     </ClCompile>
@@ -493,33 +463,6 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Scene\Scene.cpp">
       <Filter>src\Titan\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui.cpp">
-      <Filter>vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_demo.cpp">
-      <Filter>vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_draw.cpp">
-      <Filter>vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_impl_glfw.cpp">
-      <Filter>vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_tables.cpp">
-      <Filter>vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\imgui_widgets.cpp">
-      <Filter>vendor\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\misc\cpp\imgui_stdlib.cpp">
-      <Filter>vendor\ImGui\misc\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\misc\fonts\binary_to_compressed_c.cpp">
-      <Filter>vendor\ImGui\misc\fonts</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
-      <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

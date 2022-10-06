@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <wrl.h>
 
 namespace Titan
 {
@@ -11,6 +12,9 @@ namespace Titan
 	{
 		return std::make_unique<T>(std::forward<Args>(args)...);
 	}
+
+	template<typename T>
+	using WinRef = Microsoft::WRL::ComPtr<T>;
 
 	template<typename T>
 	using Ref = std::shared_ptr<T>;

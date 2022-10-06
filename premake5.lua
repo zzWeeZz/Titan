@@ -21,7 +21,9 @@ externalIncludes =
 externalLinks = 
 {
     "GLFW",
-    
+    "d3d12.lib",
+    "dxgi.lib",
+    "d3dcompiler.lib",
 }
 
 include "Titan/vendor/GLFW/"
@@ -55,11 +57,11 @@ project "SandBox"
         "Titan/vendor/ImGui/",
         "Titan/vendor/freetype/Include/",
         "Titan/vendor/stb_image/",
+        "Titan/vendor/",
         externalIncludes
     }
     libdirs
     {
-        "Titan/vendor/Vulkan/Lib/",
     }
     links
     {
@@ -121,6 +123,9 @@ project "Titan"
     
     debugdir "Assets/"
     
+    pchheader "TNpch.h"
+	pchsource "Titan/src/TNpch.cpp"
+
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
     files
@@ -135,6 +140,7 @@ project "Titan"
         "Titan/vendor/ImGui/**.cpp",
         "Titan/vendor/freetype/Include/**.h",
         "Titan/vendor/stb_image/**.h",
+        "Titan/vendor/dx12helpers/**.h",
     }
     
     includedirs
@@ -145,6 +151,7 @@ project "Titan"
         "Titan/vendor/ImGui/",
         "Titan/vendor/freetype/Include/",
         "Titan/vendor/stb_image/",
+        "Titan/vendor/",
         externalIncludes
     }
     libdirs

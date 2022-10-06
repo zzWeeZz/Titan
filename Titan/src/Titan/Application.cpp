@@ -1,16 +1,22 @@
+#include "TNpch.h"
 #include "Application.h"
 
 #include <iostream>
 
-#include "imgui.h"
-
+#include "Titan/Rendering/GraphicsContext.h"
 #include "Core/Log.h"
 #include "Events/ApplicationEvent.h"
+#include "Titan/Rendering/Renderer.h"
 
 Titan::Application::Application() : m_Running(true)
 {
 	s_Window = Ref<Window>(Window::Create());
 	s_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+	GraphicsContextInfo info{ };
+	info.width = s_Window->GetWidth();
+	info.height = s_Window->GetHeight();
+	GraphicsContext::Initialize(info);
+	Renderer::Initialize();
 }
 
 void Titan::Application::Run()
@@ -22,7 +28,10 @@ void Titan::Application::Run()
 			layer->OnUpdate();
 		}
 		s_Window->OnUpdate();
+		Renderer::Begin();
 	}
+	
+	Renderer::Shutdown();
 }
 
 void Titan::Application::OnEvent(Event& e)

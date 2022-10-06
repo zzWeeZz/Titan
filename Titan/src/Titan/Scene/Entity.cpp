@@ -1,3 +1,4 @@
+#include "TNpch.h"
 #include "Entity.h"
 
 namespace Titan

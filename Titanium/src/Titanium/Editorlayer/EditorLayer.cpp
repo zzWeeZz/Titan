@@ -1,6 +1,5 @@
 #include "EditorLayer.h"
 
-#include "imgui.h"
 #include "Titan/Assets/Camera/Camera.h"
 #include "Titan/Scene/Components.h"
 
