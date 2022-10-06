@@ -20,4 +20,6 @@
 #include <ctime>
 
 
+#include "Titan/Core/Core.h"
+
 #endif

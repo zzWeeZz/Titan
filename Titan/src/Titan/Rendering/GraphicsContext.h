@@ -24,7 +24,8 @@ namespace Titan
 		static WinRef<ID3D12CommandQueue> CommandQueue() { return m_CommandQueue; }
 		static WinRef<ID3D12CommandList> CommandList() { return m_CommandList; }
 		static WinRef<IDXGISwapChain3> SwapChain() { return m_Swapchain; }
-		static void WaitForNextFrame();
+		static WinRef<ID3D12Device> Device() { return m_Device; }
+		static void WaitForNextFrame(bool getIndexFromSwapchain = true);
 		static void Clear();
 		static void Reset();
 		static void SignalCommandQueue();

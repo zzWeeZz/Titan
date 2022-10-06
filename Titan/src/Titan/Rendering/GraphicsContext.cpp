@@ -7,7 +7,7 @@
 #include <dx12helpers/d3dx12.h>
 #include "Titan/Application.h"
 #include "Titan/Platform/WindowsWindow.h"
-
+#include "d3d12sdklayers.h"
 namespace Titan
 {
 	void GraphicsContext::Initialize(const GraphicsContextInfo& info)
@@ -42,9 +42,15 @@ namespace Titan
 
 			adapterIndex++;
 		}
+
+		WinRef<ID3D12Debug> debugController;
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf()))))
+		{
+			debugController->EnableDebugLayer();
+		}
+
 		// Creates the device
 		TN_DX_CHECK(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(m_Device.GetAddressOf())));
-
 		D3D12_COMMAND_QUEUE_DESC cqDesc = {};
 		TN_DX_CHECK(m_Device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_CommandQueue.GetAddressOf())));
 
@@ -90,6 +96,10 @@ namespace Titan
 		{
 			TN_CORE_ASSERT(false, "Could not create Event!");
 		}
+		
+
+		dxgiFactory->Release();
+		adapter->Release();
 	}
 
 	WinRef<ID3D12CommandAllocator> GraphicsContext::GetCurrentCommandAllocator()
@@ -97,13 +107,17 @@ namespace Titan
 		return  m_CommandAllocators[m_FrameIndex];
 	}
 
-	void GraphicsContext::WaitForNextFrame()
+	void GraphicsContext::WaitForNextFrame(bool getIndexFromSwapchain)
 	{
-		m_FrameIndex = m_Swapchain->GetCurrentBackBufferIndex();
+		if (getIndexFromSwapchain)
+		{
+			m_FrameIndex = m_Swapchain->GetCurrentBackBufferIndex();
+		}
 
 		if (m_Fences[m_FrameIndex]->GetCompletedValue() < m_FenceValues[m_FrameIndex])
 		{
-			TN_DX_CHECK(m_Fences[m_FrameIndex]->SetEventOnCompletion(m_FenceValues[m_FrameIndex], m_FenceEvent));
+
+			(m_Fences[m_FrameIndex]->SetEventOnCompletion(m_FenceValues[m_FrameIndex], m_FenceEvent));
 
 			WaitForSingleObject(m_FenceEvent, INFINITE);
 		}
@@ -125,7 +139,9 @@ namespace Titan
 
 		m_CommandList->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
 
-		const float clearColor[] = { 0,0, 1, 1 };
+		static float time = 0;
+		time += 0.01f;
+		const float clearColor[] = { -sinf(time) * 2,sinf(time) / 2, -sinf(time), 1};
 		m_CommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 
 
@@ -151,14 +167,20 @@ namespace Titan
 
 	void GraphicsContext::Shutdown()
 	{
-		CloseHandle(m_FenceEvent);
+		auto error = CloseHandle(m_FenceEvent);
 
+		if (error == 0)
+		{
+			TN_CORE_ERROR("IT BROKE");
+		}
 
 		for (int i = 0; i < FrameCount; ++i)
 		{
 			m_FrameIndex = i;
-			WaitForNextFrame();
+			TN_SAFE_RELEASE(m_Fences[i]);
 		}
+
+
 
 		// get swapchain out of full screen before exiting
 		BOOL fs = false;
@@ -166,6 +188,7 @@ namespace Titan
 		if (fs)
 			m_Swapchain->SetFullscreenState(false, NULL);
 
+		
 		TN_SAFE_RELEASE(m_Device);
 		TN_SAFE_RELEASE(m_Swapchain);
 		TN_SAFE_RELEASE(m_CommandQueue);

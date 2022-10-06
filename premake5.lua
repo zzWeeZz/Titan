@@ -37,7 +37,7 @@ project "SandBox"
     language "C++"
     cppdialect "C++20"
 
-    debugdir "Assets/"
+    debugdir "AssetData/"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -121,7 +121,7 @@ project "Titan"
     language "C++"
     cppdialect "C++20"
     
-    debugdir "Assets/"
+    debugdir "AssetData/"
     
     pchheader "TNpch.h"
 	pchsource "Titan/src/TNpch.cpp"
