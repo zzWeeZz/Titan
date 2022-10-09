@@ -160,7 +160,12 @@ namespace Titan
 
 	void GraphicsContext::Reset(Ref<Pipeline> initual)
 	{
-		m_CommandList->Reset(m_CommandAllocators[m_FrameIndex].Get(), initual->m_PipelineStateObject.Get());
+		if (initual)
+		{
+			m_CommandList->Reset(m_CommandAllocators[m_FrameIndex].Get(), initual->m_PipelineStateObject.Get());
+			return;
+		}
+		m_CommandList->Reset(m_CommandAllocators[m_FrameIndex].Get(), NULL);
 	}
 
 	void GraphicsContext::Clear()
@@ -199,6 +204,8 @@ namespace Titan
 			TN_CORE_ERROR("IT BROKE");
 		}
 
+		m_CommandList->EndEvent();
+		m_CommandList->Close();
 		for (int i = 0; i < FrameCount; ++i)
 		{
 			m_FrameIndex = i;

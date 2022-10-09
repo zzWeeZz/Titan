@@ -8,6 +8,7 @@
 #include "Titan/Rendering/GraphicsContext.h"
 #include "Titan/Rendering/Pipeline.h"
 #include <Titan/Rendering/Buffers/VertexBuffer.h>
+#include <Titan/Rendering/Buffers/IndexBuffer.h>
 #include <Titan/Rendering/Vertices.h>
 
 namespace Titan
@@ -17,6 +18,7 @@ namespace Titan
 		Ref<Pipeline> TrianglePipeline;
 		std::vector<Vertex> vertices;
 		Ref<VertexBuffer> vertexBuffer;
+		Ref<IndexBuffer> indexBuffer;
 
 		D3D12_VIEWPORT viewPort;
 		D3D12_RECT rect;
@@ -25,15 +27,23 @@ namespace Titan
 	void Renderer::Initialize()
 	{
 		InitializePipelines();
-		s_Cache->vertices.push_back({ {0,0.5,0.5,1},{1,0,0,1} });
-		s_Cache->vertices.push_back({ {0,-0.5,0.5,1},{0,1,0,1} });
+		s_Cache->vertices.push_back({ {-0.5,0.5,0.5,1},{1,0,0,1} });
+		s_Cache->vertices.push_back({ {0.5,-0.5,0.5,1},{0,1,0,1} });
 		s_Cache->vertices.push_back({ {-0.5,-0.5,0.5,1},{0,0,1,1} });
+		s_Cache->vertices.push_back({ {0.5,0.5,0.5,1},{1,0,1,1} });
 		VertexBufferInfo info{};
 		info.sizeOfData = s_Cache->vertices.size();
 		info.vertexData = s_Cache->vertices.data();
 		info.sizeOfVertex = sizeof(Vertex);
 		info.debugName = L"Vertex";
 		s_Cache->vertexBuffer = VertexBuffer::Create(info);
+
+		std::vector<DWORD> indices = { 0,1,2,0,3,1 };
+		IndexBufferInfo iInfo{};
+		iInfo.indexData = indices.data();
+		iInfo.sizeOfArray = indices.size();
+		s_Cache->indexBuffer = IndexBuffer::Create(iInfo);
+
 		auto& view =  s_Cache->viewPort;
 		view.Height = Application::GetWindow().GetHeight();
 		view.Width = Application::GetWindow().GetWidth();
@@ -60,7 +70,8 @@ namespace Titan
 		GraphicsContext::CommandList()->RSSetViewports(1, &s_Cache->viewPort);
 		GraphicsContext::CommandList()->RSSetScissorRects(1, &s_Cache->rect);
 		s_Cache->vertexBuffer->Bind();
-		GraphicsContext::CommandList()->DrawInstanced(3, 1, 0, 0);
+		s_Cache->indexBuffer->Bind();
+		GraphicsContext::CommandList()->DrawIndexedInstanced(6, 1, 0,0,0);
 	}
 
 	void Renderer::End()

@@ -428,6 +428,7 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\Vertices.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -473,5 +474,6 @@
       <Filter>src\Titan\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp" />
   </ItemGroup>
 </Project>
