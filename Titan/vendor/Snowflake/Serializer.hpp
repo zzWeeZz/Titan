@@ -41,7 +41,7 @@ namespace Snowflake
 					if (it.second.IsEntityRegistered(entity))
 					{
 						currentEntityComponents.push_back(it.first);
-						entityByteLength += componentSizes[it.first];
+						entityByteLength += (uint32_t)componentSizes[it.first];
 					}
 				}
 				writeFile.write(reinterpret_cast<char*>(&entityByteLength), sizeof(uint32_t));
@@ -87,7 +87,7 @@ namespace Snowflake
 				SnowID readID;
 				memcpy(&readID, componentData.data(), sizeof(SnowID));
 				m_Registry.AddComponentFromData(componentData, readID, entity);
-				entityByteLength -= componentLength;
+				entityByteLength -= (uint32_t)componentLength;
 
 			}
 		}

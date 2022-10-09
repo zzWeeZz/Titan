@@ -4,6 +4,7 @@
 #include <dxgi1_6.h>
 #include <d3dcompiler.h>
 #include "Titan/Core/Core.h"
+#include <Titan/Rendering/Pipeline.h>
 
 namespace Titan
 {
@@ -22,16 +23,20 @@ namespace Titan
 		static void Initialize(const GraphicsContextInfo& info);
 		static WinRef<ID3D12CommandAllocator> GetCurrentCommandAllocator();
 		static WinRef<ID3D12CommandQueue> CommandQueue() { return m_CommandQueue; }
-		static WinRef<ID3D12CommandList> CommandList() { return m_CommandList; }
+		static WinRef<ID3D12GraphicsCommandList> CommandList() { return m_CommandList; }
 		static WinRef<IDXGISwapChain3> SwapChain() { return m_Swapchain; }
 		static WinRef<ID3D12Device> Device() { return m_Device; }
 		static void WaitForNextFrame(bool getIndexFromSwapchain = true);
-		static void Clear();
-		static void Reset();
+		static void Begin();// this function should the renderer prob handle.
+		static void Clear(); // this has no functionality, Needs to be figured out.
+		static void End(); // same with this one, should be moved to the renderer.
+		static void Reset(Ref<Pipeline> initual = nullptr);
+		static void ExecuteCommandList();
 		static void SignalCommandQueue();
 		static void Shutdown();
 	private:
 		static void InitializeSwapChain(const GraphicsContextInfo& info, IDXGIFactory4* factory);
+		static void ValidationLayer();
 		static void EnableShaderBasedValidation();
 		inline static WinRef<ID3D12Device> m_Device;
 		inline static WinRef<IDXGISwapChain3> m_Swapchain;
@@ -41,6 +46,8 @@ namespace Titan
 		inline static std::array<WinRef<ID3D12CommandAllocator>, FrameCount> m_CommandAllocators;
 		inline static WinRef<ID3D12GraphicsCommandList> m_CommandList;
 		inline static std::array<WinRef<ID3D12Fence1>, FrameCount> m_Fences;
+
+		inline static WinRef<ID3D12InfoQueue> m_InfoQueue;
 
 		inline static HANDLE m_FenceEvent;
 		inline static std::array<uint64_t, FrameCount> m_FenceValues;

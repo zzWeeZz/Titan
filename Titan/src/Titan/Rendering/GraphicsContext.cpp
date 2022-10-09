@@ -54,6 +54,8 @@ namespace Titan
 		D3D12_COMMAND_QUEUE_DESC cqDesc = {};
 		TN_DX_CHECK(m_Device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_CommandQueue.GetAddressOf())));
 
+		m_Device->QueryInterface(m_InfoQueue.GetAddressOf());
+
 		InitializeSwapChain(info, dxgiFactory);
 
 		// Render target Creation
@@ -82,7 +84,6 @@ namespace Titan
 		}
 
 		TN_DX_CHECK(m_Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_CommandAllocators[0].Get(), NULL, IID_PPV_ARGS(m_CommandList.GetAddressOf())));
-		m_CommandList->Close();
 
 		for (size_t i = 0; i < FrameCount; ++i)
 		{
@@ -96,7 +97,7 @@ namespace Titan
 		{
 			TN_CORE_ASSERT(false, "Could not create Event!");
 		}
-		
+
 
 		dxgiFactory->Release();
 		adapter->Release();
@@ -125,7 +126,7 @@ namespace Titan
 		m_FenceValues[m_FrameIndex]++;
 	}
 
-	void GraphicsContext::Clear()
+	void GraphicsContext::Begin()
 	{
 		auto beginRB = CD3DX12_RESOURCE_BARRIER::Transition(
 			m_RenderTargets[m_FrameIndex].Get(),
@@ -136,15 +137,16 @@ namespace Titan
 			1,
 			&beginRB);
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), m_FrameIndex, m_RtvDescriptorSize);
-
 		m_CommandList->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
 
 		static float time = 0;
-		time += 0.01f;
-		const float clearColor[] = { -sinf(time) * 2,sinf(time) / 2, -sinf(time), 1};
+		time += 0.001f;
+		const float clearColor[] = { 0,(cosf(time) + 1.f) / 2.f, 0, 1 };
 		m_CommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	}
 
-
+	void GraphicsContext::End()
+	{
 		auto endRB = CD3DX12_RESOURCE_BARRIER::Transition(
 			m_RenderTargets[m_FrameIndex].Get(),
 			D3D12_RESOURCE_STATE_RENDER_TARGET,
@@ -153,11 +155,34 @@ namespace Titan
 			1,
 			&endRB);
 		m_CommandList->Close();
+		ValidationLayer();
 	}
 
-	void GraphicsContext::Reset()
+	void GraphicsContext::Reset(Ref<Pipeline> initual)
 	{
-		m_CommandList->Reset(m_CommandAllocators[m_FrameIndex].Get(), NULL);
+		m_CommandList->Reset(m_CommandAllocators[m_FrameIndex].Get(), initual->m_PipelineStateObject.Get());
+	}
+
+	void GraphicsContext::Clear()
+	{
+		// transfers swapchain rendertarget
+
+
+		// command list is ready for commands
+
+
+		//Draw Something ex: triangle
+
+
+		// send it to the present state
+	}
+
+	void GraphicsContext::ExecuteCommandList()
+	{
+		ID3D12CommandList* ppCommandList[] = { GraphicsContext::CommandList().Get() };
+		GraphicsContext::CommandQueue()->ExecuteCommandLists(_countof(ppCommandList), ppCommandList);
+		m_FenceValues[m_FrameIndex]++;
+		SignalCommandQueue();
 	}
 
 	void GraphicsContext::SignalCommandQueue()
@@ -177,7 +202,7 @@ namespace Titan
 		for (int i = 0; i < FrameCount; ++i)
 		{
 			m_FrameIndex = i;
-			TN_SAFE_RELEASE(m_Fences[i]);
+			WaitForNextFrame();
 		}
 
 
@@ -188,7 +213,7 @@ namespace Titan
 		if (fs)
 			m_Swapchain->SetFullscreenState(false, NULL);
 
-		
+
 		TN_SAFE_RELEASE(m_Device);
 		TN_SAFE_RELEASE(m_Swapchain);
 		TN_SAFE_RELEASE(m_CommandQueue);
@@ -235,6 +260,37 @@ namespace Titan
 		m_Swapchain = reinterpret_cast<IDXGISwapChain3*>(tempSwapchain);
 
 		m_FrameIndex = m_Swapchain->GetCurrentBackBufferIndex();
+	}
+	void GraphicsContext::ValidationLayer()
+	{
+		SIZE_T messageLength = 0;
+		HRESULT hr = m_InfoQueue->GetMessage(0, NULL, &messageLength);
+
+		// Allocate space and get the message
+		if (messageLength)
+		{
+			D3D12_MESSAGE* pMessage = (D3D12_MESSAGE*)malloc(messageLength);
+			hr = m_InfoQueue->GetMessage(0, pMessage, &messageLength);
+			switch (pMessage->Severity)
+			{
+			case D3D12_MESSAGE_SEVERITY_INFO:
+				TN_CORE_INFO(pMessage->pDescription);
+				break;
+			case D3D12_MESSAGE_SEVERITY_WARNING:
+				TN_CORE_WARN(pMessage->pDescription);
+				break;
+			case D3D12_MESSAGE_SEVERITY_ERROR:
+				TN_CORE_ERROR(pMessage->pDescription);
+				break;
+			case D3D12_MESSAGE_SEVERITY_MESSAGE:
+				TN_CORE_TRACE(pMessage->pDescription);
+				break;
+			default:
+				break;
+			}
+			
+				free(pMessage);
+		}
 	}
 	void GraphicsContext::EnableShaderBasedValidation()
 	{

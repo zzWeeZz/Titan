@@ -114,6 +114,9 @@
     <ClInclude Include="src\Titan\Rendering\GraphicsContext.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Pipeline.h">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Renderer.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
@@ -423,6 +426,8 @@
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h">
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\Vertices.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -455,6 +460,9 @@
     <ClCompile Include="src\Titan\Rendering\GraphicsContext.cpp">
       <Filter>src\Titan\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Pipeline.cpp">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Renderer.cpp">
       <Filter>src\Titan\Rendering</Filter>
     </ClCompile>
@@ -464,5 +472,6 @@
     <ClCompile Include="src\Titan\Scene\Scene.cpp">
       <Filter>src\Titan\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp" />
   </ItemGroup>
 </Project>

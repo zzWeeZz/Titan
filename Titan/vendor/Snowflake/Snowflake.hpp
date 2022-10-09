@@ -85,7 +85,7 @@ namespace Snowflake
 	public:
 		Entity CreateEntity()
 		{
-			Entity entity = m_Entities.size();
+			Entity entity = (uint32_t)m_Entities.size();
 			m_Entities.emplace_back(entity);
 			return entity;
 		}

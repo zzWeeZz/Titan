@@ -24,6 +24,7 @@ externalLinks =
     "d3d12.lib",
     "dxgi.lib",
     "d3dcompiler.lib",
+    "dxguid.lib",
 }
 
 include "Titan/vendor/GLFW/"

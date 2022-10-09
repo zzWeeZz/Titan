@@ -26,16 +26,60 @@ namespace Titan
 			&vertexShader,
 			&errorBuffer));
 
-		D3D12_INPUT_LAYOUT_DESC inputLayout;
-		GetInputLayoutFromBlob(vertexShader, inputLayout);
+		ID3DBlob* pxShader;
+		TN_DX_CHECK(D3DCompileFromFile(
+			info.psPath.wstring().c_str(),
+			nullptr,
+			nullptr,
+			"main",
+			"ps_5_0",
+			D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
+			0,
+			&pxShader,
+			&errorBuffer));
 
+		D3D12_SHADER_BYTECODE vsByteCode;
+		vsByteCode.BytecodeLength = vertexShader->GetBufferSize();
+		vsByteCode.pShaderBytecode = vertexShader->GetBufferPointer();
+
+		D3D12_SHADER_BYTECODE psByteCode;
+		psByteCode.BytecodeLength = pxShader->GetBufferSize();
+		psByteCode.pShaderBytecode = pxShader->GetBufferPointer();
+
+		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayoutDesc;
+		GetInputLayoutFromBlob(vertexShader, inputLayoutDesc);
+		D3D12_INPUT_LAYOUT_DESC inputLayout;
+		inputLayout.NumElements = inputLayoutDesc.size();
+		inputLayout.pInputElementDescs = inputLayoutDesc.data();
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc{};
+		pipelineDesc.VS = vsByteCode;
+		pipelineDesc.PS = psByteCode;
+		pipelineDesc.pRootSignature = m_RootSignature.Get();
+		pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		pipelineDesc.InputLayout = inputLayout;
+		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		pipelineDesc.NumRenderTargets = 1;
+		pipelineDesc.SampleMask = 0xffffffff;
+		pipelineDesc.SampleDesc.Count = 1;
+		pipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		pipelineDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+
+		TN_DX_CHECK(GraphicsContext::Device()->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(m_PipelineStateObject.GetAddressOf())));
+		TN_CORE_INFO("Pipeline created");
+	}
+	void Pipeline::Bind()
+	{
+		GraphicsContext::CommandList()->SetPipelineState(m_PipelineStateObject.Get());
+		GraphicsContext::CommandList()->SetGraphicsRootSignature(m_RootSignature.Get());
+		GraphicsContext::CommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 	Ref<Pipeline> Pipeline::Create(const PipelineInfo& info)
 	{
 		return CreateRef<Pipeline>(info);
 	}
 
-	void Pipeline::GetInputLayoutFromBlob(ID3DBlob* blob, D3D12_INPUT_LAYOUT_DESC& InputLayout)
+	void Pipeline::GetInputLayoutFromBlob(ID3DBlob* blob, std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout)
 	{
 		ID3D12ShaderReflection* pReflector = nullptr;
 		TN_DX_CHECK(D3DReflect(blob->GetBufferPointer(), blob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&pReflector));
@@ -103,9 +147,7 @@ namespace Titan
 			/*LOGINFO("Found Semantic: {}", paramDesc.SemanticName);*/
 
 			// Save element desc
-			inputLayoutDesc.push_back(elementDesc);
+			InputLayout.push_back(elementDesc);
 		}
-		InputLayout.NumElements = inputLayoutDesc.size();
-		InputLayout.pInputElementDescs = inputLayoutDesc.data();
 	}
 }

@@ -29,6 +29,9 @@ void Titan::Application::Run()
 		}
 		s_Window->OnUpdate();
 		Renderer::Begin();
+		Renderer::End();
+
+		Renderer::DrawCommands();
 	}
 	
 	Renderer::Shutdown();
