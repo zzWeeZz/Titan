@@ -28,6 +28,9 @@
     <Filter Include="src\Titan\Rendering">
       <UniqueIdentifier>{495B65AD-B5BC-42BB-3E2A-896DAA8A797A}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Rendering\Buffers">
+      <UniqueIdentifier>{C5530107-3161-2FED-BA47-2BD82654FBA3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Scene">
       <UniqueIdentifier>{19619842-85EC-0507-8EFD-88FBFA076207}</UniqueIdentifier>
     </Filter>
@@ -111,6 +114,15 @@
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h">
       <Filter>src\Titan\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Framebuffer.h">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\GraphicsContext.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
@@ -118,6 +130,9 @@
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Renderer.h">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Vertices.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Scene\Components.h">
@@ -140,6 +155,9 @@
     </ClInclude>
     <ClInclude Include="vendor\Snowflake\Snowflake.hpp">
       <Filter>vendor\Snowflake</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\dx12helpers\D3D12MemAlloc.h">
+      <Filter>vendor\dx12helpers</Filter>
     </ClInclude>
     <ClInclude Include="vendor\dx12helpers\d3dx12.h">
       <Filter>vendor\dx12helpers</Filter>
@@ -426,9 +444,7 @@
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h">
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h" />
-    <ClInclude Include="src\Titan\Rendering\Vertices.h" />
-    <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h" />
+    <ClInclude Include="src\Titan\Core\TitanFormats.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -458,6 +474,15 @@
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp">
       <Filter>src\Titan\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Framebuffer.cpp">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\GraphicsContext.cpp">
       <Filter>src\Titan\Rendering</Filter>
     </ClCompile>
@@ -473,7 +498,8 @@
     <ClCompile Include="src\Titan\Scene\Scene.cpp">
       <Filter>src\Titan\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp" />
-    <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp" />
+    <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
+      <Filter>vendor\dx12helpers</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

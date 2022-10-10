@@ -142,6 +142,7 @@ project "Titan"
         "Titan/vendor/freetype/Include/**.h",
         "Titan/vendor/stb_image/**.h",
         "Titan/vendor/dx12helpers/**.h",
+        "Titan/vendor/dx12helpers/**.cpp",
     }
     
     includedirs

@@ -70,6 +70,7 @@ namespace Titan
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
+
 		for (size_t i = 0; i < FrameCount; ++i)
 		{
 			TN_DX_CHECK(m_Swapchain->GetBuffer(i, IID_PPV_ARGS(m_RenderTargets[i].GetAddressOf())));
@@ -198,14 +199,13 @@ namespace Titan
 	void GraphicsContext::Shutdown()
 	{
 		auto error = CloseHandle(m_FenceEvent);
-
+		Reset();
 		if (error == 0)
 		{
 			TN_CORE_ERROR("IT BROKE");
 		}
 
-		m_CommandList->EndEvent();
-		m_CommandList->Close();
+		
 		for (int i = 0; i < FrameCount; ++i)
 		{
 			m_FrameIndex = i;

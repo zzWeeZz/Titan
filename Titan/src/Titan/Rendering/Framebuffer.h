@@ -1,12 +1,13 @@
 #pragma once
+#include "Titan/Core/TitanFormats.h"
 namespace Titan
 {
 	struct FramebufferInfo
 	{
 		size_t width = 1280u;
 		size_t height = 720u;
-		//Imageformat vector
-
+		
+		std::vector<ImageFormat> imageFormats;
 	};
 	class Framebuffer
 	{
@@ -18,5 +19,6 @@ namespace Titan
 		static Ref<Framebuffer> Create(const FramebufferInfo& info);
 	private:
 		void Validate();
+
 	};
 }

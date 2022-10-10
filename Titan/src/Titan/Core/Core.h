@@ -18,7 +18,7 @@
 
 #define TN_DX_CHECK(X) {HRESULT hr = X; if(FAILED(hr)){ assert(false);}}
 
-#define TN_SAFE_RELEASE(X) if(X){X->Release(); X = nullptr;}
+#define TN_SAFE_RELEASE(X) if( (X) ){ (X)->Release(); (X) = nullptr;}
 
 #define BIT(x) (1 << x)
 

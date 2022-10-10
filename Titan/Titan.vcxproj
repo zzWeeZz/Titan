@@ -148,8 +148,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h" />
-    <ClInclude Include="src\Titan\Rendering\Vertices.h" />
+    <ClInclude Include="src\Titan\Core\TitanFormats.h" />
     <ClInclude Include="src\TNpch.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
@@ -165,9 +164,13 @@
     <ClInclude Include="src\Titan\Layer.h" />
     <ClInclude Include="src\Titan\LayerStack.h" />
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\Framebuffer.h" />
     <ClInclude Include="src\Titan\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Titan\Rendering\Pipeline.h" />
     <ClInclude Include="src\Titan\Rendering\Renderer.h" />
+    <ClInclude Include="src\Titan\Rendering\Vertices.h" />
     <ClInclude Include="src\Titan\Scene\Components.h" />
     <ClInclude Include="src\Titan\Scene\Entity.h" />
     <ClInclude Include="src\Titan\Scene\Scene.h" />
@@ -175,6 +178,7 @@
     <ClInclude Include="vendor\Snowflake\Serializer.hpp" />
     <ClInclude Include="vendor\Snowflake\SnowID.h" />
     <ClInclude Include="vendor\Snowflake\Snowflake.hpp" />
+    <ClInclude Include="vendor\dx12helpers\D3D12MemAlloc.h" />
     <ClInclude Include="vendor\dx12helpers\d3dx12.h" />
     <ClInclude Include="vendor\freetype\Include\freetype\config\ftconfig.h" />
     <ClInclude Include="vendor\freetype\Include\freetype\config\ftheader.h" />
@@ -270,10 +274,8 @@
     <ClInclude Include="vendor\tinygltf\stb_image.h" />
     <ClInclude Include="vendor\tinygltf\stb_image_write.h" />
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h" />
-    <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp" />
     <ClCompile Include="src\TNpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -285,12 +287,15 @@
     <ClCompile Include="src\Titan\Layer.cpp" />
     <ClCompile Include="src\Titan\LayerStack.cpp" />
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Framebuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\GraphicsContext.cpp" />
     <ClCompile Include="src\Titan\Rendering\Pipeline.cpp" />
     <ClCompile Include="src\Titan\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Titan\Scene\Entity.cpp" />
     <ClCompile Include="src\Titan\Scene\Scene.cpp" />
-    <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp" />
+    <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

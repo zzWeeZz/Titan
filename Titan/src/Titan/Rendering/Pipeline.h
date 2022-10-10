@@ -3,10 +3,12 @@
 #include "Titan/Core/TitanMemory.h"
 namespace Titan
 {
+
+
 	struct PipelineInfo
 	{
-		std::filesystem::path vsPath;
-		std::filesystem::path psPath;
+		std::filesystem::path vsPath = "";
+		std::filesystem::path psPath = "";
 
 	};
 	class Pipeline
