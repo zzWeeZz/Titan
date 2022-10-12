@@ -90,6 +90,9 @@
     <ClInclude Include="src\Titan\Core\Log.h">
       <Filter>src\Titan\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Core\TitanFormats.h">
+      <Filter>src\Titan\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Core\TitanMemory.h">
       <Filter>src\Titan\Core</Filter>
     </ClInclude>
@@ -444,7 +447,6 @@
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h">
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Core\TitanFormats.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">

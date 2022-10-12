@@ -49,7 +49,7 @@ namespace Titan
 		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayoutDesc;
 		GetInputLayoutFromBlob(vertexShader, inputLayoutDesc);
 		D3D12_INPUT_LAYOUT_DESC inputLayout;
-		inputLayout.NumElements = inputLayoutDesc.size();
+		inputLayout.NumElements = static_cast<UINT>(inputLayoutDesc.size());
 		inputLayout.pInputElementDescs = inputLayoutDesc.data();
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc{};

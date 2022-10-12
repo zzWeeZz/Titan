@@ -60,7 +60,7 @@ namespace Titan
 
 		m_IndexBufferView.BufferLocation = m_IndexBuffer->GetGPUVirtualAddress();
 		m_IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
-		m_IndexBufferView.SizeInBytes = sizeWithStride;
+		m_IndexBufferView.SizeInBytes = static_cast<UINT>(sizeWithStride);
 	}
 	void IndexBuffer::Bind()
 	{

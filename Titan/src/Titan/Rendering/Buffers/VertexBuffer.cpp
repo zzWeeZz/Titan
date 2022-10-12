@@ -56,8 +56,8 @@ namespace Titan
 		GraphicsContext::ExecuteCommandList();
 
 		m_VertexBufferView.BufferLocation = m_VertexBuffer->GetGPUVirtualAddress();
-		m_VertexBufferView.StrideInBytes = info.sizeOfVertex;
-		m_VertexBufferView.SizeInBytes = info.sizeOfData * info.sizeOfVertex;
+		m_VertexBufferView.StrideInBytes = static_cast<UINT>(info.sizeOfVertex);
+		m_VertexBufferView.SizeInBytes = info.sizeOfData * static_cast<UINT>(info.sizeOfVertex);
 
 
     }

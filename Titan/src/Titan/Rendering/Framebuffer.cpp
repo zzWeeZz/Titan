@@ -73,16 +73,13 @@ namespace Titan
 						&texDesc,
 						D3D12_RESOURCE_STATE_RENDER_TARGET, 
 						nullptr,
-						IID_PPV_ARGS(m_RenderTargets[i][j].ReleaseAndGetAddressOf())));
+						IID_PPV_ARGS(m_RenderTargets[i][j].ReleaseAndGetAddressOf())
+					));
 
 					m_RenderTargets[i][j]->SetName(L"FrameBuffer");
+					rtvHandle.Offset(1, m_RtvDescriptorSize);
 				}
 			}
-
-
-			/*GraphicsContext::Device()->CreateRenderTargetView(m_RenderTargets[i].Get(), nullptr, rtvHandle);
-
-			rtvHandle.Offset(1, m_RtvDescriptorSize);*/
 		}
 	}
 }

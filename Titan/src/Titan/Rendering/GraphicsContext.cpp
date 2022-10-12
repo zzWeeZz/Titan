@@ -69,7 +69,7 @@ namespace Titan
 
 		for (size_t i = 0; i < FrameCount; ++i)
 		{
-			TN_DX_CHECK(m_Swapchain->GetBuffer(i, IID_PPV_ARGS(m_RenderTargets[i].GetAddressOf())));
+			TN_DX_CHECK(m_Swapchain->GetBuffer(static_cast<UINT>(i), IID_PPV_ARGS(m_RenderTargets[i].GetAddressOf())));
 			m_Device->CreateRenderTargetView(m_RenderTargets[i].Get(), nullptr, rtvHandle);
 
 			rtvHandle.Offset(1, m_RtvDescriptorSize);
@@ -274,8 +274,10 @@ namespace Titan
 		// Allocate space and get the message
 		if (messageLength)
 		{
-			D3D12_MESSAGE* pMessage = (D3D12_MESSAGE*)malloc(messageLength);
+			D3D12_MESSAGE* pMessage = nullptr;
+			pMessage = (D3D12_MESSAGE*)malloc(messageLength);
 			hr = m_InfoQueue->GetMessage(0, pMessage, &messageLength);
+			
 			switch (pMessage->Severity)
 			{
 			case D3D12_MESSAGE_SEVERITY_INFO:

@@ -148,7 +148,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan\Core\TitanFormats.h" />
     <ClInclude Include="src\TNpch.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
@@ -156,6 +155,7 @@
     <ClInclude Include="src\Titan\Assets\Camera\Camera.h" />
     <ClInclude Include="src\Titan\Core\Core.h" />
     <ClInclude Include="src\Titan\Core\Log.h" />
+    <ClInclude Include="src\Titan\Core\TitanFormats.h" />
     <ClInclude Include="src\Titan\Core\TitanMemory.h" />
     <ClInclude Include="src\Titan\EntryPoint.h" />
     <ClInclude Include="src\Titan\Events\ApplicationEvent.h" />
