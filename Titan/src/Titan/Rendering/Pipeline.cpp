@@ -2,6 +2,7 @@
 #include "Pipeline.h"
 #include <dx12helpers/d3dx12.h>
 #include "Titan/Rendering/GraphicsContext.h"
+#include <Titan/Core/TitanFormats.h>
 namespace Titan
 {
 	Pipeline::Pipeline(const PipelineInfo& info)
@@ -58,7 +59,7 @@ namespace Titan
 		pipelineDesc.pRootSignature = m_RootSignature.Get();
 		pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		pipelineDesc.InputLayout = inputLayout;
-		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM, FormatToDXFormat(ImageFormat::Depth24);
 		pipelineDesc.NumRenderTargets = 1;
 		pipelineDesc.SampleMask = 0xffffffff;
 		pipelineDesc.SampleDesc.Count = 1;

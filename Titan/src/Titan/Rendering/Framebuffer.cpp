@@ -18,8 +18,19 @@ namespace Titan
 	void Framebuffer::Resize(const size_t width, const size_t height)
 	{
 	}
+	void Framebuffer::Clear(const glm::vec4& color)
+	{
+		/*CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), GraphicsContext::GetFrameIndex(), m_RtvDescriptorSize);
+		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_DsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), GraphicsContext::GetFrameIndex(), m_DvsDescriptorSize);
+		const float clearColor[] = { color.x, color.y, color.z, color.a };
+		GraphicsContext::CommandList()->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+		GraphicsContext::CommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.f, 0, 0, nullptr);*/
+	}
 	void Framebuffer::Bind()
 	{
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), GraphicsContext::GetFrameIndex(), m_RtvDescriptorSize);
+		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_DsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), GraphicsContext::GetFrameIndex(), m_DvsDescriptorSize);
+		GraphicsContext::CommandList()->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 	}
 	void Framebuffer::Unbind()
 	{
@@ -58,7 +69,7 @@ namespace Titan
 					texDesc.SampleDesc.Count = 1;
 					texDesc.SampleDesc.Quality = 0;
 					texDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-					texDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+					texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 
 					D3D12_HEAP_PROPERTIES HeapProps;
 					HeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -77,7 +88,52 @@ namespace Titan
 					));
 
 					m_RenderTargets[i][j]->SetName(L"FrameBuffer");
+
+					device->CreateRenderTargetView(m_RenderTargets[i][j].Get(), nullptr, rtvHandle);
+
 					rtvHandle.Offset(1, m_RtvDescriptorSize);
+				}
+				else
+				{
+					D3D12_DESCRIPTOR_HEAP_DESC DsvHeapDesc = {};
+					DsvHeapDesc.NumDescriptors = FrameCount;
+					DsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+
+					DsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+					TN_DX_CHECK(GraphicsContext::Device()->CreateDescriptorHeap(&DsvHeapDesc, IID_PPV_ARGS(m_DsvDescriptorHeap.GetAddressOf())));
+
+					CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_DsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+					m_DvsDescriptorSize = GraphicsContext::Device()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+					D3D12_RESOURCE_DESC texDesc = {};
+					texDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+					texDesc.Width = m_FBInfo.width;
+					texDesc.Height = (UINT)m_FBInfo.height;
+					texDesc.DepthOrArraySize = 1;
+					texDesc.MipLevels = 1;
+					texDesc.Format = FormatToDXFormat(m_FBInfo.imageFormats[j]);
+					texDesc.SampleDesc.Count = 1;
+					texDesc.SampleDesc.Quality = 0;
+					texDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+					texDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+					D3D12_HEAP_PROPERTIES HeapProps;
+					HeapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+					HeapProps.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+					HeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+					HeapProps.CreationNodeMask = 1;
+					HeapProps.VisibleNodeMask = 1;
+
+					TN_DX_CHECK(device->CreateCommittedResource(
+						&HeapProps,
+						D3D12_HEAP_FLAG_NONE,
+						&texDesc,
+						D3D12_RESOURCE_STATE_DEPTH_WRITE,
+						nullptr,
+						IID_PPV_ARGS(m_DepthTarget[i].ReleaseAndGetAddressOf())
+					));
+
+					m_DepthTarget[i]->SetName(L"FrameBuffer");
+					device->CreateDepthStencilView(m_DepthTarget[i].Get(), nullptr, dsvHandle);
 				}
 			}
 		}

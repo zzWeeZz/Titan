@@ -44,7 +44,7 @@ namespace Titan
 		FramebufferInfo fbInfo{};
 		fbInfo.height = 720;
 		fbInfo.width = 1280;
-		fbInfo.imageFormats = { ImageFormat::RGBA8UN };
+		fbInfo.imageFormats = { ImageFormat::RGBA8UN, ImageFormat::Depth24 };
 		s_Cache->testFB = Framebuffer::Create(fbInfo);
 
 		std::vector<DWORD> indices = { 0,1,2,0,3,1 };
@@ -74,6 +74,8 @@ namespace Titan
 		GraphicsContext::GetCurrentCommandAllocator()->Reset();
 		GraphicsContext::Reset(s_Cache->TrianglePipeline);
 		GraphicsContext::Begin();
+		s_Cache->testFB->Bind();
+		s_Cache->testFB->Clear();
 
 		s_Cache->TrianglePipeline->Bind();
 		GraphicsContext::CommandList()->RSSetViewports(1, &s_Cache->viewPort);

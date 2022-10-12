@@ -1,6 +1,7 @@
 #pragma once
 #include "Titan/Core/TitanFormats.h"
 #include "GraphicsContext.h"
+#include "glm/glm.hpp"
 namespace Titan
 {
 	struct FramebufferInfo
@@ -14,6 +15,7 @@ namespace Titan
 	public:
 		Framebuffer(const FramebufferInfo& info);
 		void Resize(const size_t width, const size_t height);
+		void Clear(const glm::vec4& color = {0.45f ,0.45f ,0.45f, 1.f});
 		void Bind();
 		void Unbind();
 		static Ref<Framebuffer> Create(const FramebufferInfo& info);
@@ -25,6 +27,7 @@ namespace Titan
 		std::array<WinRef<ID3D12Resource>, FrameCount> m_DepthTarget;
 
 		int32_t m_RtvDescriptorSize;
+		int32_t m_DvsDescriptorSize;
 		FramebufferInfo m_FBInfo;
 	};
 }
