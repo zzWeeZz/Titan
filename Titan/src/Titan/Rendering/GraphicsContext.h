@@ -26,6 +26,7 @@ namespace Titan
 		static WinRef<ID3D12GraphicsCommandList> CommandList() { return m_CommandList; }
 		static WinRef<IDXGISwapChain3> SwapChain() { return m_Swapchain; }
 		static WinRef<ID3D12Device> Device() { return m_Device; }
+		static uint32_t GetFrameIndex() { return m_FrameIndex; }
 		static void WaitForNextFrame(bool getIndexFromSwapchain = true);
 		static void Begin();// this function should the renderer prob handle.
 		static void Clear(); // this has no functionality, Needs to be figured out.

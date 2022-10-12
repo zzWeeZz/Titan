@@ -10,6 +10,7 @@
 #include <Titan/Rendering/Buffers/VertexBuffer.h>
 #include <Titan/Rendering/Buffers/IndexBuffer.h>
 #include <Titan/Rendering/Vertices.h>
+#include <Titan/Rendering/Framebuffer.h>
 
 namespace Titan
 {
@@ -19,6 +20,8 @@ namespace Titan
 		std::vector<Vertex> vertices;
 		Ref<VertexBuffer> vertexBuffer;
 		Ref<IndexBuffer> indexBuffer;
+
+		Ref<Framebuffer> testFB;
 
 		D3D12_VIEWPORT viewPort;
 		D3D12_RECT rect;
@@ -38,6 +41,12 @@ namespace Titan
 		info.debugName = L"Vertex";
 		s_Cache->vertexBuffer = VertexBuffer::Create(info);
 
+		FramebufferInfo fbInfo{};
+		fbInfo.height = 720;
+		fbInfo.width = 1280;
+		fbInfo.imageFormats = { ImageFormat::RGBA8UN };
+		s_Cache->testFB = Framebuffer::Create(fbInfo);
+
 		std::vector<DWORD> indices = { 0,1,2,0,3,1 };
 		IndexBufferInfo iInfo{};
 		iInfo.indexData = indices.data();
@@ -45,8 +54,8 @@ namespace Titan
 		s_Cache->indexBuffer = IndexBuffer::Create(iInfo);
 
 		auto& view =  s_Cache->viewPort;
-		view.Height = Application::GetWindow().GetHeight();
-		view.Width = Application::GetWindow().GetWidth();
+		view.Height = static_cast<float>(Application::GetWindow().GetHeight());
+		view.Width = static_cast<float>(Application::GetWindow().GetWidth());
 		view.MinDepth = 0.0f;
 		view.MaxDepth = 1.0f;
 		view.TopLeftX = 0;

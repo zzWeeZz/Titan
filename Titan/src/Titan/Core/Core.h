@@ -21,4 +21,8 @@
 #define TN_SAFE_RELEASE(X) if( (X) ){ (X)->Release(); (X) = nullptr;}
 
 #define BIT(x) (1 << x)
-
+template<typename T, typename F>
+inline T& TitanCast(F & cast)
+{
+	return static_cast<T>(cast);
+}

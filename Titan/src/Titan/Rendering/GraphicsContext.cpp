@@ -42,12 +42,8 @@ namespace Titan
 
 			adapterIndex++;
 		}
-
-		WinRef<ID3D12Debug> debugController;
-		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf()))))
-		{
-			debugController->EnableDebugLayer();
-		}
+		if (info.debuging)
+			EnableShaderBasedValidation();
 
 		// Creates the device
 		TN_DX_CHECK(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(m_Device.GetAddressOf())));
@@ -205,7 +201,7 @@ namespace Titan
 			TN_CORE_ERROR("IT BROKE");
 		}
 
-		
+
 		for (int i = 0; i < FrameCount; ++i)
 		{
 			m_FrameIndex = i;
@@ -270,6 +266,8 @@ namespace Titan
 	}
 	void GraphicsContext::ValidationLayer()
 	{
+		if (!m_InfoQueue) return;
+
 		SIZE_T messageLength = 0;
 		HRESULT hr = m_InfoQueue->GetMessage(0, NULL, &messageLength);
 
@@ -295,8 +293,8 @@ namespace Titan
 			default:
 				break;
 			}
-			
-				free(pMessage);
+
+			free(pMessage);
 		}
 	}
 	void GraphicsContext::EnableShaderBasedValidation()
@@ -304,7 +302,8 @@ namespace Titan
 		WinRef<ID3D12Debug> spDebugController0;
 		WinRef<ID3D12Debug1> spDebugController1;
 		TN_DX_CHECK(D3D12GetDebugInterface(IID_PPV_ARGS(&spDebugController0)));
+		spDebugController0->EnableDebugLayer();
 		TN_DX_CHECK(spDebugController0->QueryInterface(IID_PPV_ARGS(&spDebugController1)));
-		spDebugController1->SetEnableGPUBasedValidation(true);
+		//spDebugController1->SetEnableGPUBasedValidation(true);
 	}
 }
