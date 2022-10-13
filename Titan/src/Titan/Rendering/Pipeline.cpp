@@ -7,10 +7,34 @@ namespace Titan
 {
 	Pipeline::Pipeline(const PipelineInfo& info)
 	{
-		CD3DX12_ROOT_SIGNATURE_DESC rootSigdesc{};
-		rootSigdesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+		D3D12_DESCRIPTOR_RANGE ranges[1] = {};
+		ranges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+		ranges[0].NumDescriptors = 1;
+		ranges[0].BaseShaderRegister = 0; // this is the bind point;
+		ranges[0].RegisterSpace = 0;
+		ranges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+		D3D12_ROOT_DESCRIPTOR_TABLE table{};
+		table.NumDescriptorRanges = _countof(ranges);
+		table.pDescriptorRanges = &ranges[0];
+
+		D3D12_ROOT_PARAMETER parameters[1];
+		parameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		parameters[0].DescriptorTable = table;
+		parameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+
+		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
+		rootSignatureDesc.Init(_countof(parameters),
+			parameters,
+			0,
+			nullptr,
+			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // we can deny shader stages here for better performance
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS);
 		ID3DBlob* signature;
-		TN_DX_CHECK(D3D12SerializeRootSignature(&rootSigdesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, nullptr));
+		TN_DX_CHECK(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, nullptr));
 
 		TN_DX_CHECK(GraphicsContext::Device()->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(m_RootSignature.GetAddressOf())));
 
@@ -27,7 +51,8 @@ namespace Titan
 			&vertexShader,
 			&errorBuffer));
 
-		ID3DBlob* pxShader;
+		ID3DBlob* pxShader = nullptr;
+
 		TN_DX_CHECK(D3DCompileFromFile(
 			info.psPath.wstring().c_str(),
 			nullptr,
@@ -38,11 +63,13 @@ namespace Titan
 			0,
 			&pxShader,
 			&errorBuffer));
-
+		if (errorBuffer)
+		{
+			TN_CORE_ERROR(errorBuffer->GetBufferPointer());
+		}
 		D3D12_SHADER_BYTECODE vsByteCode;
 		vsByteCode.BytecodeLength = vertexShader->GetBufferSize();
 		vsByteCode.pShaderBytecode = vertexShader->GetBufferPointer();
-
 		D3D12_SHADER_BYTECODE psByteCode;
 		psByteCode.BytecodeLength = pxShader->GetBufferSize();
 		psByteCode.pShaderBytecode = pxShader->GetBufferPointer();
@@ -59,10 +86,13 @@ namespace Titan
 		pipelineDesc.pRootSignature = m_RootSignature.Get();
 		pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 		pipelineDesc.InputLayout = inputLayout;
-		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM, FormatToDXFormat(ImageFormat::Depth24);
+		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		pipelineDesc.NumRenderTargets = 1;
 		pipelineDesc.SampleMask = 0xffffffff;
 		pipelineDesc.SampleDesc.Count = 1;
+		pipelineDesc.DSVFormat = (DXGI_FORMAT)45;
+		pipelineDesc.DepthStencilState = GetDepthStencilDesc(info.depthState, info.depthCullState);
+
 		pipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		pipelineDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 
@@ -150,5 +180,20 @@ namespace Titan
 			// Save element desc
 			InputLayout.push_back(elementDesc);
 		}
+	}
+	D3D12_DEPTH_STENCIL_DESC Pipeline::GetDepthStencilDesc(const DepthState& state, const CullState& depthCull)
+	{
+		const D3D12_DEPTH_STENCILOP_DESC stencil = { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
+		D3D12_DEPTH_STENCIL_DESC desc{};
+		desc.BackFace = stencil;
+		desc.FrontFace = stencil;
+
+		desc.DepthEnable = TRUE;
+		desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+		desc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+		desc.StencilEnable = FALSE;
+		desc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+		desc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+		return desc;
 	}
 }

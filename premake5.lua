@@ -16,11 +16,13 @@ externalIncludes =
     "Titan/vendor/spdlog/include/",
     "Titan/vendor/GLFW/include/",
     "Titan/vendor/glm/",
+    "YAML/include/"
 }
 
 externalLinks = 
 {
     "GLFW",
+    "yaml-cpp",
     "d3d12.lib",
     "dxgi.lib",
     "d3dcompiler.lib",
@@ -29,6 +31,7 @@ externalLinks =
 
 include "Titan/vendor/GLFW/"
 include "Titan/vendor/glm/"
+include "YAML/"
 
 
 

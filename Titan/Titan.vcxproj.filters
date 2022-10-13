@@ -117,6 +117,12 @@
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h">
       <Filter>src\Titan\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffer.h">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffers.h">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClInclude>
@@ -447,6 +453,8 @@
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h">
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Assets\ResourceRegistry.h" />
+    <ClInclude Include="src\Titan\Core\TitanID.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -475,6 +483,9 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp">
       <Filter>src\Titan\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Buffers\ConstantBuffer.cpp">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp">
       <Filter>src\Titan\Rendering\Buffers</Filter>

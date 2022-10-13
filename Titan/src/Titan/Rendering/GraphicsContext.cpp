@@ -56,7 +56,7 @@ namespace Titan
 
 		// Render target Creation
 		D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-		rtvHeapDesc.NumDescriptors = FrameCount;
+		rtvHeapDesc.NumDescriptors = g_FrameCount;
 		rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 
 		rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
@@ -67,7 +67,7 @@ namespace Titan
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
 
-		for (size_t i = 0; i < FrameCount; ++i)
+		for (size_t i = 0; i < g_FrameCount; ++i)
 		{
 			TN_DX_CHECK(m_Swapchain->GetBuffer(static_cast<UINT>(i), IID_PPV_ARGS(m_RenderTargets[i].GetAddressOf())));
 			m_Device->CreateRenderTargetView(m_RenderTargets[i].Get(), nullptr, rtvHandle);
@@ -75,14 +75,14 @@ namespace Titan
 			rtvHandle.Offset(1, m_RtvDescriptorSize);
 		}
 
-		for (size_t i = 0; i < FrameCount; ++i)
+		for (size_t i = 0; i < g_FrameCount; ++i)
 		{
 			TN_DX_CHECK(m_Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_CommandAllocators[i].GetAddressOf())));
 		}
 
 		TN_DX_CHECK(m_Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_CommandAllocators[0].Get(), NULL, IID_PPV_ARGS(m_CommandList.GetAddressOf())));
 
-		for (size_t i = 0; i < FrameCount; ++i)
+		for (size_t i = 0; i < g_FrameCount; ++i)
 		{
 			TN_DX_CHECK(m_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_Fences[i].GetAddressOf())));
 
@@ -134,7 +134,7 @@ namespace Titan
 			1,
 			&beginRB);
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), m_FrameIndex, m_RtvDescriptorSize);
-		m_CommandList->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
+		
 
 		static float time = 0;
 		time += 0.001f;
@@ -163,6 +163,11 @@ namespace Titan
 			return;
 		}
 		m_CommandList->Reset(m_CommandAllocators[m_FrameIndex].Get(), NULL);
+	}
+
+	WinRef<ID3D12Resource> GraphicsContext::GetCurrentRtv()
+	{
+		return m_RenderTargets[m_FrameIndex];
 	}
 
 	void GraphicsContext::Clear()
@@ -202,7 +207,7 @@ namespace Titan
 		}
 
 
-		for (int i = 0; i < FrameCount; ++i)
+		for (int i = 0; i < g_FrameCount; ++i)
 		{
 			m_FrameIndex = i;
 			WaitForNextFrame();
@@ -223,7 +228,7 @@ namespace Titan
 		TN_SAFE_RELEASE(m_RTVDescriptorHeap);
 		TN_SAFE_RELEASE(m_CommandList);
 
-		for (int i = 0; i < FrameCount; ++i)
+		for (int i = 0; i < g_FrameCount; ++i)
 		{
 			TN_SAFE_RELEASE(m_RenderTargets[i]);
 			TN_SAFE_RELEASE(m_CommandAllocators[i]);
@@ -251,7 +256,7 @@ namespace Titan
 
 		scDesc.SampleDesc = sDesc;
 		scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		scDesc.BufferCount = FrameCount;
+		scDesc.BufferCount = g_FrameCount;
 		scDesc.OutputWindow = glfwGetWin32Window(reinterpret_cast<GLFWwindow*>(Application::GetWindow().GetNativeWindow()));
 		scDesc.Windowed = TRUE;
 		scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;

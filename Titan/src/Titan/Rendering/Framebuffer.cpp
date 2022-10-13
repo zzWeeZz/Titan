@@ -6,10 +6,11 @@
 #include <dx12helpers/d3dx12.h>
 namespace Titan
 {
+	
 	Framebuffer::Framebuffer(const FramebufferInfo& info) : m_RtvDescriptorSize(0)
 	{
 		m_FBInfo = info;
-		for (size_t i = 0; i < FrameCount; ++i)
+		for (size_t i = 0; i < g_FrameCount; ++i)
 		{
 			m_RenderTargets[i].resize(m_FBInfo.imageFormats.size());
 		}
@@ -20,16 +21,19 @@ namespace Titan
 	}
 	void Framebuffer::Clear(const glm::vec4& color)
 	{
-		/*CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), GraphicsContext::GetFrameIndex(), m_RtvDescriptorSize);
-		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_DsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), GraphicsContext::GetFrameIndex(), m_DvsDescriptorSize);
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), GraphicsContext::GetFrameIndex(), m_RtvDescriptorSize);
 		const float clearColor[] = { color.x, color.y, color.z, color.a };
 		GraphicsContext::CommandList()->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-		GraphicsContext::CommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.f, 0, 0, nullptr);*/
+		GraphicsContext::CommandList()->ClearDepthStencilView(m_DsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
+	}
+	WinRef<ID3D12Resource> Framebuffer::GetCurrentRtv()
+	{
+		return m_RenderTargets[GraphicsContext::GetFrameIndex()][0];
 	}
 	void Framebuffer::Bind()
 	{
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), GraphicsContext::GetFrameIndex(), m_RtvDescriptorSize);
-		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_DsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), GraphicsContext::GetFrameIndex(), m_DvsDescriptorSize);
+		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_DsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 		GraphicsContext::CommandList()->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 	}
 	void Framebuffer::Unbind()
@@ -42,7 +46,7 @@ namespace Titan
 	void Framebuffer::Validate()
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-		rtvHeapDesc.NumDescriptors = FrameCount;
+		rtvHeapDesc.NumDescriptors = g_FrameCount;
 		rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 
 		rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
@@ -53,7 +57,7 @@ namespace Titan
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
 		auto device = GraphicsContext::Device();
-		for (size_t i = 0; i < FrameCount; ++i)
+		for (size_t i = 0; i < g_FrameCount; ++i)
 		{
 			for (size_t j = 0; j < m_FBInfo.imageFormats.size(); ++j)
 			{
@@ -77,13 +81,20 @@ namespace Titan
 					HeapProps.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 					HeapProps.CreationNodeMask = 1;
 					HeapProps.VisibleNodeMask = 1;
-
+					
+					FLOAT clearColor[4] = { 0.32f, 0.32f, 0.32f, 1.f };
+					D3D12_CLEAR_VALUE clrValue{};
+					clrValue.Format = FormatToDXFormat(m_FBInfo.imageFormats[j]);
+					clrValue.Color[0] = clearColor[0];
+					clrValue.Color[1] = clearColor[1];
+					clrValue.Color[2] = clearColor[2];
+					clrValue.Color[3] = clearColor[3];
 					TN_DX_CHECK(device->CreateCommittedResource(
 						&HeapProps,
 						D3D12_HEAP_FLAG_NONE,
 						&texDesc,
 						D3D12_RESOURCE_STATE_RENDER_TARGET, 
-						nullptr,
+						&clrValue,
 						IID_PPV_ARGS(m_RenderTargets[i][j].ReleaseAndGetAddressOf())
 					));
 
@@ -96,7 +107,7 @@ namespace Titan
 				else
 				{
 					D3D12_DESCRIPTOR_HEAP_DESC DsvHeapDesc = {};
-					DsvHeapDesc.NumDescriptors = FrameCount;
+					DsvHeapDesc.NumDescriptors = g_FrameCount;
 					DsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 
 					DsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
@@ -123,12 +134,17 @@ namespace Titan
 					HeapProps.CreationNodeMask = 1;
 					HeapProps.VisibleNodeMask = 1;
 
+					D3D12_CLEAR_VALUE clrValue{};
+					clrValue.Format = FormatToDXFormat(m_FBInfo.imageFormats[j]);
+					clrValue.DepthStencil.Depth = 1.0f;
+					clrValue.DepthStencil.Stencil = 0;
+
 					TN_DX_CHECK(device->CreateCommittedResource(
 						&HeapProps,
 						D3D12_HEAP_FLAG_NONE,
 						&texDesc,
 						D3D12_RESOURCE_STATE_DEPTH_WRITE,
-						nullptr,
+						&clrValue,
 						IID_PPV_ARGS(m_DepthTarget[i].ReleaseAndGetAddressOf())
 					));
 

@@ -11,7 +11,9 @@
 #include <Titan/Rendering/Buffers/IndexBuffer.h>
 #include <Titan/Rendering/Vertices.h>
 #include <Titan/Rendering/Framebuffer.h>
-
+#include <dx12helpers/d3dx12.h>
+#include <Titan/Rendering/Buffers/ConstantBuffer.h>
+#include "Titan/Rendering/Buffers/ConstantBuffers.h"
 namespace Titan
 {
 	struct Cache
@@ -23,6 +25,9 @@ namespace Titan
 
 		Ref<Framebuffer> testFB;
 
+		CameraData cameraData;
+		Ref<ConstantBuffer> cbuffer;
+
 		D3D12_VIEWPORT viewPort;
 		D3D12_RECT rect;
 	};
@@ -30,10 +35,18 @@ namespace Titan
 	void Renderer::Initialize()
 	{
 		InitializePipelines();
+
+		s_Cache->cbuffer = ConstantBuffer::Create();
+
 		s_Cache->vertices.push_back({ {-0.5,0.5,0.5,1},{1,0,0,1} });
 		s_Cache->vertices.push_back({ {0.5,-0.5,0.5,1},{0,1,0,1} });
 		s_Cache->vertices.push_back({ {-0.5,-0.5,0.5,1},{0,0,1,1} });
 		s_Cache->vertices.push_back({ {0.5,0.5,0.5,1},{1,0,1,1} });
+
+		s_Cache->vertices.push_back({ {-1.5,1.5,0.7,1},{1,1,1,1} });
+		s_Cache->vertices.push_back({ {1.5,-1.5,0.7,1},{1,1,1,1} });
+		s_Cache->vertices.push_back({ {-1.5,-1.5,0.7,1},{1,1,1,1} });
+		s_Cache->vertices.push_back({ {1.5,1.5,0.7,1},{1,1,1,1} });
 		VertexBufferInfo info{};
 		info.sizeOfData = s_Cache->vertices.size();
 		info.vertexData = s_Cache->vertices.data();
@@ -47,7 +60,13 @@ namespace Titan
 		fbInfo.imageFormats = { ImageFormat::RGBA8UN, ImageFormat::Depth24 };
 		s_Cache->testFB = Framebuffer::Create(fbInfo);
 
-		std::vector<DWORD> indices = { 0,1,2,0,3,1 };
+
+		std::vector<DWORD> indices = {
+			0,1,2,
+			0,3,1,
+			4,5,6,
+			4,7,5
+		};
 		IndexBufferInfo iInfo{};
 		iInfo.indexData = indices.data();
 		iInfo.sizeOfArray = indices.size();
@@ -76,13 +95,17 @@ namespace Titan
 		GraphicsContext::Begin();
 		s_Cache->testFB->Bind();
 		s_Cache->testFB->Clear();
-
+		
+		s_Cache->cbuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
 		s_Cache->TrianglePipeline->Bind();
 		GraphicsContext::CommandList()->RSSetViewports(1, &s_Cache->viewPort);
 		GraphicsContext::CommandList()->RSSetScissorRects(1, &s_Cache->rect);
 		s_Cache->vertexBuffer->Bind();
 		s_Cache->indexBuffer->Bind();
-		GraphicsContext::CommandList()->DrawIndexedInstanced(6, 1, 0,0,0);
+		s_Cache->cbuffer->Bind(0);
+		GraphicsContext::CommandList()->DrawIndexedInstanced(12, 1, 0,0,0);
+		
+		CopyResource(GraphicsContext::GetCurrentRtv().Get(), s_Cache->testFB->GetCurrentRtv().Get());
 	}
 
 	void Renderer::End()
@@ -104,11 +127,45 @@ namespace Titan
 	{
 		GraphicsContext::Shutdown();
 	}
+	void Renderer::CopyResource(ID3D12Resource* dest, ID3D12Resource* source)
+	{
+		{
+			auto CopyRB = CD3DX12_RESOURCE_BARRIER::Transition(
+				source,
+				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				D3D12_RESOURCE_STATE_COPY_SOURCE);
+			auto dcsRB = CD3DX12_RESOURCE_BARRIER::Transition(
+				dest,
+				D3D12_RESOURCE_STATE_RENDER_TARGET,
+				D3D12_RESOURCE_STATE_COPY_DEST);
+			std::array<CD3DX12_RESOURCE_BARRIER, 2> arr = { CopyRB, dcsRB };
+			GraphicsContext::CommandList()->ResourceBarrier(
+				arr.size(),
+				arr.data());
+		}
+		GraphicsContext::CommandList()->CopyResource(dest, source);
+		{
+			auto CopyRB = CD3DX12_RESOURCE_BARRIER::Transition(
+				source,
+				D3D12_RESOURCE_STATE_COPY_SOURCE,
+				D3D12_RESOURCE_STATE_RENDER_TARGET);
+			auto dcsRB = CD3DX12_RESOURCE_BARRIER::Transition(
+				dest,
+				D3D12_RESOURCE_STATE_COPY_DEST,
+				D3D12_RESOURCE_STATE_RENDER_TARGET);
+			std::array<CD3DX12_RESOURCE_BARRIER, 2> arr = { CopyRB, dcsRB };
+			GraphicsContext::CommandList()->ResourceBarrier(
+				arr.size(),
+				arr.data());
+		}
+	}
 	void Renderer::InitializePipelines()
 	{
 		PipelineInfo info{};
 		info.vsPath = "Engine/Shaders/triangle_vs.hlsl";
 		info.psPath = "Engine/Shaders/triangle_ps.hlsl";
+		info.depthState = DepthState::ReadWrite;
+		info.depthCullState = CullState::None;
 		s_Cache->TrianglePipeline = Pipeline::Create(info);
 	}
 }

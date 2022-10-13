@@ -76,7 +76,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -97,7 +97,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -123,7 +123,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -158,6 +158,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Titan\vendor\GLFW\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\YAML\yaml-cpp.vcxproj">
+      <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

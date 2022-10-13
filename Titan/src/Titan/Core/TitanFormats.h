@@ -3,6 +3,21 @@
 
 namespace Titan
 {
+	enum class DepthState
+	{
+		Off = 0,
+		ReadWrite,
+		ReadOnly,
+		Count
+	};
+
+	enum class CullState
+	{
+		None,
+		Front,
+		Back,
+	};
+
 	enum class ImageFormat
 	{
 		RGBA32F = 2,

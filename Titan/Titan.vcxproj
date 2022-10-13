@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>TNpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -99,7 +99,7 @@
       <PrecompiledHeaderFile>TNpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -126,7 +126,7 @@
       <PrecompiledHeaderFile>TNpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -148,6 +148,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titan\Assets\ResourceRegistry.h" />
+    <ClInclude Include="src\Titan\Core\TitanID.h" />
     <ClInclude Include="src\TNpch.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
@@ -164,6 +166,8 @@
     <ClInclude Include="src\Titan\Layer.h" />
     <ClInclude Include="src\Titan\LayerStack.h" />
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffers.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\Framebuffer.h" />
@@ -287,6 +291,7 @@
     <ClCompile Include="src\Titan\Layer.cpp" />
     <ClCompile Include="src\Titan\LayerStack.cpp" />
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Buffers\ConstantBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Framebuffer.cpp" />
@@ -300,6 +305,9 @@
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\YAML\yaml-cpp.vcxproj">
+      <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\binary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\convert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\directives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\emit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\emitfromevents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\emitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\emitterstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\emitterutils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\exceptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\exp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\memory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\node_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\nodebuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\nodeevents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\null.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\ostream_wrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\parse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\regex_yaml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\scanner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\scanscalar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\scantag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\scantoken.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\simplekey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\singledocparser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\stream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\tag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\contrib\graphbuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\contrib\graphbuilderadapter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\anchor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\binary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\contrib\anchordict.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\contrib\graphbuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\dll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\emitfromevents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\emitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\emitterdef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\emittermanip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\emitterstyle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\eventhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\exceptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\mark.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\convert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\detail\bool_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\detail\impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\detail\iterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\detail\iterator_fwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\detail\memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\detail\node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\detail\node_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\detail\node_iterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\detail\node_ref.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\emit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\iterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\node.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\parse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\ptr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\node\type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\noncopyable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\null.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\ostream_wrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\stlemitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\include\yaml-cpp\yaml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\collectionstack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\directives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\emitterstate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\emitterutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\exp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\indentation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\nodebuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\nodeevents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\ptr_vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\regex_yaml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\regeximpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\scanner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\scanscalar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\scantag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\setting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\singledocparser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\stream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\streamcharsource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\stringsource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\tag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\token.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\src\contrib\graphbuilderadapter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\zzWee\Downloads\yaml-cpp-yaml-cpp-0.6.0\yaml-cpp-yaml-cpp-0.6.0\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{0C756316-1D73-3288-87EC-1CBA6E89B1A2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{888489DB-E604-3422-963B-DC28B6F38C05}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

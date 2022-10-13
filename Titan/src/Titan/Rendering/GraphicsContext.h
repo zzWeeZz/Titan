@@ -8,7 +8,7 @@
 
 namespace Titan
 {
-	constexpr uint32_t FrameCount = 3;
+	constexpr uint32_t g_FrameCount = 3;
 
 	struct GraphicsContextInfo
 	{
@@ -32,6 +32,7 @@ namespace Titan
 		static void Clear(); // this has no functionality, Needs to be figured out.
 		static void End(); // same with this one, should be moved to the renderer.
 		static void Reset(Ref<Pipeline> initual = nullptr);
+		static WinRef<ID3D12Resource> GetCurrentRtv();
 		static void ExecuteCommandList();
 		static void SignalCommandQueue();
 		static void Shutdown();
@@ -43,15 +44,15 @@ namespace Titan
 		inline static WinRef<IDXGISwapChain3> m_Swapchain;
 		inline static WinRef<ID3D12CommandQueue> m_CommandQueue;
 		inline static WinRef<ID3D12DescriptorHeap> m_RTVDescriptorHeap;
-		inline static std::array<WinRef<ID3D12Resource>, FrameCount> m_RenderTargets;
-		inline static std::array<WinRef<ID3D12CommandAllocator>, FrameCount> m_CommandAllocators;
+		inline static std::array<WinRef<ID3D12Resource>, g_FrameCount> m_RenderTargets;
+		inline static std::array<WinRef<ID3D12CommandAllocator>, g_FrameCount> m_CommandAllocators;
 		inline static WinRef<ID3D12GraphicsCommandList> m_CommandList;
-		inline static std::array<WinRef<ID3D12Fence1>, FrameCount> m_Fences;
+		inline static std::array<WinRef<ID3D12Fence1>, g_FrameCount> m_Fences;
 
 		inline static WinRef<ID3D12InfoQueue> m_InfoQueue;
 
 		inline static HANDLE m_FenceEvent;
-		inline static std::array<uint64_t, FrameCount> m_FenceValues;
+		inline static std::array<uint64_t, g_FrameCount> m_FenceValues;
 		inline static uint32_t m_FrameIndex;
 		inline static int32_t m_RtvDescriptorSize;
 	};
