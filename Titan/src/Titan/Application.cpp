@@ -7,6 +7,7 @@
 #include "Core/Log.h"
 #include "Events/ApplicationEvent.h"
 #include "Titan/Rendering/Renderer.h"
+#include "Titan/Assets/ResourceRegistry.h"
 
 Titan::Application::Application() : m_Running(true)
 {
@@ -16,7 +17,9 @@ Titan::Application::Application() : m_Running(true)
 	info.width = s_Window->GetWidth();
 	info.height = s_Window->GetHeight();
 	GraphicsContext::Initialize(info);
+	ResourceRegistry::Initialize();
 	Renderer::Initialize();
+	ResourceRegistry::Dump();
 }
 
 void Titan::Application::Run()

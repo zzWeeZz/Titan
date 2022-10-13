@@ -3,6 +3,8 @@
 #include <windows.h>
 #include <iostream>
 
+
+
 namespace Titan
 {
 	typedef UUID TitanID;
@@ -12,7 +14,7 @@ namespace Titan
 		UuidCreate(&uuid);
 		return uuid;
 	}
-	inline TitanID CreateIDFromString(const char* str)
+	inline TitanID GetIDFromString(const char* str)
 	{
 		UUID uuid;
 		UuidFromStringA(*(RPC_CSTR*)&str, &uuid);
@@ -26,4 +28,12 @@ namespace Titan
 		RpcStringFreeA((RPC_CSTR*)&str);
 		return returnValue;
 	}
+	struct TitanIDComparer
+	{
+		bool operator()(const TitanID& Left, const TitanID& Right) const
+		{
+			// comparison logic goes here
+			return memcmp(&Left, &Right, sizeof(Right)) < 0;
+		}
+	};
 }

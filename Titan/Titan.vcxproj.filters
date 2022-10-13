@@ -78,11 +78,14 @@
     <ClInclude Include="src\Titan\Application.h">
       <Filter>src\Titan</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Assets\Asset.h">
+    <ClInclude Include="src\Titan\Assets\Resource.h">
       <Filter>src\Titan\Assets</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Camera\Camera.h">
       <Filter>src\Titan\Assets\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Assets\ResourceRegistry.h">
+      <Filter>src\Titan\Assets</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Core\Core.h">
       <Filter>src\Titan\Core</Filter>
@@ -91,6 +94,9 @@
       <Filter>src\Titan\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Core\TitanFormats.h">
+      <Filter>src\Titan\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Core\TitanID.h">
       <Filter>src\Titan\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Core\TitanMemory.h">
@@ -453,8 +459,8 @@
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h">
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Assets\ResourceRegistry.h" />
-    <ClInclude Include="src\Titan\Core\TitanID.h" />
+    <ClInclude Include="src\Titan\Assets\Model\ModelHandle.h" />
+    <ClInclude Include="src\Titan\Assets\Model\Model.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -514,5 +520,7 @@
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <Filter>vendor\dx12helpers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Assets\ResourceRegistry.cpp" />
+    <ClCompile Include="src\Titan\Assets\Model\ModelHandle.cpp" />
   </ItemGroup>
 </Project>

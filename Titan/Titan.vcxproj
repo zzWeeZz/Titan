@@ -148,16 +148,18 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan\Assets\ResourceRegistry.h" />
-    <ClInclude Include="src\Titan\Core\TitanID.h" />
+    <ClInclude Include="src\Titan\Assets\Model\Model.h" />
+    <ClInclude Include="src\Titan\Assets\Model\ModelHandle.h" />
     <ClInclude Include="src\TNpch.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
-    <ClInclude Include="src\Titan\Assets\Asset.h" />
+    <ClInclude Include="src\Titan\Assets\Resource.h" />
     <ClInclude Include="src\Titan\Assets\Camera\Camera.h" />
+    <ClInclude Include="src\Titan\Assets\ResourceRegistry.h" />
     <ClInclude Include="src\Titan\Core\Core.h" />
     <ClInclude Include="src\Titan\Core\Log.h" />
     <ClInclude Include="src\Titan\Core\TitanFormats.h" />
+    <ClInclude Include="src\Titan\Core\TitanID.h" />
     <ClInclude Include="src\Titan\Core\TitanMemory.h" />
     <ClInclude Include="src\Titan\EntryPoint.h" />
     <ClInclude Include="src\Titan\Events\ApplicationEvent.h" />
@@ -280,6 +282,8 @@
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titan\Assets\Model\ModelHandle.cpp" />
+    <ClCompile Include="src\Titan\Assets\ResourceRegistry.cpp" />
     <ClCompile Include="src\TNpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
