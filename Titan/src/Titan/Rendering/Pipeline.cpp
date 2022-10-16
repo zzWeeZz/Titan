@@ -7,37 +7,6 @@ namespace Titan
 {
 	Pipeline::Pipeline(const PipelineInfo& info)
 	{
-		D3D12_DESCRIPTOR_RANGE ranges[1] = {};
-		ranges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-		ranges[0].NumDescriptors = 1;
-		ranges[0].BaseShaderRegister = 0; // this is the bind point;
-		ranges[0].RegisterSpace = 0;
-		ranges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-		D3D12_ROOT_DESCRIPTOR_TABLE table{};
-		table.NumDescriptorRanges = _countof(ranges);
-		table.pDescriptorRanges = &ranges[0];
-
-		D3D12_ROOT_PARAMETER parameters[1];
-		parameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-		parameters[0].DescriptorTable = table;
-		parameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-
-		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-		rootSignatureDesc.Init(_countof(parameters),
-			parameters,
-			0,
-			nullptr,
-			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // we can deny shader stages here for better performance
-			D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
-			D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-			D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-			D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS);
-		ID3DBlob* signature;
-		TN_DX_CHECK(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, nullptr));
-
-		TN_DX_CHECK(GraphicsContext::Device()->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(m_RootSignature.GetAddressOf())));
-
 		ID3DBlob* vertexShader;
 		ID3DBlob* errorBuffer;
 		TN_DX_CHECK(D3DCompileFromFile(
@@ -52,7 +21,11 @@ namespace Titan
 			&errorBuffer));
 
 		ID3DBlob* pxShader = nullptr;
-
+		if (errorBuffer)
+		{
+			TN_CORE_ERROR(errorBuffer->GetBufferPointer());
+		}
+		errorBuffer = nullptr;
 		TN_DX_CHECK(D3DCompileFromFile(
 			info.psPath.wstring().c_str(),
 			nullptr,
@@ -74,6 +47,35 @@ namespace Titan
 		psByteCode.BytecodeLength = pxShader->GetBufferSize();
 		psByteCode.pShaderBytecode = pxShader->GetBufferPointer();
 
+		std::vector<D3D12_DESCRIPTOR_RANGE> ranges;
+		GetDescriptorRangesFromBlob(vertexShader, ranges);
+
+		D3D12_ROOT_DESCRIPTOR_TABLE table{};
+		table.NumDescriptorRanges = (UINT)ranges.size();
+		table.pDescriptorRanges = ranges.data();
+
+		D3D12_ROOT_PARAMETER parameters[1];
+		parameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		parameters[0].DescriptorTable = table;
+		parameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+
+		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
+		rootSignatureDesc.Init(_countof(parameters),
+			parameters,
+			0,
+			nullptr,
+			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // we can deny shader stages here for better performance
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS);
+		ID3DBlob* signature;
+		TN_DX_CHECK(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, nullptr));
+
+		TN_DX_CHECK(GraphicsContext::Device()->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(m_RootSignature.GetAddressOf())));
+
+		
+
 		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayoutDesc;
 		GetInputLayoutFromBlob(vertexShader, inputLayoutDesc);
 		D3D12_INPUT_LAYOUT_DESC inputLayout;
@@ -94,6 +96,7 @@ namespace Titan
 		pipelineDesc.DepthStencilState = GetDepthStencilDesc(info.depthState, info.depthCullState);
 
 		pipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		pipelineDesc.RasterizerState.FrontCounterClockwise = TRUE;
 		pipelineDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 
 		TN_DX_CHECK(GraphicsContext::Device()->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(m_PipelineStateObject.GetAddressOf())));
@@ -179,6 +182,29 @@ namespace Titan
 
 			// Save element desc
 			InputLayout.push_back(elementDesc);
+		}
+	}
+	void Pipeline::GetDescriptorRangesFromBlob(ID3DBlob* blob, std::vector<D3D12_DESCRIPTOR_RANGE>& ranges)
+	{
+		ID3D12ShaderReflection* pReflector = nullptr;
+		TN_DX_CHECK(D3DReflect(blob->GetBufferPointer(), blob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&pReflector));
+		D3D12_SHADER_DESC desc;
+		pReflector->GetDesc(&desc);
+		
+		
+		for (size_t i = 0; i < desc.BoundResources; ++i)
+		{
+			D3D12_SHADER_INPUT_BIND_DESC inputBinDesc;
+			pReflector->GetResourceBindingDesc(i, &inputBinDesc);
+			if (inputBinDesc.Type == D3D10_SIT_CBUFFER)
+			{
+				auto& range = ranges.emplace_back();
+				range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+				range.NumDescriptors = 1;
+				range.BaseShaderRegister = inputBinDesc.BindPoint;
+				range.RegisterSpace = 0;
+				range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+			}
 		}
 	}
 	D3D12_DEPTH_STENCIL_DESC Pipeline::GetDepthStencilDesc(const DepthState& state, const CullState& depthCull)

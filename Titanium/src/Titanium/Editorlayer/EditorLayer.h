@@ -1,7 +1,8 @@
 #pragma once
 #include "Titan/Layer.h"
 #include "Titanium/Panels/SceneHierarchyPanel.h"
-
+#include "Titan/Assets/Camera/Camera.h"
+#include "Titan/Scene/Components.h"
 
 namespace Titan
 {
@@ -13,6 +14,9 @@ namespace Titan
 		void OnDetach() override;
 		void OnEvent(Event& e) override;
 	private:
+		void RunEditorCamera();
+		CameraComponent m_cameraData;
+		TransformComponent m_transformData;
 		Ref<Scene> m_ActiveScene;
 		Ref<SceneHierarchyPanel> m_SceneHierarchyPanel;
 	};

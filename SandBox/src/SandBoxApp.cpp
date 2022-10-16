@@ -26,7 +26,7 @@ public:
 	{
 		m_LayerStack.Push(new TestLayer());
 		//m_LayerStack.Push(new Titan::ImGuiLayer());
-		//m_LayerStack.Push(new Titan::EditorLayer());
+		m_LayerStack.Push(new Titan::EditorLayer());
 	}
 
 	~SandBox()

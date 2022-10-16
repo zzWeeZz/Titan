@@ -81,7 +81,7 @@ namespace Titan
 		}
 
 		TN_DX_CHECK(m_Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_CommandAllocators[0].Get(), NULL, IID_PPV_ARGS(m_CommandList.GetAddressOf())));
-
+		m_CommandList->Close(); 
 		for (size_t i = 0; i < g_FrameCount; ++i)
 		{
 			TN_DX_CHECK(m_Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_Fences[i].GetAddressOf())));
@@ -199,6 +199,8 @@ namespace Titan
 
 	void GraphicsContext::Shutdown()
 	{
+
+		WaitForNextFrame();
 		auto error = CloseHandle(m_FenceEvent);
 		Reset();
 		if (error == 0)
@@ -210,7 +212,7 @@ namespace Titan
 		for (int i = 0; i < g_FrameCount; ++i)
 		{
 			m_FrameIndex = i;
-			WaitForNextFrame();
+			WaitForNextFrame(false);
 		}
 
 

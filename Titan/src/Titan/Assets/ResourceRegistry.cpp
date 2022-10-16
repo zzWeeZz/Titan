@@ -2,14 +2,11 @@
 #include "ResourceRegistry.h"
 
 #include "yaml-cpp/yaml.h"
+#include "Titan/Assets/Model/ModelHandle.h"
 const std::string filePath = "Engine/Resources/ResourceRegistry.yaml";
 void Titan::ResourceRegistry::Initialize()
 {
-	auto id = CreateID();
-	s_Registry[GetStringOfID(id)] = nullptr;
-
 	Load();
-
 }
 
 void Titan::ResourceRegistry::Dump()

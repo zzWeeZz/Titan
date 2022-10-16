@@ -11,6 +11,7 @@ namespace Titan
 	IndexBuffer::IndexBuffer(const IndexBufferInfo& info)
 	{
 		auto heapPropDefault = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+		
 		auto buffer = CD3DX12_RESOURCE_DESC::Buffer(info.sizeOfArray * sizeof(DWORD));
 
 		const size_t sizeWithStride = info.sizeOfArray * sizeof(DWORD);
@@ -45,7 +46,6 @@ namespace Titan
 		vertexData.pData = reinterpret_cast<BYTE*>(info.indexData); // pointer to our vertex array
 		vertexData.RowPitch = sizeWithStride; // size of all our triangle vertex data
 		vertexData.SlicePitch = sizeWithStride; // also the size of our triangle vertex data
-
 		UpdateSubresources(GraphicsContext::CommandList().Get(), m_IndexBuffer.Get(), iBufferUploadHeap, 0, 0, 1, &vertexData);
 
 		auto resourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -61,13 +61,26 @@ namespace Titan
 		m_IndexBufferView.BufferLocation = m_IndexBuffer->GetGPUVirtualAddress();
 		m_IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 		m_IndexBufferView.SizeInBytes = static_cast<UINT>(sizeWithStride);
+		m_IndexCount = info.sizeOfArray;
 	}
 	void IndexBuffer::Bind()
 	{
 		GraphicsContext::CommandList()->IASetIndexBuffer(&m_IndexBufferView);
 	}
+	size_t IndexBuffer::GetIndexCount()
+	{
+		return	m_IndexCount;
+	}
 	Ref<IndexBuffer> IndexBuffer::Create(const IndexBufferInfo& info)
 	{
 		return CreateRef<IndexBuffer>(info);
+	}
+	IndexBuffer::~IndexBuffer()
+	{
+		TN_SAFE_RELEASE(m_IndexBuffer);
+
+		for (size_t i = 0; i < g_FrameCount; ++i)
+		{
+		}
 	}
 }

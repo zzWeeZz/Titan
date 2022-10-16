@@ -461,6 +461,11 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Model\ModelHandle.h" />
     <ClInclude Include="src\Titan\Assets\Model\Model.h" />
+    <ClInclude Include="src\Titan\Utils\Input.h" />
+    <ClInclude Include="src\Titan\Utils\KeyCode.h" />
+    <ClInclude Include="src\Titan\Utils\MouseCode.h" />
+    <ClInclude Include="src\Titan\Assets\ModelImporters\GLTFImporter.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\VertexPacket.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -522,5 +527,7 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\ResourceRegistry.cpp" />
     <ClCompile Include="src\Titan\Assets\Model\ModelHandle.cpp" />
+    <ClCompile Include="src\Titan\Utils\Input.cpp" />
+    <ClCompile Include="src\Titan\Assets\ModelImporters\GLTFImporter.cpp" />
   </ItemGroup>
 </Project>

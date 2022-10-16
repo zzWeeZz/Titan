@@ -1,8 +1,9 @@
 
 struct VertexInput
 {
-	float4 position : POSITION;
-	float4 color : COLOR;
+	float3 Position : POSITION;
+	float3 Normal : NORMAL;
+	float2 TexCoord : TEXCOORD;
 };
 
 struct PixelInput
@@ -15,13 +16,15 @@ cbuffer ColorBuffer : register(b0)
 {
     float4x4 view;
     float4x4 proj;
+    float4x4 mdlSpace;
 }
+
 
 PixelInput main(VertexInput input)
 {
 	PixelInput output;
-	
-	output.position = input.position;
-	output.color = input.color;
+    float4x4 mvp = mul(proj, mul(view, mdlSpace));
+    output.position = mul(mvp, float4(input.Position, 1));
+    output.color = float4(input.TexCoord.x, input.TexCoord.y, 0, 1);
 	return output;
 }

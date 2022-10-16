@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "Components.h"
 #include "Titan/Assets/Camera/Camera.h"
+#include "Titan/Assets/Model/Model.h"
 #include "Titan/Rendering/Renderer.h"
 
 namespace Titan
@@ -19,14 +20,7 @@ namespace Titan
 			});
 		m_Registry.Execute<ModelComponent, TransformComponent>([&](auto& entity, ModelComponent& mdl, TransformComponent& tf)
 			{
-				/*if (!mdl.modelHandle)
-				{
-					mdl.modelHandle = Model::Create(mdl.filePath);
-				}
-				mdl.modelHandle->SetPosition(tf.position);
-				mdl.modelHandle->SetRotation(tf.quaternion);
-				mdl.modelHandle->SetScale(tf.scale);
-				Renderer::SubmitMesh(mdl.modelHandle);*/
+				ModelSystem(mdl, tf);
 			});
 	}
 

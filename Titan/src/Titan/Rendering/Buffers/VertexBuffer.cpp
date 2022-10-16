@@ -11,7 +11,7 @@ namespace Titan
     {
 		auto heapPropDefault = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 		auto buffer = CD3DX12_RESOURCE_DESC::Buffer(info.sizeOfData * info.sizeOfVertex);
-		
+		GraphicsContext::Reset();
 		TN_DX_CHECK(GraphicsContext::Device()->CreateCommittedResource
 		(
 			&heapPropDefault,

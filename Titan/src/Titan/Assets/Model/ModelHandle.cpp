@@ -1,9 +1,11 @@
 #include "TNpch.h"
 #include "ModelHandle.h"
+#include "Titan/Assets/ModelImporters/GLTFImporter.h"
 namespace Titan
 {
-	inline void Titan::ModelHandle::Initialize(const std::filesystem::path& path)
+	void Titan::ModelHandle::Initialize(const std::filesystem::path& path)
 	{
 		SetPath(path);
+		GLTFImporter::Import(path, m_VertexPackage);
 	}
 }

@@ -3,9 +3,8 @@
 #include "dx12helpers/d3dx12.h"
 namespace Titan
 {
-	ConstantBuffer::ConstantBuffer()
+	ConstantBuffer::ConstantBuffer(size_t sizeOfObject)
 	{
-		
 		for (size_t i = 0; i < g_FrameCount; ++i)
 		{
 			D3D12_DESCRIPTOR_HEAP_DESC desc{};
@@ -25,9 +24,10 @@ namespace Titan
 				IID_PPV_ARGS(m_CBufferUploadHeap[i].GetAddressOf()));
 			m_CBufferUploadHeap[i]->SetName(L"Constant Buffer Upload Resource Heap");
 
+
 			D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
 			cbvDesc.BufferLocation = m_CBufferUploadHeap[i]->GetGPUVirtualAddress();
-			cbvDesc.SizeInBytes = (sizeof(ConstantBuffer) + 255) & ~255;    // CB size is required to be 256-byte aligned.
+			cbvDesc.SizeInBytes = (sizeOfObject + 255) & ~255;    // CB size is required to be 256-byte aligned.
 			GraphicsContext::Device()->CreateConstantBufferView(&cbvDesc, m_MainDescriptorHeap[i]->GetCPUDescriptorHandleForHeapStart());
 		}
 	}
@@ -39,16 +39,24 @@ namespace Titan
 		memcpy(m_ConstantBufferGPUAddress[GraphicsContext::GetFrameIndex()], data, sizeOfData);
 		currCBUploadHeap->Unmap(0, &readRange);
 	}
-	void ConstantBuffer::Bind(const uint32_t bindPoint)
+	void ConstantBuffer::Bind(uint32_t bindPoint)
 	{
 		ID3D12DescriptorHeap* descriptorHeaps[] = { m_MainDescriptorHeap[GraphicsContext::GetFrameIndex()].Get() };
 		GraphicsContext::CommandList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
+		//GraphicsContext::CommandList()->SetGraphicsRootConstantBufferView(bindPoint, m_CBufferUploadHeap[GraphicsContext::GetFrameIndex()]->GetGPUVirtualAddress());
 		// set the root descriptor table 0 to the constant buffer descriptor heap
-		GraphicsContext::CommandList()->SetGraphicsRootDescriptorTable(0, m_MainDescriptorHeap[GraphicsContext::GetFrameIndex()]->GetGPUDescriptorHandleForHeapStart());
+		GraphicsContext::CommandList()->SetGraphicsRootDescriptorTable(bindPoint, m_MainDescriptorHeap[GraphicsContext::GetFrameIndex()]->GetGPUDescriptorHandleForHeapStart());
 	}
-	Ref<ConstantBuffer> ConstantBuffer::Create()
+	Ref<ConstantBuffer> ConstantBuffer::Create(size_t sizeOfObject)
 	{
-		return CreateRef<ConstantBuffer>();
+		return CreateRef<ConstantBuffer>(sizeOfObject);
+	}
+	ConstantBuffer::~ConstantBuffer()
+	{
+		for (size_t i = 0; i < g_FrameCount; ++i)
+		{
+			TN_SAFE_RELEASE(m_MainDescriptorHeap[i]);
+			TN_SAFE_RELEASE(m_CBufferUploadHeap[i]);
+		}
 	}
 }

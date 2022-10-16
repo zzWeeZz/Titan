@@ -21,6 +21,7 @@ namespace Titan
 		static Ref<Pipeline> Create(const PipelineInfo& info);
 	private:
 		void GetInputLayoutFromBlob(ID3DBlob* blob, std::vector<D3D12_INPUT_ELEMENT_DESC>& InputLayout);
+		void GetDescriptorRangesFromBlob(ID3DBlob* blob, std::vector<D3D12_DESCRIPTOR_RANGE>& ranges);
 		D3D12_DEPTH_STENCIL_DESC GetDepthStencilDesc(const DepthState& state, const CullState& depthCull);
 		WinRef<ID3D12PipelineState> m_PipelineStateObject; // pso containing a pipeline state
 

@@ -1,7 +1,7 @@
 #include "TNpch.h"
 #include "Camera.h"
 
-
+#include "Titan/Rendering/Renderer.h"
 namespace Titan
 {
 	void CameraSystem(CameraComponent& c, TransformComponent& tf)
@@ -15,5 +15,9 @@ namespace Titan
 		else
 		{
 		}
+		CameraCmd cmd{};
+		cmd.view = c.View;
+		cmd.proj = c.Projection;
+		Renderer::Submit(cmd);
 	}
 }

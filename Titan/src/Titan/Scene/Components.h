@@ -8,7 +8,7 @@
 COMPONENT(TagComponent)
 {
 	REGISTER_COMPONENT("{0A07B7F9-8312-40B1-81AA-773BE3B295B9}"_guid);
-	std::string tag = "Unknown";
+	char tag[512];
 };
 
 COMPONENT(TransformComponent)
@@ -17,11 +17,4 @@ COMPONENT(TransformComponent)
 	glm::vec3 position = { 0,0,0 };
 	glm::quat quaternion = {1,0,0,0};
 	glm::vec3 scale = { 1, 1, 1 };
-};
-
-COMPONENT(ModelComponent)
-{
-	REGISTER_COMPONENT("{EC4E0F57-123F-4EEF-BF9E-DA7A05E0052A}"_guid);
-	std::string filePath;
-	//Titan::Ref<Titan::Model> modelHandle = nullptr;
 };

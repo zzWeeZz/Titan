@@ -1,4 +1,7 @@
 ResourceRegistry:
   - 0:
-      - 28fcc2e7-54fd-44dc-bcde-70be4682e070
-      - "NULL"
+      - fd79957c-b3e8-4bb5-b93d-296bf172f280
+      - Assets/Models/Cube.gltf
+  - 1:
+      - 4d60c36a-891d-4c34-848b-a6ad97400123
+      - Assets/Models/Cube.gltf

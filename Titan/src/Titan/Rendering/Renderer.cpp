@@ -18,41 +18,40 @@ namespace Titan
 {
 	struct Cache
 	{
-		Ref<Pipeline> TrianglePipeline;
+		Ref<Pipeline> StaticMeshPipeline;
 		std::vector<Vertex> vertices;
 		Ref<VertexBuffer> vertexBuffer;
 		Ref<IndexBuffer> indexBuffer;
 
+		CameraCmd currentCamera;
+		std::vector<MeshCmd> meshCmds;
+
 		Ref<Framebuffer> testFB;
 
 		CameraData cameraData;
-		Ref<ConstantBuffer> cbuffer;
+		Ref<ConstantBuffer> cameraBuffer;
+
+		ModelData modelData;
+		Ref<ConstantBuffer> modelBuffer;
 
 		D3D12_VIEWPORT viewPort;
 		D3D12_RECT rect;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
+	void Renderer::Submit(const CameraCmd& cameraCmd)
+	{
+		s_Cache->currentCamera = cameraCmd;
+	}
+	void Renderer::Submit(const MeshCmd& meshCmd)
+	{
+		s_Cache->meshCmds.push_back(meshCmd);
+	}
 	void Renderer::Initialize()
 	{
 		InitializePipelines();
 
-		s_Cache->cbuffer = ConstantBuffer::Create();
-
-		s_Cache->vertices.push_back({ {-0.5,0.5,0.5,1},{1,0,0,1} });
-		s_Cache->vertices.push_back({ {0.5,-0.5,0.5,1},{0,1,0,1} });
-		s_Cache->vertices.push_back({ {-0.5,-0.5,0.5,1},{0,0,1,1} });
-		s_Cache->vertices.push_back({ {0.5,0.5,0.5,1},{1,0,1,1} });
-
-		s_Cache->vertices.push_back({ {-1.5,1.5,0.7,1},{1,1,1,1} });
-		s_Cache->vertices.push_back({ {1.5,-1.5,0.7,1},{1,1,1,1} });
-		s_Cache->vertices.push_back({ {-1.5,-1.5,0.7,1},{1,1,1,1} });
-		s_Cache->vertices.push_back({ {1.5,1.5,0.7,1},{1,1,1,1} });
-		VertexBufferInfo info{};
-		info.sizeOfData = s_Cache->vertices.size();
-		info.vertexData = s_Cache->vertices.data();
-		info.sizeOfVertex = sizeof(Vertex);
-		info.debugName = L"Vertex";
-		s_Cache->vertexBuffer = VertexBuffer::Create(info);
+		s_Cache->cameraBuffer = ConstantBuffer::Create(sizeof(CameraData));
+		s_Cache->modelBuffer = ConstantBuffer::Create(sizeof(ModelData));
 
 		FramebufferInfo fbInfo{};
 		fbInfo.height = 720;
@@ -60,17 +59,6 @@ namespace Titan
 		fbInfo.imageFormats = { ImageFormat::RGBA8UN, ImageFormat::Depth24 };
 		s_Cache->testFB = Framebuffer::Create(fbInfo);
 
-
-		std::vector<DWORD> indices = {
-			0,1,2,
-			0,3,1,
-			4,5,6,
-			4,7,5
-		};
-		IndexBufferInfo iInfo{};
-		iInfo.indexData = indices.data();
-		iInfo.sizeOfArray = indices.size();
-		s_Cache->indexBuffer = IndexBuffer::Create(iInfo);
 
 		auto& view =  s_Cache->viewPort;
 		view.Height = static_cast<float>(Application::GetWindow().GetHeight());
@@ -83,28 +71,43 @@ namespace Titan
 		auto& rec = s_Cache->rect;
 		rec.left = 0;
 		rec.top = 0;
-		rec.right = Application::GetWindow().GetHeight();
-		rec.bottom = Application::GetWindow().GetWidth();
+		rec.bottom = Application::GetWindow().GetHeight();
+		rec.right = Application::GetWindow().GetWidth();
 	}
 
 	void Renderer::Begin()
 	{
 		GraphicsContext::WaitForNextFrame();
 		GraphicsContext::GetCurrentCommandAllocator()->Reset();
-		GraphicsContext::Reset(s_Cache->TrianglePipeline);
+		GraphicsContext::Reset(s_Cache->StaticMeshPipeline);
 		GraphicsContext::Begin();
 		s_Cache->testFB->Bind();
 		s_Cache->testFB->Clear();
 		
-		s_Cache->cbuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
-		s_Cache->TrianglePipeline->Bind();
+		
+		s_Cache->StaticMeshPipeline->Bind();
 		GraphicsContext::CommandList()->RSSetViewports(1, &s_Cache->viewPort);
 		GraphicsContext::CommandList()->RSSetScissorRects(1, &s_Cache->rect);
-		s_Cache->vertexBuffer->Bind();
-		s_Cache->indexBuffer->Bind();
-		s_Cache->cbuffer->Bind(0);
-		GraphicsContext::CommandList()->DrawIndexedInstanced(12, 1, 0,0,0);
 		
+		/*s_Cache->cameraData.view = s_Cache->currentCamera.view;
+		s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
+		s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
+		s_Cache->cameraBuffer->Bind(0);*/
+
+		for (auto& cmd : s_Cache->meshCmds)
+		{
+			cmd.package.vertexBuffer->Bind();
+			cmd.package.indexBuffer->Bind();
+			s_Cache->cameraData.view = s_Cache->currentCamera.view;
+			s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
+			s_Cache->cameraData.mdlSpace = cmd.transform;
+			s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
+			s_Cache->cameraBuffer->Bind(0);
+			GraphicsContext::CommandList()->DrawIndexedInstanced(cmd.package.indexBuffer->GetIndexCount(), 1, 0, 0, 0);
+		}
+		
+		
+		s_Cache->meshCmds.clear();
 		CopyResource(GraphicsContext::GetCurrentRtv().Get(), s_Cache->testFB->GetCurrentRtv().Get());
 	}
 
@@ -166,6 +169,6 @@ namespace Titan
 		info.psPath = "Engine/Shaders/triangle_ps.hlsl";
 		info.depthState = DepthState::ReadWrite;
 		info.depthCullState = CullState::None;
-		s_Cache->TrianglePipeline = Pipeline::Create(info);
+		s_Cache->StaticMeshPipeline = Pipeline::Create(info);
 	}
 }
