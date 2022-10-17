@@ -19,7 +19,7 @@ namespace Titan
 		{
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Cube.gltf");
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/box01.glb");
 			entity.GetComponent<TransformComponent>().position.x = 10;
 		}
 		m_transformData.position.z = -5.f;

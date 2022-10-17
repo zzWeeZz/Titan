@@ -16,10 +16,10 @@ namespace Titan
 
 	inline void ModelSystem(ModelComponent& mdl, TransformComponent& tf)
 	{
-		//static float time = 0;
-		//time += 0.004;
+		static float time = 0;
+		time += 0.004;
 		////tf.position.x = sinf(time);
-		////tf.quaternion = glm::quat(cos(glm::radians(time / 2) * 10), 0, sin(glm::radians(time / 2) * 10) * 1, 0);
+		tf.quaternion = glm::quat(cos(glm::radians(time / 2) * 10), 0, sin(glm::radians(time / 2) * 10) * 1, 0);
 		//tf.scale.x = (sinf(time) + 1.f) / 2.f;
 		//tf.scale.y = (sinf(time) + 1.f) / 2.f;
 		//tf.scale.z = (sinf(time) + 1.f) / 2.f;

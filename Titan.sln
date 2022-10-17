@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW", "Titan\vendor\GLFW\GLFW.vcxproj", "{154B857C-0182-860D-AA6E-6C109684020F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Optick", "Titan\vendor\Optick\Optick.vcxproj", "{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandBox", "SandBox\SandBox.vcxproj", "{D43924E3-4019-A37E-4931-2E55B58F09E0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Titan", "Titan\Titan.vcxproj", "{A5982A0E-11AD-52BF-DA2E-F61E46024FF0}"
@@ -11,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Titanium", "Titanium\Titani
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glm", "Titan\vendor\glm\glm.vcxproj", "{6577880B-D180-887C-5AFC-9E7CC604947C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yaml-cpp", "YAML\yaml-cpp.vcxproj", "{88F1A057-74BE-FB62-9DD7-E90A890331F1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yaml-cpp", "Titan\vendor\YAML\yaml-cpp.vcxproj", "{88F1A057-74BE-FB62-9DD7-E90A890331F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,12 @@ Global
 		{154B857C-0182-860D-AA6E-6C109684020F}.Dist|x64.Build.0 = Dist|x64
 		{154B857C-0182-860D-AA6E-6C109684020F}.Release|x64.ActiveCfg = Release|x64
 		{154B857C-0182-860D-AA6E-6C109684020F}.Release|x64.Build.0 = Release|x64
+		{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}.Debug|x64.ActiveCfg = Debug|x64
+		{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}.Debug|x64.Build.0 = Debug|x64
+		{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}.Dist|x64.ActiveCfg = Dist|x64
+		{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}.Dist|x64.Build.0 = Dist|x64
+		{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}.Release|x64.ActiveCfg = Release|x64
+		{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}.Release|x64.Build.0 = Release|x64
 		{D43924E3-4019-A37E-4931-2E55B58F09E0}.Debug|x64.ActiveCfg = Debug|x64
 		{D43924E3-4019-A37E-4931-2E55B58F09E0}.Debug|x64.Build.0 = Debug|x64
 		{D43924E3-4019-A37E-4931-2E55B58F09E0}.Dist|x64.ActiveCfg = Dist|x64

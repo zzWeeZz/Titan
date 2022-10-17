@@ -8,6 +8,7 @@
 #include "Events/ApplicationEvent.h"
 #include "Titan/Rendering/Renderer.h"
 #include "Titan/Assets/ResourceRegistry.h"
+#include <Optick/src/optick.h>
 
 Titan::Application::Application() : m_Running(true)
 {
@@ -25,6 +26,7 @@ void Titan::Application::Run()
 {
 	while (m_Running)
 	{
+		OPTICK_FRAME("MainThread");
 		for (const auto& layer : m_LayerStack)
 		{
 			layer->OnUpdate();

@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>TNpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;vendor\YAML\include;vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -99,7 +99,7 @@
       <PrecompiledHeaderFile>TNpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;vendor\YAML\include;vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -126,7 +126,7 @@
       <PrecompiledHeaderFile>TNpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\tinygltf;vendor\Snowflake;vendor\ImGui;vendor\freetype\Include;vendor\stb_image;vendor;vendor\spdlog\include;vendor\GLFW\include;vendor\glm;vendor\YAML\include;vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -148,18 +148,14 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan\Assets\ModelImporters\GLTFImporter.h" />
-    <ClInclude Include="src\Titan\Rendering\Buffers\VertexPacket.h" />
-    <ClInclude Include="src\Titan\Utils\Input.h" />
-    <ClInclude Include="src\Titan\Assets\Model\Model.h" />
-    <ClInclude Include="src\Titan\Assets\Model\ModelHandle.h" />
-    <ClInclude Include="src\Titan\Utils\KeyCode.h" />
-    <ClInclude Include="src\Titan\Utils\MouseCode.h" />
     <ClInclude Include="src\TNpch.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
-    <ClInclude Include="src\Titan\Assets\Resource.h" />
     <ClInclude Include="src\Titan\Assets\Camera\Camera.h" />
+    <ClInclude Include="src\Titan\Assets\Model\Model.h" />
+    <ClInclude Include="src\Titan\Assets\Model\ModelHandle.h" />
+    <ClInclude Include="src\Titan\Assets\ModelImporters\GLTFImporter.h" />
+    <ClInclude Include="src\Titan\Assets\Resource.h" />
     <ClInclude Include="src\Titan\Assets\ResourceRegistry.h" />
     <ClInclude Include="src\Titan\Core\Core.h" />
     <ClInclude Include="src\Titan\Core\Log.h" />
@@ -177,6 +173,7 @@
     <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffers.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\VertexPacket.h" />
     <ClInclude Include="src\Titan\Rendering\Framebuffer.h" />
     <ClInclude Include="src\Titan\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Titan\Rendering\Pipeline.h" />
@@ -185,6 +182,9 @@
     <ClInclude Include="src\Titan\Scene\Components.h" />
     <ClInclude Include="src\Titan\Scene\Entity.h" />
     <ClInclude Include="src\Titan\Scene\Scene.h" />
+    <ClInclude Include="src\Titan\Utils\Input.h" />
+    <ClInclude Include="src\Titan\Utils\KeyCode.h" />
+    <ClInclude Include="src\Titan\Utils\MouseCode.h" />
     <ClInclude Include="src\Titan\Window.h" />
     <ClInclude Include="vendor\Snowflake\Serializer.hpp" />
     <ClInclude Include="vendor\Snowflake\SnowID.h" />
@@ -287,15 +287,14 @@
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Titan\Assets\ModelImporters\GLTFImporter.cpp" />
-    <ClCompile Include="src\Titan\Utils\Input.cpp" />
-    <ClCompile Include="src\Titan\Assets\Model\ModelHandle.cpp" />
-    <ClCompile Include="src\Titan\Assets\ResourceRegistry.cpp" />
     <ClCompile Include="src\TNpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp" />
+    <ClCompile Include="src\Titan\Assets\Model\ModelHandle.cpp" />
+    <ClCompile Include="src\Titan\Assets\ModelImporters\GLTFImporter.cpp" />
+    <ClCompile Include="src\Titan\Assets\ResourceRegistry.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />
     <ClCompile Include="src\Titan\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Titan\ImGui\ImGuiLayer.cpp" />
@@ -311,14 +310,18 @@
     <ClCompile Include="src\Titan\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Titan\Scene\Entity.cpp" />
     <ClCompile Include="src\Titan\Scene\Scene.cpp" />
+    <ClCompile Include="src\Titan\Utils\Input.cpp" />
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\YAML\yaml-cpp.vcxproj">
+    <ProjectReference Include="vendor\YAML\yaml-cpp.vcxproj">
       <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\Optick\Optick.vcxproj">
+      <Project>{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

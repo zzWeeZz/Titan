@@ -1,22 +1,22 @@
 project "yaml-cpp"
     kind "StaticLib"
     language "C++"
-    location "%{wks.location}/YAML"
+    
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
     disablewarnings { "4996", "26812" }
     
         files
         {
-            "%{wks.location}/YAML/src/**.h",
-            "%{wks.location}/YAML/src/**.cpp",
+            "src/**.h",
+            "src/**.cpp",
             
-            "%{wks.location}/YAML/include/**.h"
+            "include/**.h"
         }
     
         includedirs
         {
-            "%{wks.location}/YAML/include"
+            "include/"
         }
     
         filter "system:windows"

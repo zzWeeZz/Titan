@@ -8,6 +8,7 @@
 #include "Titan/Application.h"
 #include "Titan/Platform/WindowsWindow.h"
 #include "d3d12sdklayers.h"
+#include "optick.h"
 namespace Titan
 {
 	void GraphicsContext::Initialize(const GraphicsContextInfo& info)
@@ -94,8 +95,8 @@ namespace Titan
 		{
 			TN_CORE_ASSERT(false, "Could not create Event!");
 		}
-
-
+		OPTICK_GPU_INIT_D3D12(m_Device.Get(), m_CommandQueue.GetAddressOf(), 1);
+		OPTICK_GPU_CONTEXT(m_CommandList.Get());
 		dxgiFactory->Release();
 		adapter->Release();
 	}
@@ -135,7 +136,6 @@ namespace Titan
 			&beginRB);
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), m_FrameIndex, m_RtvDescriptorSize);
 		
-
 		static float time = 0;
 		time += 0.001f;
 		const float clearColor[] = { 0,(cosf(time) + 1.f) / 2.f, 0, 1 };

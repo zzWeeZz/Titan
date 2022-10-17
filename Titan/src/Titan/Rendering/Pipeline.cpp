@@ -9,12 +9,12 @@ namespace Titan
 	{
 		ID3DBlob* vertexShader;
 		ID3DBlob* errorBuffer;
-		TN_DX_CHECK(D3DCompileFromFile(
+		(D3DCompileFromFile(
 			info.vsPath.wstring().c_str(),
 			nullptr,
 			nullptr,
 			"main",
-			"vs_5_0",
+			"vs_5_1",
 			D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
 			0,
 			&vertexShader,
@@ -23,22 +23,24 @@ namespace Titan
 		ID3DBlob* pxShader = nullptr;
 		if (errorBuffer)
 		{
-			TN_CORE_ERROR(errorBuffer->GetBufferPointer());
+			TN_CORE_ERROR((char*)errorBuffer->GetBufferPointer());
+			return;
 		}
 		errorBuffer = nullptr;
-		TN_DX_CHECK(D3DCompileFromFile(
+		(D3DCompileFromFile(
 			info.psPath.wstring().c_str(),
 			nullptr,
 			nullptr,
 			"main",
-			"ps_5_0",
+			"ps_5_1",
 			D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
 			0,
 			&pxShader,
 			&errorBuffer));
 		if (errorBuffer)
 		{
-			TN_CORE_ERROR(errorBuffer->GetBufferPointer());
+			TN_CORE_ERROR((char*)errorBuffer->GetBufferPointer());
+			return;
 		}
 		D3D12_SHADER_BYTECODE vsByteCode;
 		vsByteCode.BytecodeLength = vertexShader->GetBufferSize();
@@ -55,8 +57,8 @@ namespace Titan
 		table.pDescriptorRanges = ranges.data();
 
 		D3D12_ROOT_PARAMETER parameters[1];
-		parameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-		parameters[0].DescriptorTable = table;
+		parameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+		parameters[0].Descriptor = {0, 0};
 		parameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
@@ -202,7 +204,7 @@ namespace Titan
 				range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
 				range.NumDescriptors = 1;
 				range.BaseShaderRegister = inputBinDesc.BindPoint;
-				range.RegisterSpace = 0;
+				range.RegisterSpace = inputBinDesc.Space;
 				range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 			}
 		}

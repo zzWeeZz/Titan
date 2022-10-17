@@ -7,12 +7,7 @@ namespace Titan
 	{
 		for (size_t i = 0; i < g_FrameCount; ++i)
 		{
-			D3D12_DESCRIPTOR_HEAP_DESC desc{};
-			desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-			desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-			desc.NumDescriptors = 1;
-			TN_DX_CHECK(GraphicsContext::Device()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(m_MainDescriptorHeap[i].ReleaseAndGetAddressOf())));
-
+			m_ConstantBufferGPUAddress[i] = nullptr;
 			auto upload = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 			auto resource = CD3DX12_RESOURCE_DESC::Buffer(1024 * 64);
 			GraphicsContext::Device()->CreateCommittedResource(
@@ -23,30 +18,24 @@ namespace Titan
 				nullptr,
 				IID_PPV_ARGS(m_CBufferUploadHeap[i].GetAddressOf()));
 			m_CBufferUploadHeap[i]->SetName(L"Constant Buffer Upload Resource Heap");
-
-
-			D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
-			cbvDesc.BufferLocation = m_CBufferUploadHeap[i]->GetGPUVirtualAddress();
-			cbvDesc.SizeInBytes = (sizeOfObject + 255) & ~255;    // CB size is required to be 256-byte aligned.
-			GraphicsContext::Device()->CreateConstantBufferView(&cbvDesc, m_MainDescriptorHeap[i]->GetCPUDescriptorHandleForHeapStart());
 		}
 	}
-	void ConstantBuffer::SetData(void* data, size_t sizeOfData)
+	void ConstantBuffer::SetData(void* data, size_t sizeOfData, size_t drawID)
 	{
 		auto currCBUploadHeap = m_CBufferUploadHeap[GraphicsContext::GetFrameIndex()];
 		CD3DX12_RANGE readRange(0, 0);    // We do not intend to read from this resource on the CPU. (End is less than or equal to begin)
+		size_t cBufferOffset = (sizeOfData + 255) & ~255;
+		cBufferOffset *= drawID;
 		currCBUploadHeap->Map(0, &readRange, reinterpret_cast<void**>(&m_ConstantBufferGPUAddress[GraphicsContext::GetFrameIndex()]));
-		memcpy(m_ConstantBufferGPUAddress[GraphicsContext::GetFrameIndex()], data, sizeOfData);
+		memcpy(m_ConstantBufferGPUAddress[GraphicsContext::GetFrameIndex()] + cBufferOffset, data, sizeOfData);
 		currCBUploadHeap->Unmap(0, &readRange);
 	}
-	void ConstantBuffer::Bind(uint32_t bindPoint)
+	void ConstantBuffer::Bind(uint32_t drawID, size_t sizeOfData)
 	{
-		ID3D12DescriptorHeap* descriptorHeaps[] = { m_MainDescriptorHeap[GraphicsContext::GetFrameIndex()].Get() };
-		GraphicsContext::CommandList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-		//GraphicsContext::CommandList()->SetGraphicsRootConstantBufferView(bindPoint, m_CBufferUploadHeap[GraphicsContext::GetFrameIndex()]->GetGPUVirtualAddress());
-		// set the root descriptor table 0 to the constant buffer descriptor heap
-		GraphicsContext::CommandList()->SetGraphicsRootDescriptorTable(bindPoint, m_MainDescriptorHeap[GraphicsContext::GetFrameIndex()]->GetGPUDescriptorHandleForHeapStart());
-	}
+		size_t cBufferOffset = (sizeOfData + 255) & ~255;
+		cBufferOffset *= drawID;
+		GraphicsContext::CommandList()->SetGraphicsRootConstantBufferView(0, m_CBufferUploadHeap[GraphicsContext::GetFrameIndex()]->GetGPUVirtualAddress() + cBufferOffset);
+		}
 	Ref<ConstantBuffer> ConstantBuffer::Create(size_t sizeOfObject)
 	{
 		return CreateRef<ConstantBuffer>(sizeOfObject);
@@ -55,7 +44,6 @@ namespace Titan
 	{
 		for (size_t i = 0; i < g_FrameCount; ++i)
 		{
-			TN_SAFE_RELEASE(m_MainDescriptorHeap[i]);
 			TN_SAFE_RELEASE(m_CBufferUploadHeap[i]);
 		}
 	}

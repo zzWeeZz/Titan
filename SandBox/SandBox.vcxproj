@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titanium\src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titanium\src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;..\Titan\vendor\YAML\include;..\Titan\vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -98,7 +98,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titanium\src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titanium\src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;..\Titan\vendor\YAML\include;..\Titan\vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -122,7 +122,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titanium\src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;..\YAML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\Titan\src;..\Titanium\src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\glm;..\Titan\vendor\YAML\include;..\Titan\vendor\Optick\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -154,8 +154,11 @@
     <ProjectReference Include="..\Titan\vendor\GLFW\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\YAML\yaml-cpp.vcxproj">
+    <ProjectReference Include="..\Titan\vendor\YAML\yaml-cpp.vcxproj">
       <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Titan\vendor\Optick\Optick.vcxproj">
+      <Project>{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

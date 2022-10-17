@@ -14,6 +14,7 @@
 #include <dx12helpers/d3dx12.h>
 #include <Titan/Rendering/Buffers/ConstantBuffer.h>
 #include "Titan/Rendering/Buffers/ConstantBuffers.h"
+#include <Optick/src/optick.h>
 namespace Titan
 {
 	struct Cache
@@ -23,19 +24,19 @@ namespace Titan
 		Ref<VertexBuffer> vertexBuffer;
 		Ref<IndexBuffer> indexBuffer;
 
-		CameraCmd currentCamera;
+		CameraCmd currentCamera = {};
 		std::vector<MeshCmd> meshCmds;
 
 		Ref<Framebuffer> testFB;
 
-		CameraData cameraData;
+		CameraData cameraData = {};
 		Ref<ConstantBuffer> cameraBuffer;
 
-		ModelData modelData;
+		ModelData modelData = {};
 		Ref<ConstantBuffer> modelBuffer;
 
-		D3D12_VIEWPORT viewPort;
-		D3D12_RECT rect;
+		D3D12_VIEWPORT viewPort = {};
+		D3D12_RECT rect = {};
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
 	void Renderer::Submit(const CameraCmd& cameraCmd)
@@ -77,6 +78,7 @@ namespace Titan
 
 	void Renderer::Begin()
 	{
+		OPTICK_GPU_CONTEXT(GraphicsContext::CommandList().Get());
 		GraphicsContext::WaitForNextFrame();
 		GraphicsContext::GetCurrentCommandAllocator()->Reset();
 		GraphicsContext::Reset(s_Cache->StaticMeshPipeline);
@@ -93,7 +95,8 @@ namespace Titan
 		s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 		s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
 		s_Cache->cameraBuffer->Bind(0);*/
-
+		OPTICK_GPU_EVENT("Draw");
+		size_t i = 0;
 		for (auto& cmd : s_Cache->meshCmds)
 		{
 			cmd.package.vertexBuffer->Bind();
@@ -101,9 +104,11 @@ namespace Titan
 			s_Cache->cameraData.view = s_Cache->currentCamera.view;
 			s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 			s_Cache->cameraData.mdlSpace = cmd.transform;
-			s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
-			s_Cache->cameraBuffer->Bind(0);
+			s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData), i);
+			s_Cache->cameraBuffer->Bind(i, sizeof(CameraData));
+			OPTICK_GPU_EVENT("DrawIndexedInstanced");
 			GraphicsContext::CommandList()->DrawIndexedInstanced(cmd.package.indexBuffer->GetIndexCount(), 1, 0, 0, 0);
+			i++;
 		}
 		
 		
@@ -122,7 +127,8 @@ namespace Titan
 		GraphicsContext::CommandQueue()->ExecuteCommandLists(_countof(ppCommandList), ppCommandList);
 
 		GraphicsContext::SignalCommandQueue();
-
+		OPTICK_GPU_FLIP(GraphicsContext::SwapChain().Get());
+		OPTICK_CATEGORY("Present", Optick::Category::Wait);
 		GraphicsContext::SwapChain()->Present(0, 0);
 	}
 
