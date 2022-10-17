@@ -6,7 +6,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include "Titan/Rendering/GraphicsContext.h"
-#include "Titan/Rendering/Pipeline.h"
+#include "Titan/Rendering/Pipeline/Pipeline.h"
 #include <Titan/Rendering/Buffers/VertexBuffer.h>
 #include <Titan/Rendering/Buffers/IndexBuffer.h>
 #include <Titan/Rendering/Vertices.h>

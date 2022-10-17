@@ -1,7 +1,16 @@
 ResourceRegistry:
   - 0:
-      - 4cc09e60-10bc-4662-804f-58e48d1dd3a2
+      - 514b694b-10f6-4b59-8884-3c9c4f9bdee5
       - Assets/Models/Cube.gltf
   - 1:
-      - 2beaf65b-1296-47b4-8895-adb4589efad1
+      - 273b82bd-9ed7-4de0-b10d-291c4f6b0887
+      - Assets/Models/box01.glb
+  - 2:
+      - f353c177-6923-4886-affd-3e10e31d14d8
+      - Assets/Models/box01.glb
+  - 3:
+      - 6b2e7768-0158-4377-8ddf-5fc868c2751c
+      - Assets/Models/box01.glb
+  - 4:
+      - 4b299b9c-78f2-4334-84f7-6a681e53f4e8
       - Assets/Models/box01.glb

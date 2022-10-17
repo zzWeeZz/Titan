@@ -176,7 +176,7 @@
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexPacket.h" />
     <ClInclude Include="src\Titan\Rendering\Framebuffer.h" />
     <ClInclude Include="src\Titan\Rendering\GraphicsContext.h" />
-    <ClInclude Include="src\Titan\Rendering\Pipeline.h" />
+    <ClInclude Include="src\Titan\Rendering\Pipeline\Pipeline.h" />
     <ClInclude Include="src\Titan\Rendering\Renderer.h" />
     <ClInclude Include="src\Titan\Rendering\Vertices.h" />
     <ClInclude Include="src\Titan\Scene\Components.h" />
@@ -186,6 +186,7 @@
     <ClInclude Include="src\Titan\Utils\KeyCode.h" />
     <ClInclude Include="src\Titan\Utils\MouseCode.h" />
     <ClInclude Include="src\Titan\Window.h" />
+    <ClInclude Include="src\Titan\Assets\Texture\Texture.h" />
     <ClInclude Include="vendor\Snowflake\Serializer.hpp" />
     <ClInclude Include="vendor\Snowflake\SnowID.h" />
     <ClInclude Include="vendor\Snowflake\Snowflake.hpp" />
@@ -306,11 +307,12 @@
     <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Framebuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\GraphicsContext.cpp" />
-    <ClCompile Include="src\Titan\Rendering\Pipeline.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Pipeline\Pipeline.cpp" />
     <ClCompile Include="src\Titan\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Titan\Scene\Entity.cpp" />
     <ClCompile Include="src\Titan\Scene\Scene.cpp" />
     <ClCompile Include="src\Titan\Utils\Input.cpp" />
+    <ClCompile Include="src\Titan\Assets\Texture\Texture.cpp" />
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp" />
   </ItemGroup>
   <ItemGroup>

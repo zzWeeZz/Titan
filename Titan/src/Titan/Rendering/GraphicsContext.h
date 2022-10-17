@@ -4,7 +4,7 @@
 #include <dxgi1_6.h>
 #include <d3dcompiler.h>
 #include "Titan/Core/Core.h"
-#include <Titan/Rendering/Pipeline.h>
+#include <Titan/Rendering/Pipeline/Pipeline.h>
 
 namespace Titan
 {
