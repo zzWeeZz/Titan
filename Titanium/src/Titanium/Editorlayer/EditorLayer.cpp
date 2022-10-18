@@ -4,6 +4,7 @@
 #include "Titan/Scene/Components.h"
 #include "Titan/Utils/Input.h"
 #include "Titan/Assets/Model/Model.h"
+#include "Titan/Assets/Texture/Texture.h"
 
 namespace Titan
 {
@@ -15,6 +16,7 @@ namespace Titan
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();
 			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Cube.gltf");
+			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
 		{
 			auto entity = m_ActiveScene->CreateEntity();

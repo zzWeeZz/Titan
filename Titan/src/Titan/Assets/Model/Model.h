@@ -12,6 +12,7 @@ namespace Titan
 	{
 		REGISTER_COMPONENT("{564BFFF1-275D-48B8-B94B-32E3A9B138A9}"_guid);
 		TitanID modelHandle;
+		TitanID textureHandle;
 	};
 
 	inline void ModelSystem(ModelComponent& mdl, TransformComponent& tf)

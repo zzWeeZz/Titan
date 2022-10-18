@@ -490,6 +490,7 @@
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Texture\Texture.h" />
+    <ClInclude Include="src\Titan\Assets\Material\Material.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -562,5 +563,6 @@
       <Filter>vendor\dx12helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\Texture\Texture.cpp" />
+    <ClCompile Include="src\Titan\Assets\Material\Material.cpp" />
   </ItemGroup>
 </Project>

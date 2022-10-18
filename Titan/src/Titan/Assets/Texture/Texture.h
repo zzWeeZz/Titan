@@ -11,6 +11,9 @@ namespace Titan
 		virtual void Initialize(const std::filesystem::path& path) override;
 		static Ref<Texture> Create();
 	private:
+		void* m_Pixels;
+		size_t m_Width;
+		size_t m_Height;
 		WinRef<ID3D12Resource> m_Texture;
 	};
 }

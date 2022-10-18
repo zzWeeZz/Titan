@@ -3,83 +3,129 @@
 #include <dx12helpers/d3dx12.h>
 #include "Titan/Rendering/GraphicsContext.h"
 #include <Titan/Core/TitanFormats.h>
+#include <dxcapi.h>
 namespace Titan
 {
 	Pipeline::Pipeline(const PipelineInfo& info)
 	{
-		ID3DBlob* vertexShader;
-		ID3DBlob* errorBuffer;
-		(D3DCompileFromFile(
+		IDxcBlobEncoding* vsSourceBlob;
+		IDxcBlobEncoding* errorBuffer;
+
+		WinRef<IDxcLibrary> library;
+		TN_DX_CHECK(DxcCreateInstance(CLSID_DxcLibrary, IID_PPV_ARGS(library.GetAddressOf())));
+		WinRef<IDxcCompiler> compiler;
+		TN_DX_CHECK(DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(compiler.GetAddressOf())));
+		uint32_t codePage = CP_UTF8;
+		library->CreateBlobFromFile(info.vsPath.wstring().c_str(), &codePage, &vsSourceBlob);
+
+		WinRef<IDxcOperationResult> result;
+		compiler->Compile(vsSourceBlob, info.vsPath.wstring().c_str(), L"main", L"VS_6_0", NULL, 0, NULL, 0, NULL, result.GetAddressOf());
+		
+		WinRef<IDxcBlob> code;
+		result->GetResult(&code);
+
+
+		/*(D3DCompileFromFile(
 			info.vsPath.wstring().c_str(),
 			nullptr,
 			nullptr,
 			"main",
-			"vs_5_1",
+			"vs_6_0",
 			D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
 			0,
-			&vertexShader,
-			&errorBuffer));
+			&vsSourceBlob,
+			&errorBuffer));*/
 
 		ID3DBlob* pxShader = nullptr;
-		if (errorBuffer)
+		/*if (errorBuffer)
 		{
 			TN_CORE_ERROR((char*)errorBuffer->GetBufferPointer());
 			return;
-		}
+		}*/
+		
 		errorBuffer = nullptr;
 		(D3DCompileFromFile(
 			info.psPath.wstring().c_str(),
 			nullptr,
 			nullptr,
 			"main",
-			"ps_5_1",
+			"ps_6_0",
 			D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
 			0,
 			&pxShader,
-			&errorBuffer));
-		if (errorBuffer)
+			nullptr));
+		/*if (errorBuffer)
 		{
 			TN_CORE_ERROR((char*)errorBuffer->GetBufferPointer());
 			return;
-		}
+		}*/
 		D3D12_SHADER_BYTECODE vsByteCode;
-		vsByteCode.BytecodeLength = vertexShader->GetBufferSize();
-		vsByteCode.pShaderBytecode = vertexShader->GetBufferPointer();
+		vsByteCode.BytecodeLength = code->GetBufferSize();
+		vsByteCode.pShaderBytecode = code->GetBufferPointer();
 		D3D12_SHADER_BYTECODE psByteCode;
 		psByteCode.BytecodeLength = pxShader->GetBufferSize();
 		psByteCode.pShaderBytecode = pxShader->GetBufferPointer();
 
-		std::vector<D3D12_DESCRIPTOR_RANGE> ranges;
-		GetDescriptorRangesFromBlob(vertexShader, ranges);
+		std::vector<D3D12_ROOT_PARAMETER> parameters;
+		GetDescriptorRangesFromBlob(, parameters);
 
-		D3D12_ROOT_DESCRIPTOR_TABLE table{};
-		table.NumDescriptorRanges = (UINT)ranges.size();
-		table.pDescriptorRanges = ranges.data();
 
-		D3D12_ROOT_PARAMETER parameters[1];
-		parameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-		parameters[0].Descriptor = {0, 0};
-		parameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+		D3D12_DESCRIPTOR_RANGE  descriptorTableRanges[1]; // only one range right now
+		descriptorTableRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // this is a range of shader resource views (descriptors)
+		descriptorTableRanges[0].NumDescriptors = 1; // we only have one texture right now, so the range is only 1
+		descriptorTableRanges[0].BaseShaderRegister = 0; // start index of the shader registers in the range
+		descriptorTableRanges[0].RegisterSpace = 0; // space 0. can usually be zero
+		descriptorTableRanges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // this appends the range to the end of the root signature descriptor tables
+		
+		D3D12_ROOT_DESCRIPTOR_TABLE descriptorTable;
+		descriptorTable.NumDescriptorRanges = _countof(descriptorTableRanges); // we only have one range
+		descriptorTable.pDescriptorRanges = &descriptorTableRanges[0]; // the pointer to the beginning of our ranges array
+		
+		auto param = parameters.emplace_back();
+		param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		param.DescriptorTable = descriptorTable;
+		param.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+
+		// create a static sampler
+		D3D12_STATIC_SAMPLER_DESC sampler = {};
+		sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
+		sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+		sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+		sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+		sampler.MipLODBias = 0;
+		sampler.MaxAnisotropy = 0;
+		sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+		sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+		sampler.MinLOD = 0.0f;
+		sampler.MaxLOD = D3D12_FLOAT32_MAX;
+		sampler.ShaderRegister = 0;
+		sampler.RegisterSpace = 0;
+		sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-		rootSignatureDesc.Init(_countof(parameters),
-			parameters,
-			0,
-			nullptr,
+		rootSignatureDesc.Init(parameters.size(),
+			parameters.data(),
+			1,
+			&sampler,
 			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // we can deny shader stages here for better performance
 			D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
 			D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-			D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-			D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS);
+			D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS);
 		ID3DBlob* signature;
-		TN_DX_CHECK(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, nullptr));
+		ID3DBlob* errorBlob = nullptr;
+		TN_DX_CHECK(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &errorBlob));
+		if (errorBlob)
+		{
+			TN_CORE_ERROR((char*)errorBlob->GetBufferPointer());
+		}
 
 		TN_DX_CHECK(GraphicsContext::Device()->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(m_RootSignature.GetAddressOf())));
 
 		
 
 		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayoutDesc;
-		GetInputLayoutFromBlob(vertexShader, inputLayoutDesc);
+		GetInputLayoutFromBlob(vsSourceBlob, inputLayoutDesc);
 		D3D12_INPUT_LAYOUT_DESC inputLayout;
 		inputLayout.NumElements = static_cast<UINT>(inputLayoutDesc.size());
 		inputLayout.pInputElementDescs = inputLayoutDesc.data();
@@ -186,7 +232,7 @@ namespace Titan
 			InputLayout.push_back(elementDesc);
 		}
 	}
-	void Pipeline::GetDescriptorRangesFromBlob(ID3DBlob* blob, std::vector<D3D12_DESCRIPTOR_RANGE>& ranges)
+	void Pipeline::GetDescriptorRangesFromBlob(ID3DBlob* blob, std::vector<D3D12_ROOT_PARAMETER>& ranges)
 	{
 		ID3D12ShaderReflection* pReflector = nullptr;
 		TN_DX_CHECK(D3DReflect(blob->GetBufferPointer(), blob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&pReflector));
@@ -201,11 +247,9 @@ namespace Titan
 			if (inputBinDesc.Type == D3D10_SIT_CBUFFER)
 			{
 				auto& range = ranges.emplace_back();
-				range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-				range.NumDescriptors = 1;
-				range.BaseShaderRegister = inputBinDesc.BindPoint;
-				range.RegisterSpace = inputBinDesc.Space;
-				range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+				range.ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+				range.Descriptor = { inputBinDesc.BindPoint, inputBinDesc.Space };
+				range.ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 			}
 		}
 	}

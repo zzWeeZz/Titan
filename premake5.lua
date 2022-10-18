@@ -29,6 +29,7 @@ externalLinks =
     "dxgi.lib",
     "d3dcompiler.lib",
     "dxguid.lib",
+    "dxcompiler.lib"
 }
 
 include "Titan/vendor/GLFW/"

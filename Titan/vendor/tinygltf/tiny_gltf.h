@@ -800,6 +800,7 @@ struct Material {
   std::string extensions_json_string;
 
   Material() : alphaMode("OPAQUE"), alphaCutoff(0.5), doubleSided(false) {}
+
   DEFAULT_METHODS(Material)
 
   bool operator==(const Material &) const;
@@ -1696,6 +1697,7 @@ void JsonParse(JsonDocument &doc, const char *str, size_t length,
 
 #ifdef __APPLE__
 #include "TargetConditionals.h"
+#include "Material.h"
 #endif
 
 #ifdef __clang__

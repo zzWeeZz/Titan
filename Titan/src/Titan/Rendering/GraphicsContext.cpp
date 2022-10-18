@@ -51,6 +51,12 @@ namespace Titan
 		D3D12_COMMAND_QUEUE_DESC cqDesc = {};
 		TN_DX_CHECK(m_Device->CreateCommandQueue(&cqDesc, IID_PPV_ARGS(m_CommandQueue.GetAddressOf())));
 
+		D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = { D3D_SHADER_MODEL_6_0 };
+		if (m_Device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel)) || (shaderModel.HighestShaderModel < D3D_SHADER_MODEL_6_0))
+		{
+			TN_CORE_ERROR("SHADER MODEL 6.0 is not supported!");
+		}
+
 		m_Device->QueryInterface(m_InfoQueue.GetAddressOf());
 
 		InitializeSwapChain(info, dxgiFactory);
