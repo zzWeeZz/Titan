@@ -13,7 +13,7 @@ struct PixelInput
     float2 TexCoord : TEXCOORD;
 };
 
-cbuffer ColorBuffer : register(b0, space4)
+cbuffer ColorBuffer
 {
     float4x4 view;
     float4x4 proj;
@@ -21,11 +21,13 @@ cbuffer ColorBuffer : register(b0, space4)
     float4x4 padding;
 }
 
+ConstantBuffer<ColorBuffer> objectBuffer : register(b0);
+
 
 PixelInput main(VertexInput input)
 {
 	PixelInput output;
-    float4x4 mvp = mul(proj, mul(view, mdlSpace));
+    float4x4 mvp = mul(objectBuffer.proj, mul(objectBuffer.view, objectBuffer.mdlSpace));
     output.position = mul(mvp, float4(input.Position, 1));
     output.color = float4(input.TexCoord.x, input.TexCoord.y, 0, 1);
     output.TexCoord = input.TexCoord;

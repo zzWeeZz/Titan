@@ -3,7 +3,7 @@
 #include <dx12helpers/d3dx12.h>
 #include "Titan/Rendering/GraphicsContext.h"
 #include <Titan/Core/TitanFormats.h>
-#include <dxcapi.h>
+#include <dxil/include/dxcapi.h>
 namespace Titan
 {
 	Pipeline::Pipeline(const PipelineInfo& info)
@@ -11,63 +11,70 @@ namespace Titan
 		IDxcBlobEncoding* vsSourceBlob;
 		IDxcBlobEncoding* errorBuffer;
 
-		WinRef<IDxcLibrary> library;
-		TN_DX_CHECK(DxcCreateInstance(CLSID_DxcLibrary, IID_PPV_ARGS(library.GetAddressOf())));
-		WinRef<IDxcCompiler> compiler;
+		WinRef<IDxcUtils> pUtils;
+		TN_DX_CHECK(DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(pUtils.GetAddressOf())));
+		WinRef<IDxcCompiler3> compiler;
 		TN_DX_CHECK(DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(compiler.GetAddressOf())));
-		uint32_t codePage = CP_UTF8;
-		library->CreateBlobFromFile(info.vsPath.wstring().c_str(), &codePage, &vsSourceBlob);
 
-		WinRef<IDxcOperationResult> result;
-		compiler->Compile(vsSourceBlob, info.vsPath.wstring().c_str(), L"main", L"VS_6_0", NULL, 0, NULL, 0, NULL, result.GetAddressOf());
-		
-		WinRef<IDxcBlob> code;
-		result->GetResult(&code);
+		pUtils->CreateBlob(info.vsPath.wstring().c_str(), info.vsPath.wstring().size(), CP_UTF8, &vsSourceBlob);
 
+	
+		DxcBuffer sourceBuffer;
+		sourceBuffer.Ptr = vsSourceBlob->GetBufferPointer();
+		sourceBuffer.Size = vsSourceBlob->GetBufferSize();
+		sourceBuffer.Encoding = 0;
 
-		/*(D3DCompileFromFile(
-			info.vsPath.wstring().c_str(),
-			nullptr,
-			nullptr,
-			"main",
-			"vs_6_0",
-			D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
-			0,
-			&vsSourceBlob,
-			&errorBuffer));*/
+		std::vector<LPCWSTR> arguments;
+		//-E for the entry point (eg. PSMain)
+		arguments.push_back(L"-E");
+		arguments.push_back(L"main");
+
+		//-T for the target profile (eg. ps_6_2)
+		arguments.push_back(L"-T");
+		arguments.push_back(L"ps_6_2");
+
+		//Strip reflection data and pdbs (see later)
+		arguments.push_back(L"-Qstrip_debug");
+		arguments.push_back(L"-Qstrip_reflect");
+
+		arguments.push_back(DXC_ARG_WARNINGS_ARE_ERRORS); //-WX
+		arguments.push_back(DXC_ARG_DEBUG); //-Zi
+		arguments.push_back(DXC_ARG_PACK_MATRIX_ROW_MAJOR); //-Zp
+
+		WinRef<IDxcResult> result;
+		compiler->Compile(&sourceBuffer, arguments.data(), arguments.size(),nullptr, IID_PPV_ARGS(result.GetAddressOf()));
+	
+		WinRef<IDxcBlobUtf8> pErrors;
+		result->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(pErrors.GetAddressOf()), nullptr);
+		if (pErrors && pErrors->GetStringLength() > 0)
+		{
+			TN_CORE_ASSERT(false, (char*)pErrors->GetBufferPointer());
+		}
+
+		WinRef<IDxcBlob> pDebugData;
+		WinRef<IDxcBlobUtf16> pDebugDataPath;
+		result->GetOutput(DXC_OUT_PDB, IID_PPV_ARGS(pDebugData.GetAddressOf()), pDebugDataPath.GetAddressOf());
+
+		WinRef<IDxcBlob> pReflectionData;
+		result->GetOutput(DXC_OUT_REFLECTION, IID_PPV_ARGS(pReflectionData.GetAddressOf()), nullptr);
+		DxcBuffer reflectionBuffer;
+		reflectionBuffer.Ptr = pReflectionData->GetBufferPointer();
+		reflectionBuffer.Size = pReflectionData->GetBufferSize();
+		reflectionBuffer.Encoding = 0;
+		WinRef<ID3D12ShaderReflection> pShaderReflection;
+		pUtils->CreateReflection(&reflectionBuffer, IID_PPV_ARGS(pShaderReflection.GetAddressOf()));
 
 		ID3DBlob* pxShader = nullptr;
-		/*if (errorBuffer)
-		{
-			TN_CORE_ERROR((char*)errorBuffer->GetBufferPointer());
-			return;
-		}*/
-		
-		errorBuffer = nullptr;
-		(D3DCompileFromFile(
-			info.psPath.wstring().c_str(),
-			nullptr,
-			nullptr,
-			"main",
-			"ps_6_0",
-			D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION,
-			0,
-			&pxShader,
-			nullptr));
-		/*if (errorBuffer)
-		{
-			TN_CORE_ERROR((char*)errorBuffer->GetBufferPointer());
-			return;
-		}*/
-		D3D12_SHADER_BYTECODE vsByteCode;
+
+		/*D3D12_SHADER_BYTECODE vsByteCode;
 		vsByteCode.BytecodeLength = code->GetBufferSize();
-		vsByteCode.pShaderBytecode = code->GetBufferPointer();
+		vsByteCode.pShaderBytecode = code->GetBufferPointer();*/
 		D3D12_SHADER_BYTECODE psByteCode;
 		psByteCode.BytecodeLength = pxShader->GetBufferSize();
 		psByteCode.pShaderBytecode = pxShader->GetBufferPointer();
 
 		std::vector<D3D12_ROOT_PARAMETER> parameters;
-		GetDescriptorRangesFromBlob(, parameters);
+		//GetDescriptorRangesFromBlob(, parameters);
 
 
 		D3D12_DESCRIPTOR_RANGE  descriptorTableRanges[1]; // only one range right now
@@ -125,13 +132,13 @@ namespace Titan
 		
 
 		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayoutDesc;
-		GetInputLayoutFromBlob(vsSourceBlob, inputLayoutDesc);
+		//GetInputLayoutFromBlob(vsSourceBlob, inputLayoutDesc);
 		D3D12_INPUT_LAYOUT_DESC inputLayout;
 		inputLayout.NumElements = static_cast<UINT>(inputLayoutDesc.size());
 		inputLayout.pInputElementDescs = inputLayoutDesc.data();
 
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc{};
-		pipelineDesc.VS = vsByteCode;
+		//pipelineDesc.VS = vsByteCode;
 		pipelineDesc.PS = psByteCode;
 		pipelineDesc.pRootSignature = m_RootSignature.Get();
 		pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;

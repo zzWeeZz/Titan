@@ -15,6 +15,7 @@ externalIncludes =
 {
     "Titan/vendor/spdlog/include/",
     "Titan/vendor/GLFW/include/",
+    "Titan/vendor/dxil/include/",
     "Titan/vendor/glm/",
     "Titan/vendor/YAML/include/",
     "Titan/vendor/Optick/src/",
@@ -27,9 +28,8 @@ externalLinks =
     "Optick",
     "d3d12.lib",
     "dxgi.lib",
-    "d3dcompiler.lib",
     "dxguid.lib",
-    "dxcompiler.lib"
+    "Titan/vendor/dxil/lib/dxcompiler.lib"
 }
 
 include "Titan/vendor/GLFW/"
