@@ -1,3 +1,6 @@
 .vs
 Bin
 Bin-Int
+.sln
+*.vcxproj
+*.vcxproj.user

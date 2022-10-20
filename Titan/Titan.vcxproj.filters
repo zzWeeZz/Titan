@@ -180,6 +180,9 @@
     <ClInclude Include="src\Titan\Rendering\Pipeline\Pipeline.h">
       <Filter>src\Titan\Rendering\Pipeline</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Pipeline\ShaderCompiler.h">
+      <Filter>src\Titan\Rendering\Pipeline</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Renderer.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
@@ -504,7 +507,6 @@
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h">
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Pipeline\ShaderCompiler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -567,6 +569,9 @@
     <ClCompile Include="src\Titan\Rendering\Pipeline\Pipeline.cpp">
       <Filter>src\Titan\Rendering\Pipeline</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Pipeline\ShaderCompiler.cpp">
+      <Filter>src\Titan\Rendering\Pipeline</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Renderer.cpp">
       <Filter>src\Titan\Rendering</Filter>
     </ClCompile>
@@ -582,6 +587,5 @@
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <Filter>vendor\dx12helpers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\Pipeline\ShaderCompiler.cpp" />
   </ItemGroup>
 </Project>

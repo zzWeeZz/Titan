@@ -10,7 +10,7 @@ workspace "Titan"
     }
     
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-
+VULKAN_SDK = os.getenv("VULKAN_SDK")
 externalIncludes = 
 {
     "Titan/vendor/spdlog/include/",
@@ -19,6 +19,7 @@ externalIncludes =
     "Titan/vendor/glm/",
     "Titan/vendor/YAML/include/",
     "Titan/vendor/Optick/src/",
+    "%{VULKAN_SDK}/Include"
 }
 
 externalLinks = 
@@ -29,7 +30,8 @@ externalLinks =
     "d3d12.lib",
     "dxgi.lib",
     "dxguid.lib",
-    "Titan/vendor/dxil/lib/dxcompiler.lib"
+    "Titan/vendor/dxil/lib/dxcompiler.lib",
+    "%{VULKAN_SDK}/lib/**.lib"
 }
 
 include "Titan/vendor/GLFW/"
