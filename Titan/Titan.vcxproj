@@ -90,7 +90,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;vendor\dxil\lib\dxcompiler.lib;C:\VulkanSDK\1.3.216.0\lib\**.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;vendor\dxil\lib\dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -117,7 +117,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;vendor\dxil\lib\dxcompiler.lib;C:\VulkanSDK\1.3.216.0\lib\**.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;vendor\dxil\lib\dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -144,7 +144,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;vendor\dxil\lib\dxcompiler.lib;C:\VulkanSDK\1.3.216.0\lib\**.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;vendor\dxil\lib\dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -171,6 +171,9 @@
     <ClInclude Include="src\Titan\Layer.h" />
     <ClInclude Include="src\Titan\LayerStack.h" />
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
+    <ClInclude Include="src\Titan\Rendering\Backend\Device.h" />
+    <ClInclude Include="src\Titan\Rendering\Backend\PhysicalDevice.h" />
+    <ClInclude Include="src\Titan\Rendering\Backend\Swapchain.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffers.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h" />
@@ -306,6 +309,9 @@
     <ClCompile Include="src\Titan\Layer.cpp" />
     <ClCompile Include="src\Titan\LayerStack.cpp" />
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Backend\Device.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Backend\PhysicalDevice.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Backend\Swapchain.cpp" />
     <ClCompile Include="src\Titan\Rendering\Buffers\ConstantBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp" />

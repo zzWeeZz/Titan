@@ -89,7 +89,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;..\Titan\vendor\dxil\lib\dxcompiler.lib;C:\VulkanSDK\1.3.216.0\lib\**.lib;..\Titan\vendor\freetype\lib\freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -115,7 +115,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;..\Titan\vendor\dxil\lib\dxcompiler.lib;C:\VulkanSDK\1.3.216.0\lib\**.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -141,7 +141,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;..\Titan\vendor\dxil\lib\dxcompiler.lib;C:\VulkanSDK\1.3.216.0\lib\**.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>

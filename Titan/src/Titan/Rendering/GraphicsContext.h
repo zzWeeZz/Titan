@@ -5,6 +5,7 @@
 #include <d3dcompiler.h>
 #include "Titan/Core/Core.h"
 #include <Titan/Rendering/Pipeline/Pipeline.h>
+#include "vulkan/vulkan.h"
 
 namespace Titan
 {
@@ -55,5 +56,7 @@ namespace Titan
 		inline static std::array<uint64_t, g_FrameCount> m_FenceValues;
 		inline static uint32_t m_FrameIndex;
 		inline static int32_t m_RtvDescriptorSize;
+
+		inline static VkInstance m_Instance;
 	};
 }

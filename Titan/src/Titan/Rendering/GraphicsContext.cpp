@@ -13,6 +13,31 @@ namespace Titan
 {
 	void GraphicsContext::Initialize(const GraphicsContextInfo& info)
 	{
+
+		VkApplicationInfo appInfo{};
+		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		appInfo.pApplicationName = "Titan";
+		appInfo.applicationVersion = VK_API_VERSION_1_3;
+		appInfo.pEngineName = "No Engine";
+		appInfo.engineVersion = VK_API_VERSION_1_3;
+		appInfo.apiVersion = VK_API_VERSION_1_3;
+
+		VkInstanceCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		createInfo.pApplicationInfo = &appInfo;
+
+		uint32_t glfwExtensionCount = 0;
+		const char** glfwExtensions;
+
+		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+		createInfo.enabledExtensionCount = glfwExtensionCount;
+		createInfo.ppEnabledExtensionNames = glfwExtensions;
+
+		createInfo.enabledLayerCount = 0;
+
+		TN_VK_CHECK(vkCreateInstance(&createInfo, nullptr, &m_Instance));
+
 		IDXGIFactory4* dxgiFactory;
 		TN_DX_CHECK(CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory)));
 

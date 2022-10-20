@@ -40,6 +40,9 @@
     <Filter Include="src\Titan\Rendering">
       <UniqueIdentifier>{495B65AD-B5BC-42BB-3E2A-896DAA8A797A}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Rendering\Backend">
+      <UniqueIdentifier>{009B26D8-6CA8-54BE-F58E-50A9619B2075}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Rendering\Buffers">
       <UniqueIdentifier>{C5530107-3161-2FED-BA47-2BD82654FBA3}</UniqueIdentifier>
     </Filter>
@@ -155,6 +158,15 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h">
       <Filter>src\Titan\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Backend\Device.h">
+      <Filter>src\Titan\Rendering\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Backend\PhysicalDevice.h">
+      <Filter>src\Titan\Rendering\Backend</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Backend\Swapchain.h">
+      <Filter>src\Titan\Rendering\Backend</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffer.h">
       <Filter>src\Titan\Rendering\Buffers</Filter>
@@ -550,6 +562,15 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp">
       <Filter>src\Titan\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Backend\Device.cpp">
+      <Filter>src\Titan\Rendering\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Backend\PhysicalDevice.cpp">
+      <Filter>src\Titan\Rendering\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Backend\Swapchain.cpp">
+      <Filter>src\Titan\Rendering\Backend</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Buffers\ConstantBuffer.cpp">
       <Filter>src\Titan\Rendering\Buffers</Filter>
