@@ -504,6 +504,7 @@
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h">
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Pipeline\ShaderCompiler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -581,5 +582,6 @@
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <Filter>vendor\dx12helpers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Pipeline\ShaderCompiler.cpp" />
   </ItemGroup>
 </Project>
