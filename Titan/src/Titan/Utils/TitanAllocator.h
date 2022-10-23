@@ -14,8 +14,10 @@ namespace Titan
 
 	struct AllocatedImage
 	{
+		uint32_t id;
 		VkImage Image;
 		VmaAllocation allocation;
+		VkDeviceSize sizeOfBuffer;
 	};
 
 	class TitanAllocator
@@ -23,7 +25,7 @@ namespace Titan
 	public:
 		static void Initialize();
 		static void Allocate(AllocatedBuffer& allocation, VkBufferCreateInfo* bufferInfo, VmaAllocationCreateInfo* allocationInfo);
-		static void Allocate(AllocatedImage& allocation);
+		static void Allocate(AllocatedImage& allocation, VkImageCreateInfo* imageInfo, VmaAllocationCreateInfo* allocationInfo);
 		static void DeAllocate(AllocatedBuffer& allocation);
 		static void DeAllocate(AllocatedImage& allocation);
 

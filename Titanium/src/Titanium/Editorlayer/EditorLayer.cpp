@@ -42,6 +42,7 @@ namespace Titan
 			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/box01.glb");
 			entity.GetComponent<TransformComponent>().position.y = -10;
 		}
+
 		m_transformData.position.z = -5.f;
 	}
 

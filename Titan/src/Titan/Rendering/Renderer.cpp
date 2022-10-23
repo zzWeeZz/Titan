@@ -15,6 +15,8 @@
 #include <Titan/Rendering/Buffers/UniformBuffer.h>
 #include "Titan/Rendering/Buffers/UniformBuffers.h"
 #include <Optick/src/optick.h>
+#include "Titan/Assets/ResourceRegistry.h"
+#include <Titan/Assets/Texture/Texture.h>
 namespace Titan
 {
 	struct Cache
@@ -27,7 +29,7 @@ namespace Titan
 		Ref<Pipeline> pipeline;
 		CameraData cameraData = {};
 		Ref<UniformBuffer> cameraBuffer;
-
+		TitanID textureID;
 		ModelData modelData = {};
 		Ref<UniformBuffer> modelBuffer;
 
@@ -45,20 +47,24 @@ namespace Titan
 	}
 	void Renderer::Initialize()
 	{
-		VkDescriptorPoolSize poolSize{};
-		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSize.descriptorCount = g_FramesInFlight;
+		std::array<VkDescriptorPoolSize, 2> poolSize{};
+		poolSize[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		poolSize[0].descriptorCount = g_FramesInFlight;
+		poolSize[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		poolSize[1].descriptorCount = g_FramesInFlight;
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		poolInfo.poolSizeCount = 1;
-		poolInfo.pPoolSizes = &poolSize;
+		poolInfo.poolSizeCount = poolSize.size();
+		poolInfo.pPoolSizes = poolSize.data();
 
 		poolInfo.maxSets = g_FramesInFlight;
 
 		TN_VK_CHECK(vkCreateDescriptorPool(GraphicsContext::GetDevice().GetHandle(), &poolInfo, nullptr, &s_Cache->descriptorPool));
 		TitanAllocator::QueueDeletion([&]() {vkDestroyDescriptorPool(GraphicsContext::GetDevice().GetHandle(), s_Cache->descriptorPool, nullptr); });
 		
+		ResourceRegistry::GetItem<Texture>(s_Cache->textureID)->Initialize("Assets/Texture/Titan.png");
+
 		PipelineInfo info{};
 		info.vsPath = "Engine/Shaders/triangle_vs.spv";
 		info.psPath = "Engine/Shaders/triangle_fs.spv";
@@ -111,15 +117,28 @@ namespace Titan
 		bufferInfo.offset = 0;
 		bufferInfo.range = sizeof(CameraData);
 
-		VkWriteDescriptorSet descriptorWrite{};
-		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrite.dstBinding = 0;
-		descriptorWrite.descriptorCount = 1;
-		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrite.pBufferInfo = &bufferInfo;
-		descriptorWrite.dstSet = descriptorSets[GraphicsContext::GetCurrentFrame()];
+		auto texture = ResourceRegistry::GetItem<Texture>(s_Cache->textureID);
+		VkDescriptorImageInfo imageInfo{};
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		imageInfo.imageView = texture->GetView();
+		imageInfo.sampler = texture->GetSampler();
 
-		vkUpdateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), 1, &descriptorWrite, 0, nullptr);
+		std::array<VkWriteDescriptorSet, 2> descriptorWrite{};
+		descriptorWrite[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrite[0].dstBinding = 0;
+		descriptorWrite[0].descriptorCount = 1;
+		descriptorWrite[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrite[0].pBufferInfo = &bufferInfo;
+		descriptorWrite[0].dstSet = descriptorSets[GraphicsContext::GetCurrentFrame()];
+		
+		descriptorWrite[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrite[1].dstBinding = 1;
+		descriptorWrite[1].descriptorCount = 1;
+		descriptorWrite[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptorWrite[1].dstSet = descriptorSets[GraphicsContext::GetCurrentFrame()];
+		descriptorWrite[1].pImageInfo = &imageInfo;
+
+		vkUpdateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), descriptorWrite.size(), descriptorWrite.data(), 0, nullptr);
 
 
 		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);

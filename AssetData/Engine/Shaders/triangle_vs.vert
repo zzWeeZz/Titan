@@ -19,10 +19,12 @@ layout (push_constant) uniform pushConstant
 }constant;
 
 layout (location = 0) out vec3 u_FragColor;
+layout (location = 1) out vec2 u_TexCoord;
 
 void main()
 {
     mat4 mvp = mvpObject.proj * mvpObject.view * constant.mdlSpace;
     gl_Position = mvp * vec4(i_Position, 1.0);
     u_FragColor = vec3(i_Texcoord.x, i_Texcoord.y, 0);
+    u_TexCoord = i_Texcoord;
 }
