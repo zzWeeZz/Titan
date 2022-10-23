@@ -5,6 +5,7 @@
 #include "comdef.h"
 #include "vulkan/vulkan.h"
 #include "TitanID.h"
+#include "PlatformDetection.h"
 
 #define TN_CORE_TRACE(...) ::Titan::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define TN_CORE_INFO(...) ::Titan::Log::GetCoreLogger()->info(__VA_ARGS__)

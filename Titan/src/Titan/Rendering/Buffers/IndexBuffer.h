@@ -5,7 +5,7 @@ namespace Titan
 {
 	struct IndexBufferInfo
 	{
-		DWORD* indexData;
+		void* indexData;
 		size_t sizeOfArray;
 		std::wstring debugName;
 	};
@@ -19,8 +19,6 @@ namespace Titan
 		static Ref<IndexBuffer> Create(const IndexBufferInfo& info);
 		~IndexBuffer();
 	private:
-		WinRef<ID3D12Resource> m_IndexBuffer; // a default buffer in GPU memory that we will load vertex data for our triangle into
 		size_t m_IndexCount;
-		D3D12_INDEX_BUFFER_VIEW m_IndexBufferView;
 	};
 }

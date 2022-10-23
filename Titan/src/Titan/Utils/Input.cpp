@@ -22,6 +22,7 @@ namespace Titan
 		default:
 			break;
 		}
+		return false;
 	}
 	bool Input::MouseButton(MouseCode key, InputMode inputMode)
 	{
@@ -41,5 +42,6 @@ namespace Titan
 		default:
 			break;
 		}
+		return false;
 	}
 }

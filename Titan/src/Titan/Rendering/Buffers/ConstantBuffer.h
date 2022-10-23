@@ -13,7 +13,6 @@ namespace Titan
 		static Ref<ConstantBuffer> Create(size_t sizeOfObject);
 		~ConstantBuffer();
 	private:
-		std::array<WinRef<ID3D12Resource>, g_FrameCount> m_CBufferUploadHeap;
-		uint8_t* m_ConstantBufferGPUAddress[g_FrameCount];
+		
 	};
 }

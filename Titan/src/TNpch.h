@@ -9,6 +9,7 @@
 
 
 //Standard lib includes
+#include <optional>
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -18,8 +19,9 @@
 #include <istream>
 #include <vector>
 #include <ctime>
+#include <set>
 
-
+//Titan includes
 #include "Titan/Core/Core.h"
 
 #endif

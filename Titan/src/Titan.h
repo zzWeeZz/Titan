@@ -5,10 +5,12 @@
 #include "ft2build.h"
 
 #include "Titan/Application.h"
-#include "Titan/Layer.h"
 
+//TITAN CORE
 #include "Titan/Core/Log.h"
 #include "Titan/Core/TitanMemory.h"
+#include "Titan/EntryPoint.h"
+#include "Titan/Layer.h"
 
 //ECS SYSTEM
 #include "Titan/Scene/Scene.h"
@@ -17,4 +19,6 @@
 
 //IMGUI STUFF
 #include "Titan/ImGui/ImGuiLayer.h"
-#include "Titan/EntryPoint.h"
+
+//TITAN RENDERING
+#include "Titan/Rendering/Renderer.h"

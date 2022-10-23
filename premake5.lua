@@ -148,12 +148,21 @@ project "SandBox"
         "Titanium",
         externalLinks
     }
+    linkoptions 
+	{
+		"/ignore:4006",
+		"/ignore:4099"
+	}
 
     defines {"_CONSOLE"}
 
     filter "configurations:Debug"
 		runtime "Debug"
 		symbols "on"
+        defines
+        {
+            "TN_CONFIG_DEBUG"
+        }
         links
         {
             "Titan/vendor/freetype/lib/freetyped.lib",
@@ -163,6 +172,10 @@ project "SandBox"
 	filter "configurations:Release"
 		runtime "Release"
 		optimize "on"
+        defines
+        {
+            "TN_CONFIG_RELEASE"
+        }
         links
         {
             "Titan/vendor/freetype/lib/freetype.lib",
@@ -173,6 +186,10 @@ project "SandBox"
 		runtime "Release"
 		optimize "on"
         symbols "off"
+        defines
+        {
+            "TN_CONFIG_DIST"
+        }
         links
         {
             "Titan/vendor/freetype/lib/freetype.lib",
@@ -202,7 +219,7 @@ project "Titan"
     kind "StaticLib"
     language "C++"
     cppdialect "C++20"
-    
+    disablewarnings { "4996" }
     debugdir "AssetData/"
     
     pchheader "TNpch.h"
@@ -224,6 +241,7 @@ project "Titan"
         "Titan/vendor/stb_image/**.h",
         "Titan/vendor/dx12helpers/**.h",
         "Titan/vendor/dx12helpers/**.cpp",
+        "Titan/vendor/vma/**.h",
     }
     
     includedirs
@@ -244,22 +262,47 @@ project "Titan"
     {
         externalLinks
     }
+    linkoptions 
+	{
+		"/ignore:4006",
+		"/ignore:4099"
+	}
     
+    filter "files:Titan/vendor/**.h"
+        disablewarnings { "26451", "6387", "26812", "26439", "26800", "26495", "4717", "5232", "4067" }
+
+    filter "files:Titan/vendor/**.cpp"
+        flags {"noPCH"}
+        disablewarnings { "26451", "6387", "26812", "26439", "26800", "26495", "4717", "5232", "4067" }
+
+    filter "files:Titan/vendor/**.hpp"
+        disablewarnings { "26451", "6387", "26812", "26439", "26800", "26495", "4717", "5232", "4067" }
+
     defines {"_CONSOLE"}
     
     filter "configurations:Debug"
         runtime "Debug"
         symbols "on"
+        defines
+        {
+            "TN_CONFIG_DEBUG"
+        }
     
     filter "configurations:Release"
         runtime "Release"
         optimize "on"
-    
+        defines
+        {
+            "TN_CONFIG_RELEASE"
+        }
     filter "configurations:Dist"
         runtime "Release"
         optimize "on"
         symbols "off"
-
+        defines
+        {
+            "TN_CONFIG_DIST"
+        }
     filter "system:windows"
         symbols "On"		
         systemversion "latest"
@@ -268,6 +311,7 @@ project "Titan"
         { 
             "MultiProcessorCompile"
         }
+ 
 
 
 
@@ -301,6 +345,7 @@ project "Titan"
         "Titan/vendor/ImGui/",
         "Titan/vendor/freetype/Include/",
         "Titan/vendor/stb_image/",
+        "Titan/vendor/",
         externalIncludes
     }
     libdirs
@@ -311,12 +356,21 @@ project "Titan"
         "Titan",
         externalLinks
     }
+    linkoptions 
+	{
+		"/ignore:4006",
+		"/ignore:4099"
+	}
         
     defines {"_CONSOLE"}
         
     filter "configurations:Debug"
         runtime "Debug"
         symbols "on"
+        defines
+        {
+            "TN_CONFIG_DEBUG"
+        }
         links
         {
             "Titan/vendor/freetype/lib/freetyped.lib",
@@ -325,6 +379,10 @@ project "Titan"
     filter "configurations:Release"
         runtime "Release"
         optimize "on"
+        defines
+        {
+            "TN_CONFIG_RELEASE"
+        }
         links
         {
             "Titan/vendor/freetype/lib/freetype.lib",
@@ -334,6 +392,10 @@ project "Titan"
         runtime "Release"
         optimize "on"
         symbols "off"
+        defines
+        {
+            "TN_CONFIG_DIST"
+        }
         links
         {
             "Titan/vendor/freetype/lib/freetype.lib",
@@ -342,7 +404,6 @@ project "Titan"
     filter "system:windows"
         symbols "On"		
         systemversion "latest"
-    
         flags 
         { 
             "MultiProcessorCompile"

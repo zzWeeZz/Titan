@@ -11,14 +11,14 @@ namespace Titan
 	COMPONENT(ModelComponent)
 	{
 		REGISTER_COMPONENT("{564BFFF1-275D-48B8-B94B-32E3A9B138A9}"_guid);
-		TitanID modelHandle;
-		TitanID textureHandle;
+		TitanID modelHandle = {};
+		TitanID textureHandle = {};
 	};
 
 	inline void ModelSystem(ModelComponent& mdl, TransformComponent& tf)
 	{
 		static float time = 0;
-		time += 0.004;
+		time += 0.004f;
 		////tf.position.x = sinf(time);
 		tf.quaternion = glm::quat(cos(glm::radians(time / 2) * 10), 0, sin(glm::radians(time / 2) * 10) * 1, 0);
 		//tf.scale.x = (sinf(time) + 1.f) / 2.f;

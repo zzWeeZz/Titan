@@ -1,116 +1,142 @@
 #include "TNpch.h"
 #include "Pipeline.h"
-#include <dx12helpers/d3dx12.h>
 #include "Titan/Rendering/GraphicsContext.h"
 #include <Titan/Core/TitanFormats.h>
-#include <dxil/include/dxcapi.h>
-#include "Titan/Rendering/Pipeline/ShaderCompiler.h"
+#include "Titan/Utils/FilesystemUtils.h"
+#include "Titan/Utils/TitanAllocator.h"
+#include "Titan/Application.h"
 namespace Titan
 {
 	Pipeline::Pipeline(const PipelineInfo& info)
 	{
-		
-		ShaderCompiler vsCompiler(info.vsPath, ShaderStage::VS);
-		std::string errorString;
-		if (!vsCompiler.Compile(errorString))
-		{
-			TN_CORE_ERROR(errorString);
-		}
+		auto vertShaderModule = CreateShaderModule(info.vsPath);
+		auto fragShaderModule = CreateShaderModule(info.psPath);
 
-		ShaderCompiler psCompiler(info.psPath, ShaderStage::PS);
-		if (!psCompiler.Compile(errorString))
-		{
-			TN_CORE_ERROR(errorString);
-		}
+		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+		vertShaderStageInfo.module = vertShaderModule;
+		vertShaderStageInfo.pName = "main";
 
-		std::vector<D3D12_ROOT_PARAMETER> parameters;
-		vsCompiler.GetRootParameters(parameters);
-		psCompiler.GetRootParameters(parameters);
+		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+		fragShaderStageInfo.module = fragShaderModule;
+		fragShaderStageInfo.pName = "main";
 
-		// create a static sampler
-		D3D12_STATIC_SAMPLER_DESC sampler = {};
-		sampler.Filter = D3D12_FILTER_MIN_MAG_MIP_POINT;
-		sampler.AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		sampler.AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		sampler.AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
-		sampler.MipLODBias = 0;
-		sampler.MaxAnisotropy = 0;
-		sampler.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-		sampler.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
-		sampler.MinLOD = 0.0f;
-		sampler.MaxLOD = D3D12_FLOAT32_MAX;
-		sampler.ShaderRegister = 0;
-		sampler.RegisterSpace = 2;
-		sampler.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
-		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-		rootSignatureDesc.Init(parameters.size(),
-			parameters.data(),
-			1,
-			&sampler,
-			D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-		ID3DBlob* signature = nullptr;
-		ID3DBlob* errorBlob = nullptr;
-		TN_DX_CHECK(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &signature, &errorBlob));
-		if (errorBlob)
-		{
-			TN_CORE_ERROR((char*)errorBlob->GetBufferPointer());
-		}
+		std::vector<VkDynamicState> dynamicStates = {
+			VK_DYNAMIC_STATE_VIEWPORT,
+			VK_DYNAMIC_STATE_SCISSOR
+		};
 
-		TN_DX_CHECK(GraphicsContext::Device()->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(m_RootSignature.GetAddressOf())));
+		VkPipelineDynamicStateCreateInfo dynamicState{};
+		dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+		dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+		dynamicState.pDynamicStates = dynamicStates.data();
 
-		
+		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+		inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		inputAssembly.primitiveRestartEnable = VK_FALSE;
 
-		std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayoutDesc;
-		vsCompiler.GetInputLayout(inputLayoutDesc);
-		D3D12_INPUT_LAYOUT_DESC inputLayout;
-		inputLayout.NumElements = static_cast<UINT>(inputLayoutDesc.size());
-		inputLayout.pInputElementDescs = inputLayoutDesc.data();
+		VkViewport viewport{};
+		viewport.x = 0.0f;
+		viewport.y = 0.0f;
+		viewport.width = (float)Application::GetWindow().GetWidth();
+		viewport.height = (float)Application::GetWindow().GetHeight();
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
 
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc{};
-		pipelineDesc.VS = {vsCompiler.GetBlob()->GetBufferPointer(), vsCompiler.GetBlob()->GetBufferSize()};
-		pipelineDesc.PS = { psCompiler.GetBlob()->GetBufferPointer(), psCompiler.GetBlob()->GetBufferSize() };
-		pipelineDesc.pRootSignature = m_RootSignature.Get();
-		pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		pipelineDesc.InputLayout = inputLayout;
-		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		pipelineDesc.NumRenderTargets = 1;
-		pipelineDesc.SampleMask = 0xffffffff;
-		pipelineDesc.SampleDesc.Count = 1;
-		pipelineDesc.DSVFormat = (DXGI_FORMAT)45;
-		pipelineDesc.DepthStencilState = GetDepthStencilDesc(info.depthState, info.depthCullState);
+		VkRect2D scissor{};
+		scissor.offset = { 0, 0 };
+		scissor.extent = GraphicsContext::GetSwapchain().GetExtent();
 
-		pipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		pipelineDesc.RasterizerState.FrontCounterClockwise = TRUE;
-		pipelineDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		VkPipelineViewportStateCreateInfo viewportState{};
+		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+		viewportState.viewportCount = 1;
+		viewportState.pViewports = &viewport;
+		viewportState.scissorCount = 1;
+		viewportState.pScissors = &scissor;
 
-		TN_DX_CHECK(GraphicsContext::Device()->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(m_PipelineStateObject.GetAddressOf())));
-		TN_CORE_INFO("Pipeline created");
+		VkPipelineRasterizationStateCreateInfo rasterizer{};
+		rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+		rasterizer.rasterizerDiscardEnable = VK_FALSE;
+		rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+		rasterizer.lineWidth = 1.0f;
+		rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+		rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+		rasterizer.depthBiasEnable = VK_FALSE;
+		rasterizer.depthBiasConstantFactor = 0.0f; // Optional
+		rasterizer.depthBiasClamp = 0.0f; // Optional
+		rasterizer.depthBiasSlopeFactor = 0.0f; // Optional
+
+		VkPipelineMultisampleStateCreateInfo multisampling{};
+		multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+		multisampling.sampleShadingEnable = VK_FALSE;
+		multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+		multisampling.minSampleShading = 1.0f; // Optional
+		multisampling.pSampleMask = nullptr; // Optional
+		multisampling.alphaToCoverageEnable = VK_FALSE; // Optional
+		multisampling.alphaToOneEnable = VK_FALSE; // Optional
+
+		VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+		colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		colorBlendAttachment.blendEnable = VK_FALSE;
+		colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
+		colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
+		colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD; // Optional
+		colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
+		colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
+		colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD; // Optional
+
+		VkPipelineColorBlendStateCreateInfo colorBlending{};
+		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+		colorBlending.logicOpEnable = VK_FALSE;
+		colorBlending.logicOp = VK_LOGIC_OP_COPY; // Optional
+		colorBlending.attachmentCount = 1;
+		colorBlending.pAttachments = &colorBlendAttachment;
+		colorBlending.blendConstants[0] = 0.0f; // Optional
+		colorBlending.blendConstants[1] = 0.0f; // Optional
+		colorBlending.blendConstants[2] = 0.0f; // Optional
+		colorBlending.blendConstants[3] = 0.0f; // Optional
+
+		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		pipelineLayoutInfo.setLayoutCount = 0; // Optional
+		pipelineLayoutInfo.pSetLayouts = nullptr; // Optional
+		pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
+		pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
+
+		TN_VK_CHECK(vkCreatePipelineLayout(GraphicsContext::GetDevice().GetHandle(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout));
+		TitanAllocator::DestructionQueue.PushFunction([&]() { vkDestroyPipelineLayout(GraphicsContext::GetDevice().GetHandle(), m_PipelineLayout, nullptr); });
+
+
+		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), vertShaderModule, nullptr);
+		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), fragShaderModule, nullptr);
 	}
 	void Pipeline::Bind()
 	{
-		GraphicsContext::CommandList()->SetPipelineState(m_PipelineStateObject.Get());
-		GraphicsContext::CommandList()->SetGraphicsRootSignature(m_RootSignature.Get());
-		GraphicsContext::CommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	
 	}
 	Ref<Pipeline> Pipeline::Create(const PipelineInfo& info)
 	{
 		return CreateRef<Pipeline>(info);
 	}
 
-	D3D12_DEPTH_STENCIL_DESC Pipeline::GetDepthStencilDesc(const DepthState& state, const CullState& depthCull)
+	VkShaderModule Pipeline::CreateShaderModule(const std::filesystem::path& shaderPath)
 	{
-		const D3D12_DEPTH_STENCILOP_DESC stencil = { D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_STENCIL_OP_KEEP, D3D12_COMPARISON_FUNC_ALWAYS };
-		D3D12_DEPTH_STENCIL_DESC desc{};
-		desc.BackFace = stencil;
-		desc.FrontFace = stencil;
+		std::vector<char> byteVector;
+		FilesystemUtils::ReadBinary(shaderPath, byteVector);
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = byteVector.size();
+		createInfo.pCode = reinterpret_cast<const uint32_t*>(byteVector.data());
 
-		desc.DepthEnable = TRUE;
-		desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-		desc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-		desc.StencilEnable = FALSE;
-		desc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-		desc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-		return desc;
+		VkShaderModule shaderModule;
+		TN_VK_CHECK(vkCreateShaderModule(GraphicsContext::GetDevice().GetHandle(), &createInfo, nullptr, &shaderModule));
+		return shaderModule;
 	}
+
 }

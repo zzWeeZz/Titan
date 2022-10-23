@@ -33,7 +33,7 @@ namespace Titan
 	{
 		WinRef<IDxcCompiler3> compiler;
 		TN_DX_CHECK(DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(compiler.GetAddressOf())));
-		pUtils->CreateBlob(m_ShaderFile.c_str(), m_ShaderFile.size(), CP_UTF8, m_Blob.GetAddressOf());
+		pUtils->CreateBlob(m_ShaderFile.c_str(), static_cast<UINT>(m_ShaderFile.size()), CP_UTF8, m_Blob.GetAddressOf());
 
 
 		DxcBuffer sourceBuffer;
@@ -86,7 +86,7 @@ namespace Titan
 		arguments.push_back(DXC_ARG_DEBUG); //-Zi
 		arguments.push_back(DXC_ARG_PACK_MATRIX_ROW_MAJOR); //-Zp
 
-		compiler->Compile(&sourceBuffer, arguments.data(), arguments.size(), nullptr, IID_PPV_ARGS(m_Result.GetAddressOf()));
+		compiler->Compile(&sourceBuffer, arguments.data(), static_cast<UINT>(arguments.size()), nullptr, IID_PPV_ARGS(m_Result.GetAddressOf()));
 
 		WinRef<IDxcBlobUtf8> pErrors;
 		m_Result->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(pErrors.GetAddressOf()), nullptr);
@@ -177,11 +177,10 @@ namespace Titan
 		D3D12_SHADER_DESC desc;
 		pReflector->GetDesc(&desc);
 
-
 		for (size_t i = 0; i < desc.BoundResources; ++i)
 		{
 			D3D12_SHADER_INPUT_BIND_DESC inputBinDesc;
-			pReflector->GetResourceBindingDesc(i, &inputBinDesc);
+			pReflector->GetResourceBindingDesc(static_cast<UINT>(i), &inputBinDesc);
 			if (inputBinDesc.Type == D3D10_SIT_CBUFFER)
 			{
 				auto& range = outRootPrameters.emplace_back();

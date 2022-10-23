@@ -11,21 +11,34 @@ namespace Titan
 	inline TitanID CreateID()
 	{
 		UUID uuid;
-		UuidCreate(&uuid);
+		auto re = UuidCreate(&uuid);
+		if (re)
+		{
+			return uuid;
+		}
 		return uuid;
 	}
 	inline TitanID GetIDFromString(const char* str)
 	{
 		UUID uuid;
-		UuidFromStringA(*(RPC_CSTR*)&str, &uuid);
+		auto re = UuidFromStringA(*(RPC_CSTR*)&str, &uuid);
+		if (re)
+		{
+			return uuid;
+		}
 		return uuid;
 	}
 	inline std::string GetStringOfID(TitanID id)
 	{
 		char* str;
-		UuidToStringA(&id, (RPC_CSTR*)&str);
+		auto re = UuidToStringA(&id, (RPC_CSTR*)&str);
+		
 		std::string returnValue(str);
 		RpcStringFreeA((RPC_CSTR*)&str);
+		if (re)
+		{
+			return returnValue;
+		}
 		return returnValue;
 	}
 	struct TitanIDComparer

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <d3d12.h>
 #include "glm/glm.hpp"
 #include "Titan/Rendering/Buffers/VertexPacket.h"
 namespace Titan
@@ -30,7 +29,5 @@ namespace Titan
 		static void DrawCommands();
 		static void Shutdown();
 	private:
-		static void CopyResource(ID3D12Resource* dest, ID3D12Resource* source);
-		static void InitializePipelines();
 	};
 }

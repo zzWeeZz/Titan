@@ -3,7 +3,7 @@ project "Optick"
 	language "C++"
 	cppdialect "C++17"
     staticruntime "off"
-
+	warnings "Off"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
@@ -20,7 +20,11 @@ project "Optick"
 		"d3dcompiler.lib",
 		"dxguid.lib",
 	}
-
+	linkoptions 
+	{
+		"/ignore:4006",
+		"/ignore:4099"
+	}
 	defines
 	{
 		"_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"

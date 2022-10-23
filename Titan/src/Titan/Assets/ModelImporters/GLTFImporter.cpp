@@ -110,7 +110,7 @@ namespace Titan
 			}
 		}
 
-		VertexBufferInfo vInfo{};
+		/*VertexBufferInfo vInfo{};
 		vInfo.vertexData = tempVertices.data();
 		vInfo.sizeOfData = tempVertices.size();
 		vInfo.sizeOfVertex = sizeof(Vertex);
@@ -118,7 +118,7 @@ namespace Titan
 		IndexBufferInfo iInfo{};
 		iInfo.indexData = tempIndex.data();
 		iInfo.sizeOfArray = tempIndex.size();
-		outVertex.indexBuffer = IndexBuffer::Create(iInfo);
+		outVertex.indexBuffer = IndexBuffer::Create(iInfo);*/
 
 		TN_CORE_INFO("Done Loading {0}", filepath.string());
 	}

@@ -9,7 +9,7 @@
 #include "Titan/Rendering/Renderer.h"
 #include "Titan/Assets/ResourceRegistry.h"
 #include <Optick/src/optick.h>
-
+#include "Titan/Utils/TitanAllocator.h"
 Titan::Application::Application() : m_Running(true)
 {
 	s_Window = Ref<Window>(Window::Create());
@@ -38,7 +38,10 @@ void Titan::Application::Run()
 		Renderer::DrawCommands();
 	}
 	ResourceRegistry::Dump();
+	TitanAllocator::DestructionQueue.Flush();
 	Renderer::Shutdown();
+	GraphicsContext::Shutdown();
+	
 }
 
 void Titan::Application::OnEvent(Event& e)

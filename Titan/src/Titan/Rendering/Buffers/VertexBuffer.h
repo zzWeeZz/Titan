@@ -9,7 +9,7 @@ namespace Titan
 		void* vertexData = nullptr;
 		size_t sizeOfData = 0;
 		size_t sizeOfVertex = 0;
-		std::wstring debugName = L"";
+		std::string debugName = "";
 	};
 	class VertexBuffer
 	{
@@ -22,9 +22,5 @@ namespace Titan
 	private:
 		size_t m_SizeOfVertex;
 
-		WinRef<ID3D12Resource> m_VertexBuffer; // a default buffer in GPU memory that we will load vertex data for our triangle into
-
-		D3D12_VERTEX_BUFFER_VIEW m_VertexBufferView; // a structure containing a pointer to the vertex data in gpu memory
-												   // the total size of the buffer, and the size of each element (vertex)
 	};
 }

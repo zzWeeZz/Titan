@@ -88,6 +88,9 @@
     <Filter Include="vendor\tinygltf">
       <UniqueIdentifier>{53CDE522-BF58-53E7-C869-D6DB3474AFE7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\vma">
+      <UniqueIdentifier>{66DFC5A8-5297-07F6-BB9E-E051A775A2E6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\TNpch.h">
@@ -127,6 +130,9 @@
       <Filter>src\Titan\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Core\Log.h">
+      <Filter>src\Titan\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Core\PlatformDetection.h">
       <Filter>src\Titan\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Core\TitanFormats.h">
@@ -217,6 +223,9 @@
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Utils\MouseCode.h">
+      <Filter>src\Titan\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Utils\TitanAllocator.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Window.h">
@@ -519,6 +528,10 @@
     <ClInclude Include="vendor\tinygltf\tiny_gltf.h">
       <Filter>vendor\tinygltf</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\vma\vk_mem_alloc.h">
+      <Filter>vendor\vma</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Utils\FilesystemUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -605,8 +618,12 @@
     <ClCompile Include="src\Titan\Utils\Input.cpp">
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Utils\TitanAllocator.cpp">
+      <Filter>src\Titan\Utils</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <Filter>vendor\dx12helpers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Utils\FilesystemUtils.cpp" />
   </ItemGroup>
 </Project>
