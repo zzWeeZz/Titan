@@ -22,6 +22,7 @@ namespace Titan
 	{
 		friend class Swapchain;
 	public:
+		static uint32_t& GetCurrentFrame() { return s_CurrentFrame; }
 		static void Initialize(const GraphicsContextInfo& info);
 		static const GraphicsContextInfo& GetInfo() { return s_Info; }
 		static Device& GetDevice() { return s_Device; }
@@ -47,5 +48,6 @@ namespace Titan
 		inline static VkInstance s_Instance;
 		inline static VkSurfaceKHR s_Surface;
 		inline static VkDebugUtilsMessengerEXT s_DebugMessanger;
+		inline static uint32_t s_CurrentFrame;
 	};
 }

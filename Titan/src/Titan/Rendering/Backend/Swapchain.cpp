@@ -5,26 +5,72 @@
 #include "Titan/Application.h"
 #include "GLFW/glfw3.h"
 #include "Titan/Rendering/GraphicsContext.h"
+#include "Titan/Utils/TitanAllocator.h"
 namespace Titan
 {
 	void Swapchain::Create(PhysicalDevice& physicalDevice, Device& device)
+	{
+		Validate(physicalDevice, device);
+	}
+	VkImage& Swapchain::GetImage(size_t index)
+	{
+		return m_SwapchainImages[index];
+	}
+	VkImageView& Swapchain::GetCurrentView(size_t index)
+	{
+		return m_SwapchainViews[index];
+	}
+	void Swapchain::Resize(size_t width, size_t height)
+	{
+		CleanUp();
+		Shutdown(GraphicsContext::GetDevice());
+		Validate(GraphicsContext::GetPhysicalDevice(), GraphicsContext::GetDevice(), (int32_t)width, (int32_t)height);
+	}
+	void Swapchain::CleanUp()
+	{
+		auto& device = GraphicsContext::GetDevice();
+		for (size_t i = 0; i < g_FramesInFlight; ++i)
+		{
+			vkDestroyImageView(device.GetHandle(), m_SwapchainViews[i], nullptr);
+		}
+		vkDestroySwapchainKHR(device.GetHandle(), m_Swapchain, nullptr);
+	}
+	void Swapchain::Shutdown(Device& device)
+	{
+		for (size_t i = 0; i < g_FramesInFlight; ++i)
+		{
+			vkDestroySemaphore(device.GetHandle(), m_ImageAvailableSemaphores[i], nullptr);
+			vkDestroySemaphore(device.GetHandle(), m_RenderFinishedSemaphores[i], nullptr);
+			vkDestroyFence(device.GetHandle(), m_InFlightFences[i], nullptr);
+		}
+	}
+	void Swapchain::Validate(PhysicalDevice& physicalDevice, Device& device, int32_t width, int32_t height)
 	{
 		SwapChainSupportDetails supportDetails;
 		GraphicsContext::QuerySwapchainSupport(supportDetails);
 
 		VkSurfaceFormatKHR surfaceFormat = ChooseSwapchainFormat(supportDetails.formats);
 		VkPresentModeKHR presentMode = ChooseSwapchainPresentMode(supportDetails.presentModes);
+		
 		VkExtent2D extent = ChooseSwapchainExtent(supportDetails.capabilities);
 
+	
 		m_SwapchainFormat = surfaceFormat.format;
-		m_SwapchainExtent = extent;
+		if (width < 0 || height < 0)
+		{
+			m_SwapchainExtent = extent;
+		}
+		else
+		{
+			m_SwapchainExtent.height = height;
+			m_SwapchainExtent.width = width;
+		}
 
 		uint32_t imageCount = supportDetails.capabilities.minImageCount + 1;
 		if (supportDetails.capabilities.maxImageCount > 0 && imageCount > supportDetails.capabilities.maxImageCount)
 		{
 			imageCount = supportDetails.capabilities.maxImageCount;
 		}
-
 		VkSwapchainCreateInfoKHR createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 		createInfo.surface = GraphicsContext::GetSurface();
@@ -32,11 +78,11 @@ namespace Titan
 		createInfo.minImageCount = imageCount;
 		createInfo.imageFormat = surfaceFormat.format;
 		createInfo.imageColorSpace = surfaceFormat.colorSpace;
-		createInfo.imageExtent = extent;
+		createInfo.imageExtent = m_SwapchainExtent;
 		createInfo.imageArrayLayers = 1;
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-		QueueFamilyIndices indices = physicalDevice.FindQueueFamilies();
+		QueueFamilyIndices indices = GraphicsContext::GetPhysicalDevice().FindQueueFamilies();
 		uint32_t queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentFamily.value() };
 
 		if (indices.graphicsFamily != indices.presentFamily)
@@ -59,7 +105,6 @@ namespace Titan
 		createInfo.clipped = VK_TRUE;
 		createInfo.oldSwapchain = VK_NULL_HANDLE;
 		TN_VK_CHECK(vkCreateSwapchainKHR(device.GetHandle(), &createInfo, nullptr, &m_Swapchain));
-
 		vkGetSwapchainImagesKHR(device.GetHandle(), m_Swapchain, &imageCount, nullptr);
 		m_SwapchainImages.resize(imageCount);
 		vkGetSwapchainImagesKHR(device.GetHandle(), m_Swapchain, &imageCount, m_SwapchainImages.data());
@@ -74,7 +119,7 @@ namespace Titan
 
 			viewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 			viewCreateInfo.format = m_SwapchainFormat;
-			
+
 			viewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
 			viewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
 			viewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
@@ -88,14 +133,23 @@ namespace Titan
 
 			TN_VK_CHECK(vkCreateImageView(GraphicsContext::GetDevice().GetHandle(), &viewCreateInfo, nullptr, &m_SwapchainViews[i]));
 		}
+		CreateSyncObject();
 	}
-	void Swapchain::Shutdown(Device& device)
+	void Swapchain::CreateSyncObject()
 	{
-		for (auto imageView : m_SwapchainViews)
+		auto& device = GraphicsContext::GetDevice().GetHandle();
+		VkSemaphoreCreateInfo semaphoreInfo{};
+		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		VkFenceCreateInfo fenceInfo{};
+		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+		for (size_t i = 0; i < g_FramesInFlight; ++i)
 		{
-			vkDestroyImageView(GraphicsContext::GetDevice().GetHandle(), imageView, nullptr);
+			TN_VK_CHECK(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphores[i]));
+			TN_VK_CHECK(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphores[i]));
+			TN_VK_CHECK(vkCreateFence(device, &fenceInfo, nullptr, &m_InFlightFences[i]));
 		}
-		vkDestroySwapchainKHR(device.GetHandle(), m_Swapchain, nullptr);
 	}
 	VkSurfaceFormatKHR Swapchain::ChooseSwapchainFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 	{

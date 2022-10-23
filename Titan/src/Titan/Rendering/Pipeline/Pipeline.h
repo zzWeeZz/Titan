@@ -16,11 +16,14 @@ namespace Titan
 	{
 	public:
 		Pipeline(const PipelineInfo& info);
-		void Bind();
+
+		VkPipeline& GetHandle() { return m_Pipeline; }
+
 		static Ref<Pipeline> Create(const PipelineInfo& info);
 	private:
 		VkShaderModule CreateShaderModule(const std::filesystem::path& shaderPath);
 
 		VkPipelineLayout m_PipelineLayout;
+		VkPipeline m_Pipeline;
 	};
 }

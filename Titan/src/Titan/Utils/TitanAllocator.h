@@ -1,26 +1,9 @@
 #pragma once
 #include "vma/vk_mem_alloc.h"
 #include <deque>
+#include <functional>
 namespace Titan
 {
-	struct DeletionQueue
-	{
-		std::deque<std::function<void()>> deletors;
-		void PushFunction(std::function<void()>&& func)
-		{
-			deletors.push_back(func);
-		}
-
-		void Flush()
-		{
-			for (auto it = deletors.begin(); it != deletors.end(); ++it)
-			{
-				(*it)();
-			}
-			deletors.clear();
-		}
-	};
-
 	struct AllocatedBuffer
 	{
 		VkBuffer buffer;
@@ -39,8 +22,10 @@ namespace Titan
 		static void Initialize();
 		static void Allocate(AllocatedBuffer& allocation);
 		static void Allocate(AllocatedImage& allocation);
-		inline static DeletionQueue DestructionQueue;
+		static void QueueDeletion(std::function<void()>&& func);
+		static void Flush();
 	private:
 		inline static VmaAllocator s_Allocator;
+		inline static std::deque<std::function<void()>> s_DestructionQueue;
 	};
 }

@@ -33,12 +33,11 @@ void Titan::Application::Run()
 		}
 		s_Window->OnUpdate();
 		Renderer::Begin();
-		Renderer::End();
-
-		Renderer::DrawCommands();
 	}
 	ResourceRegistry::Dump();
-	TitanAllocator::DestructionQueue.Flush();
+	
+	GraphicsContext::GetSwapchain().CleanUp();
+	TitanAllocator::Flush();
 	Renderer::Shutdown();
 	GraphicsContext::Shutdown();
 	
@@ -49,6 +48,11 @@ void Titan::Application::OnEvent(Event& e)
 	if (e.GetEventType() == EventType::WindowClose)
 	{
 		m_Running = false;
+	}
+	if (e.GetEventType() == EventType::WindowResize)
+	{
+		auto resize = *reinterpret_cast<WindowResizeEvent*>(&e);
+		GraphicsContext::GetSwapchain().Resize(resize.GetWidth(), resize.GetHeight());
 	}
 	for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 	{

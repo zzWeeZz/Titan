@@ -7,6 +7,12 @@
 #include "TitanID.h"
 #include "PlatformDetection.h"
 
+constexpr uint32_t g_FramesInFlight = 3;
+template<typename T>
+using PreFrameInFlight = std::array<T, g_FramesInFlight>;
+
+#define TN_BIND_FUNC(X) std::bind(&X, this, std::placeholders::_1)
+
 #define TN_CORE_TRACE(...) ::Titan::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define TN_CORE_INFO(...) ::Titan::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define TN_CORE_WARN(...) ::Titan::Log::GetCoreLogger()->warn(__VA_ARGS__)

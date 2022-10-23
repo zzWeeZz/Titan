@@ -287,6 +287,10 @@ project "Titan"
         {
             "TN_CONFIG_DEBUG"
         }
+        links
+        {
+            externalDebugLinks
+        }
     
     filter "configurations:Release"
         runtime "Release"
@@ -295,6 +299,10 @@ project "Titan"
         {
             "TN_CONFIG_RELEASE"
         }
+        links
+        {
+            externalReleaseLinks
+        }
     filter "configurations:Dist"
         runtime "Release"
         optimize "on"
@@ -302,6 +310,10 @@ project "Titan"
         defines
         {
             "TN_CONFIG_DIST"
+        }
+        links
+        {
+            externalReleaseLinks
         }
     filter "system:windows"
         symbols "On"		

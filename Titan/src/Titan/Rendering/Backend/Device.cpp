@@ -1,6 +1,7 @@
 #include "TNpch.h"
 #include "Device.h"
 #include "Titan/Rendering/GraphicsContext.h"
+#include "Titan/Utils/TitanAllocator.h"
 namespace Titan
 {
 	void Device::Create(PhysicalDevice& physicalDevice, const std::vector<const char*> validationLayers)
@@ -60,12 +61,43 @@ namespace Titan
 
 		vkGetDeviceQueue(m_Device, indices.graphicsFamily.value(), 0, &m_GraphicsQueue);
 		vkGetDeviceQueue(m_Device, indices.presentFamily.value(), 0, &m_PresentQueue);
-
+		CreateCommandPools(physicalDevice);
 	}
+
 	void Device::Shutdown()
 	{
 		vkDestroyDevice(m_Device, nullptr);
 	}
+
+	void Device::CreateCommandPools(PhysicalDevice& physicalDevice, size_t amount)
+	{
+		QueueFamilyIndices indices = physicalDevice.FindQueueFamilies();
+		m_CommandPools.resize(amount);
+		m_CommandBuffers.resize(amount);
+		
+		for (size_t i = 0; i < amount; ++i)
+		{
+			VkCommandPoolCreateInfo poolInfo{};
+			poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+			poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+			poolInfo.queueFamilyIndex = indices.graphicsFamily.value();
+
+			TN_VK_CHECK(vkCreateCommandPool(m_Device, &poolInfo, nullptr, &m_CommandPools[i]));
+
+			VkCommandBufferAllocateInfo allocInfo{};
+			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+			allocInfo.commandPool = m_CommandPools[i];
+			allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+			allocInfo.commandBufferCount = g_FramesInFlight;
+
+			TN_VK_CHECK(vkAllocateCommandBuffers(m_Device, &allocInfo, m_CommandBuffers[i].data()));
+		}
+		for (size_t i = 0; i < amount; ++i)
+		{
+			TitanAllocator::QueueDeletion([&, i]() { vkDestroyCommandPool(m_Device, m_CommandPools[i], nullptr); });
+		}
+	}
+
 	bool Device::CheckDeviceExtensionSupport(PhysicalDevice& physicalDevice, const std::vector<const char*> deviceExtensions)
 	{
 		uint32_t extensionCount;

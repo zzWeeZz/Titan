@@ -216,6 +216,9 @@
     <ClInclude Include="src\Titan\Scene\Scene.h">
       <Filter>src\Titan\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Utils\FilesystemUtils.h">
+      <Filter>src\Titan\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Utils\Input.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
@@ -531,7 +534,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Utils\FilesystemUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -615,6 +617,9 @@
     <ClCompile Include="src\Titan\Scene\Scene.cpp">
       <Filter>src\Titan\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Utils\FilesystemUtils.cpp">
+      <Filter>src\Titan\Utils</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Utils\Input.cpp">
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
@@ -624,6 +629,5 @@
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <Filter>vendor\dx12helpers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Utils\FilesystemUtils.cpp" />
   </ItemGroup>
 </Project>
