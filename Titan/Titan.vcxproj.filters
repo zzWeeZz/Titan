@@ -174,10 +174,7 @@
     <ClInclude Include="src\Titan\Rendering\Backend\Swapchain.h">
       <Filter>src\Titan\Rendering\Backend</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffer.h">
-      <Filter>src\Titan\Rendering\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffers.h">
+    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffers.h">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h">
@@ -534,6 +531,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -587,9 +585,6 @@
     <ClCompile Include="src\Titan\Rendering\Backend\Swapchain.cpp">
       <Filter>src\Titan\Rendering\Backend</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\Buffers\ConstantBuffer.cpp">
-      <Filter>src\Titan\Rendering\Buffers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClCompile>
@@ -629,5 +624,6 @@
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <Filter>vendor\dx12helpers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Buffers\UniformBuffer.cpp" />
   </ItemGroup>
 </Project>

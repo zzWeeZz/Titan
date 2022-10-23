@@ -9,7 +9,7 @@
 
 constexpr uint32_t g_FramesInFlight = 3;
 template<typename T>
-using PreFrameInFlight = std::array<T, g_FramesInFlight>;
+using PerFrameInFlight = std::array<T, g_FramesInFlight>;
 
 #define TN_BIND_FUNC(X) std::bind(&X, this, std::placeholders::_1)
 

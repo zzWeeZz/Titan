@@ -12,8 +12,8 @@
 #include <Titan/Rendering/Vertices.h>
 #include <Titan/Rendering/Framebuffer.h>
 #include <dx12helpers/d3dx12.h>
-#include <Titan/Rendering/Buffers/ConstantBuffer.h>
-#include "Titan/Rendering/Buffers/ConstantBuffers.h"
+#include <Titan/Rendering/Buffers/UniformBuffer.h>
+#include "Titan/Rendering/Buffers/UniformBuffers.h"
 #include <Optick/src/optick.h>
 namespace Titan
 {
@@ -21,30 +21,81 @@ namespace Titan
 	{
 		CameraCmd currentCamera = {};
 		std::vector<MeshCmd> meshCmds;
-
+		Ref<VertexBuffer> vbtest;
+		Ref<IndexBuffer> ibtest;
 		Ref<Framebuffer> testFB;
 		Ref<Pipeline> pipeline;
 		CameraData cameraData = {};
-		Ref<ConstantBuffer> cameraBuffer;
+		Ref<UniformBuffer> cameraBuffer;
 
 		ModelData modelData = {};
-		Ref<ConstantBuffer> modelBuffer;
+		Ref<UniformBuffer> modelBuffer;
 
+		VkDescriptorPool descriptorPool;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
+	static PerFrameInFlight<VkDescriptorSet> descriptorSets;
 	void Renderer::Submit(const CameraCmd& cameraCmd)
 	{
 		s_Cache->currentCamera = cameraCmd;
 	}
 	void Renderer::Submit(const MeshCmd& meshCmd)
 	{
+		s_Cache->meshCmds.push_back(meshCmd);
 	}
 	void Renderer::Initialize()
 	{
+		VkDescriptorPoolSize poolSize{};
+		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		poolSize.descriptorCount = g_FramesInFlight;
+
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.poolSizeCount = 1;
+		poolInfo.pPoolSizes = &poolSize;
+
+		poolInfo.maxSets = g_FramesInFlight;
+
+		TN_VK_CHECK(vkCreateDescriptorPool(GraphicsContext::GetDevice().GetHandle(), &poolInfo, nullptr, &s_Cache->descriptorPool));
+		TitanAllocator::QueueDeletion([&]() {vkDestroyDescriptorPool(GraphicsContext::GetDevice().GetHandle(), s_Cache->descriptorPool, nullptr); });
+		
 		PipelineInfo info{};
 		info.vsPath = "Engine/Shaders/triangle_vs.spv";
 		info.psPath = "Engine/Shaders/triangle_fs.spv";
 		s_Cache->pipeline = Pipeline::Create(info);
+		const std::vector<Vertex> vertices = {
+			{{-0.5f, -0.5f, 0}, {1.0f, 0.0f, 0.0f}},
+			{{0.5f, -0.5f, 0}, {0.0f, 1.0f, 0.0f}},
+			{{0.5f, 0.5f, 0}, {0.0f, 0.0f, 1.0f}},
+			{{-0.5f, 0.5f, 0}, {1.0f, 1.0f, 1.0f}}
+		};
+		VertexBufferInfo vbInfo{};
+		vbInfo.sizeOfArray = vertices.size();
+		vbInfo.sizeOfVertex = sizeof(Vertex);
+		vbInfo.vertexData = (void*)vertices.data();
+
+		const std::vector<uint32_t> indices = {
+			0, 1, 2, 2, 3, 0
+		};
+
+		IndexBufferInfo ibInfo{};
+		ibInfo.indexData = (void*)indices.data();
+		ibInfo.sizeOfArray = indices.size();
+
+		s_Cache->vbtest = VertexBuffer::Create(vbInfo);
+		s_Cache->ibtest = IndexBuffer::Create(ibInfo);
+
+		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
+
+		std::vector<VkDescriptorSetLayout> layouts(g_FramesInFlight, s_Cache->pipeline->DescLayout());
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = s_Cache->descriptorPool;
+		allocInfo.descriptorSetCount = (g_FramesInFlight);
+		allocInfo.pSetLayouts = layouts.data();
+
+
+		TN_VK_CHECK(vkAllocateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), &allocInfo, descriptorSets.data()));
 	}
 
 	void Renderer::Begin()
@@ -54,6 +105,22 @@ namespace Titan
 		auto& swapchain = GraphicsContext::GetSwapchain();
 		auto& device = GraphicsContext::GetDevice();
 		auto& handle = s_Cache->pipeline->GetHandle();
+
+		VkDescriptorBufferInfo bufferInfo{};
+		bufferInfo.buffer = s_Cache->cameraBuffer->GetAllocation().buffer;
+		bufferInfo.offset = 0;
+		bufferInfo.range = sizeof(CameraData);
+
+		VkWriteDescriptorSet descriptorWrite{};
+		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrite.dstBinding = 0;
+		descriptorWrite.descriptorCount = 1;
+		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrite.pBufferInfo = &bufferInfo;
+		descriptorWrite.dstSet = descriptorSets[GraphicsContext::GetCurrentFrame()];
+
+		vkUpdateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), 1, &descriptorWrite, 0, nullptr);
+
 
 		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		vkResetFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame));
@@ -123,6 +190,7 @@ namespace Titan
 		};
 		auto BeginRendering = (PFN_vkCmdBeginRenderingKHR)vkGetInstanceProcAddr(GraphicsContext::GetInstance(), "vkCmdBeginRenderingKHR");
 		BeginRendering(commandBuffer, &render_info);
+
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, handle);
 		VkViewport viewport{};
 		viewport.x = 0.0f;
@@ -137,7 +205,28 @@ namespace Titan
 		scissor.offset = { 0, 0 };
 		scissor.extent = swapchain.GetExtent();
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-		vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+		
+
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s_Cache->pipeline->GetLayout(), 0, 1, &descriptorSets[GraphicsContext::GetCurrentFrame()], 0, nullptr);
+
+		s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
+		s_Cache->cameraData.view = s_Cache->currentCamera.view;
+		s_Cache->cameraData.mdlSpace = glm::mat4(1.f);
+
+		s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
+
+		for (auto& mdlCmd : s_Cache->meshCmds)
+		{
+			VkDeviceSize offset = 0;
+			auto& vertex = mdlCmd.package.vertexBuffer;
+			auto& index = mdlCmd.package.indexBuffer;
+
+			vkCmdPushConstants(commandBuffer, s_Cache->pipeline->GetLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &mdlCmd.transform);
+
+			vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertex->GetAllocation().buffer, &offset);
+			vkCmdBindIndexBuffer(commandBuffer, index->GetAllocatedBuffer().buffer, 0, VK_INDEX_TYPE_UINT32);
+			vkCmdDrawIndexed(commandBuffer, index->GetIndexCount(), 1, 0, 0, 0);
+		}
 
 		auto EndRendering = (PFN_vkCmdEndRenderingKHR)vkGetInstanceProcAddr(GraphicsContext::GetInstance(), "vkCmdEndRenderingKHR");
 		EndRendering(commandBuffer);
@@ -208,7 +297,10 @@ namespace Titan
 		presentInfo.pImageIndices = &imageIndex;
 
 		vkQueuePresentKHR(device.GetPresentQueue(), &presentInfo);
+
 		currentFrame = (currentFrame + 1) % g_FramesInFlight;
+
+		s_Cache->meshCmds.clear();
 	}
 
 	void Renderer::Shutdown()

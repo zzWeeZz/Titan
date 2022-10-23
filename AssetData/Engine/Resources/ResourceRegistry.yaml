@@ -1,19 +1,19 @@
 ResourceRegistry:
   - 0:
-      - 97706fff-5ea9-40ed-a708-3bb1b7c42900
+      - e010de72-3029-4a81-a36d-1bd822527e4a
       - Assets/Models/Cube.gltf
   - 1:
-      - 946e5489-4151-474f-b6bc-b5215f269fcd
+      - 9fec04e0-5f12-48a1-bba8-f54755d441f4
       - Assets/Models/box01.glb
   - 2:
-      - 8d1a5de6-29dc-4c27-9a99-6278f8c295dd
+      - 699de23f-165a-4528-8d59-c37bcf347bae
       - Assets/Texture/Titan.png
   - 3:
-      - 0cca3511-8082-41c9-8b83-3c6fa24a6665
+      - 777bffef-ff32-4513-97dc-49c6ab676f74
       - Assets/Models/box01.glb
   - 4:
-      - 6d39f5aa-a9ed-4bec-bc65-f4e23c8aabaa
+      - 2efa2229-c58f-4d79-b981-818e211c8877
       - Assets/Models/box01.glb
   - 5:
-      - 0259759f-6b20-4c0c-9fa3-54753c79109f
+      - 3719fc34-aebc-4f16-bcd3-a20ebaca346b
       - Assets/Models/box01.glb

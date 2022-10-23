@@ -9,18 +9,49 @@ namespace Titan
 		createInfo.device = GraphicsContext::GetDevice().GetHandle();
 		createInfo.instance = GraphicsContext::GetInstance();
 		createInfo.physicalDevice = GraphicsContext::GetPhysicalDevice().GetHandle();
-		
-		//TN_VK_CHECK(vmaCreateAllocator(&createInfo, &s_Allocator));
-		//QueueDeletion([&]() {vmaDestroyAllocator(s_Allocator); });
+		s_ID = 0;
+		TN_VK_CHECK(vmaCreateAllocator(&createInfo, &s_Allocator));
 	}
 
-	void TitanAllocator::Allocate(AllocatedBuffer& allocation)
+	void TitanAllocator::Allocate(AllocatedBuffer& allocation, VkBufferCreateInfo* bufferInfo, VmaAllocationCreateInfo* allocationInfo)
 	{
-		
+		allocation.id = s_ID;
+		TN_CORE_INFO("TitanAllocator: id {0} Allocating: {1} bytes.", allocation.id, bufferInfo->size);
+		allocation.sizeOfBuffer = bufferInfo->size;
+		TN_VK_CHECK(vmaCreateBuffer(s_Allocator, bufferInfo, allocationInfo, &allocation.buffer, &allocation.allocation, nullptr));
+		s_AllocateDestructorOrder.push_back(allocation.id);
+		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_CORE_INFO("TitanAllocator: id {0} Deallocating: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation); };
+		s_ID++;
 	}
 
 	void TitanAllocator::Allocate(AllocatedImage& allocation)
 	{
+	}
+
+	void TitanAllocator::DeAllocate(AllocatedBuffer& allocation)
+	{
+		TN_CORE_INFO("TitanAllocator: id {0} Deallocating: {1} bytes", allocation.id, allocation.sizeOfBuffer);
+		vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation);
+		s_DestroyFunctions.erase(allocation.id);
+		auto it = std::find(s_AllocateDestructorOrder.begin(), s_AllocateDestructorOrder.end(), allocation.id);
+		if (it != s_AllocateDestructorOrder.end())
+		{
+			s_AllocateDestructorOrder.erase(it);
+		}
+	}
+
+	void TitanAllocator::DeAllocate(AllocatedImage& allocation)
+	{
+	}
+
+	void TitanAllocator::MapMemory(AllocatedBuffer& allocation, void*& mappedMemory)
+	{
+		TN_VK_CHECK(vmaMapMemory(s_Allocator, allocation.allocation, &mappedMemory));
+	}
+
+	void TitanAllocator::UnMapMemory(AllocatedBuffer& allocation)
+	{
+		vmaUnmapMemory(s_Allocator, allocation.allocation);
 	}
 
 	void TitanAllocator::QueueDeletion(std::function<void()>&& func)
@@ -30,10 +61,18 @@ namespace Titan
 
 	void TitanAllocator::Flush()
 	{
+		for (int32_t Index = s_AllocateDestructorOrder.size() - 1; Index >= 0 ; Index--)
+		{
+			s_DestroyFunctions[s_AllocateDestructorOrder[Index]]();
+		}
 		for (auto it = s_DestructionQueue.begin(); it != s_DestructionQueue.end(); ++it)
 		{
 			(*it)();
 		}
 		s_DestructionQueue.clear();
+	}
+	void TitanAllocator::Shutdown()
+	{
+		vmaDestroyAllocator(s_Allocator);
 	}
 }

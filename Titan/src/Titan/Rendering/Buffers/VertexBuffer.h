@@ -1,5 +1,6 @@
 #pragma once
 #include "Titan/Core/TitanMemory.h"
+#include "Titan/Utils/TitanAllocator.h"
 #include <d3d12.h>
 #include <string>
 namespace Titan
@@ -7,7 +8,7 @@ namespace Titan
 	struct VertexBufferInfo
 	{
 		void* vertexData = nullptr;
-		size_t sizeOfData = 0;
+		size_t sizeOfArray = 0;
 		size_t sizeOfVertex = 0;
 		std::string debugName = "";
 	};
@@ -16,11 +17,10 @@ namespace Titan
 	public:
 		VertexBuffer(const VertexBufferInfo& info);
 
-		void Bind();
+		AllocatedBuffer& GetAllocation() { return m_GpuBuffer; }
 
 		static Ref<VertexBuffer> Create(const VertexBufferInfo& info);
 	private:
-		size_t m_SizeOfVertex;
-
+		AllocatedBuffer m_GpuBuffer;
 	};
 }

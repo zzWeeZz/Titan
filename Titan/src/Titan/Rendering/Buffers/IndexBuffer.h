@@ -1,5 +1,6 @@
 #pragma once
-#include <d3d12.h>
+#include "Titan/Utils/TitanAllocator.h"
+
 #include "Titan/Core/TitanMemory.h"
 namespace Titan
 {
@@ -14,11 +15,12 @@ namespace Titan
 	{
 	public:
 		IndexBuffer(const IndexBufferInfo& info);
-		void Bind();
+		AllocatedBuffer& GetAllocatedBuffer() { return m_GpuBuffer; }
 		size_t GetIndexCount();
 		static Ref<IndexBuffer> Create(const IndexBufferInfo& info);
 		~IndexBuffer();
 	private:
 		size_t m_IndexCount;
+		AllocatedBuffer m_GpuBuffer;
 	};
 }

@@ -43,8 +43,8 @@ namespace Titan
 		std::vector<VkImageView> m_SwapchainViews;
 		VkFormat m_SwapchainFormat;
 		VkExtent2D m_SwapchainExtent;
-		PreFrameInFlight<VkSemaphore> m_ImageAvailableSemaphores;
-		PreFrameInFlight<VkSemaphore> m_RenderFinishedSemaphores;
-		PreFrameInFlight<VkFence> m_InFlightFences;
+		PerFrameInFlight<VkSemaphore> m_ImageAvailableSemaphores;
+		PerFrameInFlight<VkSemaphore> m_RenderFinishedSemaphores;
+		PerFrameInFlight<VkFence> m_InFlightFences;
 	};
 }

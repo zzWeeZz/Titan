@@ -18,6 +18,7 @@ Titan::Application::Application() : m_Running(true)
 	info.width = s_Window->GetWidth();
 	info.height = s_Window->GetHeight();
 	GraphicsContext::Initialize(info);
+	TitanAllocator::Initialize();
 	Renderer::Initialize();
 	ResourceRegistry::Initialize();
 }
@@ -38,6 +39,7 @@ void Titan::Application::Run()
 	
 	GraphicsContext::GetSwapchain().CleanUp();
 	TitanAllocator::Flush();
+	TitanAllocator::Shutdown();
 	Renderer::Shutdown();
 	GraphicsContext::Shutdown();
 	

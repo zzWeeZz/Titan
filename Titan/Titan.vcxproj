@@ -181,8 +181,7 @@
     <ClInclude Include="src\Titan\Rendering\Backend\Device.h" />
     <ClInclude Include="src\Titan\Rendering\Backend\PhysicalDevice.h" />
     <ClInclude Include="src\Titan\Rendering\Backend\Swapchain.h" />
-    <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffer.h" />
-    <ClInclude Include="src\Titan\Rendering\Buffers\ConstantBuffers.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffers.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexPacket.h" />
@@ -201,6 +200,7 @@
     <ClInclude Include="src\Titan\Utils\MouseCode.h" />
     <ClInclude Include="src\Titan\Utils\TitanAllocator.h" />
     <ClInclude Include="src\Titan\Window.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffer.h" />
     <ClInclude Include="vendor\Snowflake\Serializer.hpp" />
     <ClInclude Include="vendor\Snowflake\SnowID.h" />
     <ClInclude Include="vendor\Snowflake\Snowflake.hpp" />
@@ -322,7 +322,6 @@
     <ClCompile Include="src\Titan\Rendering\Backend\Device.cpp" />
     <ClCompile Include="src\Titan\Rendering\Backend\PhysicalDevice.cpp" />
     <ClCompile Include="src\Titan\Rendering\Backend\Swapchain.cpp" />
-    <ClCompile Include="src\Titan\Rendering\Buffers\ConstantBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Framebuffer.cpp" />
@@ -335,6 +334,7 @@
     <ClCompile Include="src\Titan\Utils\FilesystemUtils.cpp" />
     <ClCompile Include="src\Titan\Utils\Input.cpp" />
     <ClCompile Include="src\Titan\Utils\TitanAllocator.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Buffers\UniformBuffer.cpp" />
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>

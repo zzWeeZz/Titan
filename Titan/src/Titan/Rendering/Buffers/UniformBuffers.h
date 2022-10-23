@@ -5,9 +5,9 @@ namespace Titan
 {
 	struct CameraData
 	{
+		glm::mat4 mdlSpace;
 		glm::mat4 view;
 		glm::mat4 proj;
-		glm::mat4 mdlSpace;
 	};
 
 	struct ModelData

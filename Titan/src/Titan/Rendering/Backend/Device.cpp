@@ -64,6 +64,52 @@ namespace Titan
 		CreateCommandPools(physicalDevice);
 	}
 
+	void Device::ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& func)
+	{
+		VkCommandBuffer cmd;
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.commandBufferCount = 1;
+		allocInfo.commandPool = m_CommandPools[0];
+		vkAllocateCommandBuffers(m_Device, &allocInfo, &cmd);
+
+		auto& swapchain = GraphicsContext::GetSwapchain();
+		VkCommandBufferBeginInfo beginInfo{};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; // Optional
+		beginInfo.pInheritanceInfo = nullptr; // Optiona
+
+		VkFence fence;
+		VkFenceCreateInfo fenceCreateInfo{};
+		fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceCreateInfo.flags = 0;
+		vkCreateFence(m_Device, &fenceCreateInfo, nullptr, &fence);
+
+		TN_VK_CHECK(vkBeginCommandBuffer(cmd, &beginInfo));
+		func(cmd);
+		TN_VK_CHECK(vkEndCommandBuffer(cmd));
+
+		VkSubmitInfo info{};
+		info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		info.pNext = nullptr;
+		info.waitSemaphoreCount = 0;
+		info.pWaitSemaphores = nullptr;
+		info.pWaitDstStageMask = nullptr;
+		info.commandBufferCount = 1;
+		info.pCommandBuffers = &cmd;
+		info.signalSemaphoreCount = 0;
+		info.pSignalSemaphores = nullptr;
+
+		TN_VK_CHECK(vkQueueSubmit(m_GraphicsQueue, 1, &info, fence));
+
+		vkWaitForFences(m_Device, 1, &fence, true, UINT64_MAX);
+		vkResetFences(m_Device, 1, &fence);
+
+		vkResetCommandBuffer(cmd, 0);
+		vkDestroyFence(m_Device, fence, nullptr);
+		vkFreeCommandBuffers(m_Device, m_CommandPools[0], 1, &cmd);
+	}
+
 	void Device::Shutdown()
 	{
 		vkDestroyDevice(m_Device, nullptr);

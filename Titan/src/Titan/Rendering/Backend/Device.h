@@ -11,6 +11,7 @@ namespace Titan
 		VkCommandBuffer& GetCommandBuffer(size_t currentFrame, size_t index) { return m_CommandBuffers[index][currentFrame]; }
 		VkQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
 		VkQueue& GetPresentQueue() { return m_PresentQueue; }
+		void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& func);
 		void Shutdown();
 	private:
 		void CreateCommandPools(PhysicalDevice& physicalDevice, size_t amount = 1);
@@ -18,7 +19,7 @@ namespace Titan
 		VkDevice m_Device;
 		VkQueue m_GraphicsQueue;
 		VkQueue m_PresentQueue;
-		std::vector<PreFrameInFlight<VkCommandBuffer>> m_CommandBuffers;
+		std::vector<PerFrameInFlight<VkCommandBuffer>> m_CommandBuffers;
 		std::vector<VkCommandPool> m_CommandPools;
 	};
 }

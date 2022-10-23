@@ -18,11 +18,13 @@ namespace Titan
 		Pipeline(const PipelineInfo& info);
 
 		VkPipeline& GetHandle() { return m_Pipeline; }
-
+		VkPipelineLayout& GetLayout() { return m_PipelineLayout; }
+		VkDescriptorSetLayout& DescLayout() { return m_DescriptorSetLayout; }
 		static Ref<Pipeline> Create(const PipelineInfo& info);
 	private:
 		VkShaderModule CreateShaderModule(const std::filesystem::path& shaderPath);
-
+		void CreateDescriptorSetLayout();
+		VkDescriptorSetLayout m_DescriptorSetLayout;
 		VkPipelineLayout m_PipelineLayout;
 		VkPipeline m_Pipeline;
 	};
