@@ -143,8 +143,7 @@ namespace Titan
 
 		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		vkResetFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame));
-		uint32_t imageIndex;
-		vkAcquireNextImageKHR(device.GetHandle(), swapchain.GetHandle(), UINT64_MAX, swapchain.GetImageAvailableSemaphore(currentFrame), VK_NULL_HANDLE, &imageIndex);
+		auto imageIndex = GraphicsContext::GetSwapchain().GetNextImage();
 
 		vkResetCommandBuffer(commandBuffer, 0);
 

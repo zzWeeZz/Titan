@@ -11,6 +11,19 @@ namespace Titan
 	void Swapchain::Create(PhysicalDevice& physicalDevice, Device& device)
 	{
 		Validate(physicalDevice, device);
+		CreateRenderPass();
+		CreateFrameBuffer();
+	}
+	uint32_t Swapchain::GetNextImage()
+	{
+		uint32_t imageIndex;
+		vkAcquireNextImageKHR(GraphicsContext::GetDevice().GetHandle(), m_Swapchain, UINT64_MAX, GetImageAvailableSemaphore(GraphicsContext::GetCurrentFrame()), VK_NULL_HANDLE, &imageIndex);
+		m_CurrentImage = imageIndex;
+		return imageIndex;
+	}
+	uint32_t Swapchain::GetCurrentImageIndex()
+	{
+		return m_CurrentImage;
 	}
 	VkImage& Swapchain::GetImage(size_t index)
 	{
@@ -149,6 +162,56 @@ namespace Titan
 			TN_VK_CHECK(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphores[i]));
 			TN_VK_CHECK(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphores[i]));
 			TN_VK_CHECK(vkCreateFence(device, &fenceInfo, nullptr, &m_InFlightFences[i]));
+		}
+	}
+	void Swapchain::CreateRenderPass()
+	{
+		VkAttachmentDescription colorAttachment{};
+		colorAttachment.format = m_SwapchainFormat;
+		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+		VkAttachmentReference colorAttachmentRef{};
+		colorAttachmentRef.attachment = 0;
+		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		VkSubpassDescription subpass{};
+		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		subpass.colorAttachmentCount = 1;
+		subpass.pColorAttachments = &colorAttachmentRef;
+
+		VkRenderPassCreateInfo renderPassInfo{};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		renderPassInfo.attachmentCount = 1;
+		renderPassInfo.pAttachments = &colorAttachment;
+		renderPassInfo.subpassCount = 1;
+		renderPassInfo.pSubpasses = &subpass;
+
+		TN_VK_CHECK(vkCreateRenderPass(GraphicsContext::GetDevice().GetHandle(), &renderPassInfo, nullptr, &m_SwapchainRenderPass));
+		TitanAllocator::QueueDeletion([&]() {vkDestroyRenderPass(GraphicsContext::GetDevice().GetHandle(), m_SwapchainRenderPass, nullptr); });
+	}
+	void Swapchain::CreateFrameBuffer()
+	{
+		m_SwapchainFrameBuffers.resize(m_SwapchainViews.size());
+		for (size_t i = 0; i < m_SwapchainViews.size(); i++)
+		{
+			VkImageView attachments[] = { m_SwapchainViews[i] };
+
+			VkFramebufferCreateInfo framebufferInfo{};
+			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+			framebufferInfo.renderPass = m_SwapchainRenderPass;
+			framebufferInfo.attachmentCount = 1;
+			framebufferInfo.pAttachments = attachments;
+			framebufferInfo.width = m_SwapchainExtent.width;
+			framebufferInfo.height = m_SwapchainExtent.height;
+			framebufferInfo.layers = 1;
+
+			TN_VK_CHECK(vkCreateFramebuffer(GraphicsContext::GetDevice().GetHandle(), &framebufferInfo, nullptr, &m_SwapchainFrameBuffers[i]));
+			TitanAllocator::QueueDeletion([&, i]() {vkDestroyFramebuffer(GraphicsContext::GetDevice().GetHandle(), m_SwapchainFrameBuffers[i], nullptr); });
 		}
 	}
 	VkSurfaceFormatKHR Swapchain::ChooseSwapchainFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)

@@ -9,8 +9,11 @@ namespace Titan
 		void Create(PhysicalDevice& pysicalDevice, const std::vector<const char*> validationLayer);
 		VkDevice& GetHandle() { return m_Device; }
 		VkCommandBuffer& GetCommandBuffer(size_t currentFrame, size_t index) { return m_CommandBuffers[index][currentFrame]; }
+		VkCommandPool& GetCommandPool(size_t index) { return m_CommandPools[index]; }
 		VkQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
 		VkQueue& GetPresentQueue() { return m_PresentQueue; }
+
+		VkCommandBuffer CreateSecondaryCommandBuffer();
 		void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& func);
 		void Shutdown();
 	private:

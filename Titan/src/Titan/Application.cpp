@@ -9,6 +9,7 @@
 #include "Titan/Rendering/Renderer.h"
 #include "Titan/Assets/ResourceRegistry.h"
 #include <Optick/src/optick.h>
+#include "Titan/ImGui/TitanImGui.h"
 #include "Titan/Utils/TitanAllocator.h"
 Titan::Application::Application() : m_Running(true)
 {
@@ -20,6 +21,7 @@ Titan::Application::Application() : m_Running(true)
 	GraphicsContext::Initialize(info);
 	TitanAllocator::Initialize();
 	Renderer::Initialize();
+	TitanImGui::Initialize();
 	ResourceRegistry::Initialize();
 }
 
@@ -27,6 +29,7 @@ void Titan::Application::Run()
 {
 	while (m_Running)
 	{
+		TitanImGui::Begin();
 		OPTICK_FRAME("MainThread");
 		for (const auto& layer : m_LayerStack)
 		{
@@ -34,6 +37,7 @@ void Titan::Application::Run()
 		}
 		s_Window->OnUpdate();
 		Renderer::Begin();
+		TitanImGui::End();
 	}
 	ResourceRegistry::Dump();
 	

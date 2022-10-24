@@ -20,11 +20,13 @@ externalIncludes =
     "Titan/vendor/YAML/include/",
     "Titan/vendor/Optick/src/",
     "%{VULKAN_SDK}/Include/"
+
 }
 
 externalLinks = 
 {
     "GLFW",
+    "ImGui",
     "yaml-cpp",
     "Optick",
     "d3d12.lib",
@@ -107,6 +109,7 @@ include "Titan/vendor/GLFW/"
 include "Titan/vendor/glm/"
 include "Titan/vendor/YAML/"
 include "Titan/vendor/Optick/"
+include "Titan/vendor/imgui/"
 
 
 

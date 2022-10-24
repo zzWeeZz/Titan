@@ -5,6 +5,7 @@
 #include "Titan/Utils/Input.h"
 #include "Titan/Assets/Model/Model.h"
 #include "Titan/Assets/Texture/Texture.h"
+#include <imgui.h>
 
 namespace Titan
 {
@@ -49,6 +50,9 @@ namespace Titan
 	void EditorLayer::OnUpdate()
 	{
 		m_ActiveScene->OnEditorUpdate();
+		ImGui::Begin("Test");
+		ImGui::Text("Titan is saying hi in imgui");
+		ImGui::End();
 		RunEditorCamera();
 	}
 

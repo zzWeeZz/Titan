@@ -18,7 +18,7 @@
 #include "Titan/Scene/Components.h"
 
 //IMGUI STUFF
-#include "Titan/ImGui/ImGuiLayer.h"
+#include "Titan/ImGui/TitanImGui.h"
 
 //TITAN RENDERING
 #include "Titan/Rendering/Renderer.h"

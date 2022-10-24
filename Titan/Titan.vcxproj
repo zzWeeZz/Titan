@@ -174,15 +174,16 @@
     <ClInclude Include="src\Titan\EntryPoint.h" />
     <ClInclude Include="src\Titan\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Titan\Events\Event.h" />
-    <ClInclude Include="src\Titan\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\Titan\ImGui\TitanImGui.h" />
     <ClInclude Include="src\Titan\Layer.h" />
     <ClInclude Include="src\Titan\LayerStack.h" />
     <ClInclude Include="src\Titan\Platform\WindowsWindow.h" />
     <ClInclude Include="src\Titan\Rendering\Backend\Device.h" />
     <ClInclude Include="src\Titan\Rendering\Backend\PhysicalDevice.h" />
     <ClInclude Include="src\Titan\Rendering\Backend\Swapchain.h" />
-    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffers.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffers.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexPacket.h" />
     <ClInclude Include="src\Titan\Rendering\Framebuffer.h" />
@@ -200,7 +201,17 @@
     <ClInclude Include="src\Titan\Utils\MouseCode.h" />
     <ClInclude Include="src\Titan\Utils\TitanAllocator.h" />
     <ClInclude Include="src\Titan\Window.h" />
-    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffer.h" />
+    <ClInclude Include="vendor\ImGui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="vendor\ImGui\backends\imgui_impl_vulkan.h" />
+    <ClInclude Include="vendor\ImGui\imconfig.h" />
+    <ClInclude Include="vendor\ImGui\imgui.h" />
+    <ClInclude Include="vendor\ImGui\imgui_internal.h" />
+    <ClInclude Include="vendor\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="vendor\ImGui\imstb_textedit.h" />
+    <ClInclude Include="vendor\ImGui\imstb_truetype.h" />
+    <ClInclude Include="vendor\ImGui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="vendor\ImGui\misc\freetype\imgui_freetype.h" />
+    <ClInclude Include="vendor\ImGui\misc\single_file\imgui_single_file.h" />
     <ClInclude Include="vendor\Snowflake\Serializer.hpp" />
     <ClInclude Include="vendor\Snowflake\SnowID.h" />
     <ClInclude Include="vendor\Snowflake\Snowflake.hpp" />
@@ -315,7 +326,7 @@
     <ClCompile Include="src\Titan\Assets\Texture\Texture.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />
     <ClCompile Include="src\Titan\ImGui\ImGuiBuild.cpp" />
-    <ClCompile Include="src\Titan\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Titan\ImGui\TitanImGui.cpp" />
     <ClCompile Include="src\Titan\Layer.cpp" />
     <ClCompile Include="src\Titan\LayerStack.cpp" />
     <ClCompile Include="src\Titan\Platform\WindowsWindow.cpp" />
@@ -323,6 +334,7 @@
     <ClCompile Include="src\Titan\Rendering\Backend\PhysicalDevice.cpp" />
     <ClCompile Include="src\Titan\Rendering\Backend\Swapchain.cpp" />
     <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Buffers\UniformBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\Framebuffer.cpp" />
     <ClCompile Include="src\Titan\Rendering\GraphicsContext.cpp" />
@@ -334,7 +346,46 @@
     <ClCompile Include="src\Titan\Utils\FilesystemUtils.cpp" />
     <ClCompile Include="src\Titan\Utils\Input.cpp" />
     <ClCompile Include="src\Titan\Utils\TitanAllocator.cpp" />
-    <ClCompile Include="src\Titan\Rendering\Buffers\UniformBuffer.cpp" />
+    <ClCompile Include="vendor\ImGui\backends\imgui_impl_glfw.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\backends\imgui_impl_vulkan.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_demo.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_draw.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_tables.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_widgets.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\misc\cpp\imgui_stdlib.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\misc\fonts\binary_to_compressed_c.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -343,6 +394,9 @@
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
+      <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
     </ProjectReference>
     <ProjectReference Include="vendor\YAML\yaml-cpp.vcxproj">
       <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>

@@ -58,6 +58,27 @@
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\ImGui">
+      <UniqueIdentifier>{1DA38CEE-0906-1C93-B28B-54499ECDE715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGui\backends">
+      <UniqueIdentifier>{E7ED3B29-535A-F723-1C4E-8F818879198C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGui\misc">
+      <UniqueIdentifier>{18302066-8446-1EFC-CDBD-A91D3913EF83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGui\misc\cpp">
+      <UniqueIdentifier>{EAF585DC-5662-41D7-1F56-D9348B81633F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGui\misc\fonts">
+      <UniqueIdentifier>{71DC1016-DD13-59AD-E61D-BDD052D47FA6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGui\misc\freetype">
+      <UniqueIdentifier>{CBC9D465-B7D9-8036-2093-E5540CC26FCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGui\misc\single_file">
+      <UniqueIdentifier>{08DD8AEE-74F5-7118-3DA2-01B2A97906B2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor\Snowflake">
       <UniqueIdentifier>{2C921B61-188B-3AB3-41BD-1F382D151ABF}</UniqueIdentifier>
     </Filter>
@@ -153,7 +174,7 @@
     <ClInclude Include="src\Titan\Events\Event.h">
       <Filter>src\Titan\Events</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\ImGui\ImGuiLayer.h">
+    <ClInclude Include="src\Titan\ImGui\TitanImGui.h">
       <Filter>src\Titan\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Layer.h">
@@ -174,10 +195,13 @@
     <ClInclude Include="src\Titan\Rendering\Backend\Swapchain.h">
       <Filter>src\Titan\Rendering\Backend</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffers.h">
+    <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h">
+    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffer.h">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffers.h">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h">
@@ -230,6 +254,39 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Window.h">
       <Filter>src\Titan</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\backends\imgui_impl_glfw.h">
+      <Filter>vendor\ImGui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\backends\imgui_impl_vulkan.h">
+      <Filter>vendor\ImGui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\imconfig.h">
+      <Filter>vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\imgui.h">
+      <Filter>vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\imgui_internal.h">
+      <Filter>vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\imstb_rectpack.h">
+      <Filter>vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\imstb_textedit.h">
+      <Filter>vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\imstb_truetype.h">
+      <Filter>vendor\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\misc\cpp\imgui_stdlib.h">
+      <Filter>vendor\ImGui\misc\cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\misc\freetype\imgui_freetype.h">
+      <Filter>vendor\ImGui\misc\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\misc\single_file\imgui_single_file.h">
+      <Filter>vendor\ImGui\misc\single_file</Filter>
     </ClInclude>
     <ClInclude Include="vendor\Snowflake\Serializer.hpp">
       <Filter>vendor\Snowflake</Filter>
@@ -531,7 +588,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -564,7 +620,7 @@
     <ClCompile Include="src\Titan\ImGui\ImGuiBuild.cpp">
       <Filter>src\Titan\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\ImGui\ImGuiLayer.cpp">
+    <ClCompile Include="src\Titan\ImGui\TitanImGui.cpp">
       <Filter>src\Titan\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Layer.cpp">
@@ -586,6 +642,9 @@
       <Filter>src\Titan\Rendering\Backend</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Buffers\UniformBuffer.cpp">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp">
@@ -621,9 +680,38 @@
     <ClCompile Include="src\Titan\Utils\TitanAllocator.cpp">
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\ImGui\backends\imgui_impl_glfw.cpp">
+      <Filter>vendor\ImGui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\backends\imgui_impl_vulkan.cpp">
+      <Filter>vendor\ImGui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_demo.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_draw.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_tables.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\imgui_widgets.cpp">
+      <Filter>vendor\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\misc\cpp\imgui_stdlib.cpp">
+      <Filter>vendor\ImGui\misc\cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\misc\fonts\binary_to_compressed_c.cpp">
+      <Filter>vendor\ImGui\misc\fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
+      <Filter>vendor\ImGui\misc\freetype</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <Filter>vendor\dx12helpers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\Buffers\UniformBuffer.cpp" />
   </ItemGroup>
 </Project>

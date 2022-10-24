@@ -64,6 +64,19 @@ namespace Titan
 		CreateCommandPools(physicalDevice);
 	}
 
+	VkCommandBuffer Device::CreateSecondaryCommandBuffer()
+	{
+		VkCommandBuffer commandBuffer;
+		VkCommandBufferAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.commandPool = m_CommandPools[0];
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+		allocInfo.commandBufferCount = 1;
+
+		TN_VK_CHECK(vkAllocateCommandBuffers(m_Device, &allocInfo, &commandBuffer));
+		return commandBuffer;
+	}
+
 	void Device::ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& func)
 	{
 		VkCommandBuffer cmd;
