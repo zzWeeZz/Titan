@@ -1,27 +1,35 @@
 #pragma once
-#include "Titan/Core/TitanFormats.h"
-#include "GraphicsContext.h"
-#include "glm/glm.hpp"
+#include <vulkan/vulkan.h>
+#include <Titan/Core/TitanFormats.h>
+#include "Titan/Core/Core.h"
+#include <Titan/Utils/TitanAllocator.h>
+#include "Titan/Rendering/GraphicsContext.h"
 namespace Titan
 {
 	struct FramebufferInfo
 	{
-		size_t width = 1280u;
-		size_t height = 720u;
+		size_t width;
+		size_t height;
 		std::vector<ImageFormat> imageFormats;
 	};
+
 	class Framebuffer
 	{
 	public:
 		Framebuffer(const FramebufferInfo& info);
-		void Resize(const size_t width, const size_t height);
-		void Clear(const glm::vec4& color = { 0.32f, 0.32f, 0.32f, 1.f });
-		void Bind();
-		void Unbind();
+
+		void Resize(size_t width, size_t height);
+		std::vector<AllocatedImage> GetImages() { return m_Images[GraphicsContext::GetCurrentFrame()]; }
+		std::vector<VkImageView> GetViews() { return m_Views[GraphicsContext::GetCurrentFrame()]; }
+
+		void CleanUp();
 		static Ref<Framebuffer> Create(const FramebufferInfo& info);
 	private:
 		void Validate();
-		
-		FramebufferInfo m_FBInfo;
+		FramebufferInfo m_Info;
+
+		PerFrameInFlight<std::vector<AllocatedImage>> m_Images;
+		PerFrameInFlight<std::vector<VkImageView>> m_Views;
 	};
 }
+

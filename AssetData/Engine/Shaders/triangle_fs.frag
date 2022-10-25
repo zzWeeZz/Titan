@@ -9,5 +9,9 @@ layout(binding = 1) uniform sampler2D texSampler;
 
 void main()
 {
-    outColor = texture(texSampler, i_TexCoord);
+    vec4 col = texture(texSampler, i_TexCoord);
+    float gamma = 2.2;
+    col.xyz = pow(col.xyz, vec3(1.0/gamma));
+    outColor = col;
+
 }

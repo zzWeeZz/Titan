@@ -70,15 +70,6 @@
     <Filter Include="vendor\ImGui\misc\cpp">
       <UniqueIdentifier>{EAF585DC-5662-41D7-1F56-D9348B81633F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="vendor\ImGui\misc\fonts">
-      <UniqueIdentifier>{71DC1016-DD13-59AD-E61D-BDD052D47FA6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vendor\ImGui\misc\freetype">
-      <UniqueIdentifier>{CBC9D465-B7D9-8036-2093-E5540CC26FCF}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vendor\ImGui\misc\single_file">
-      <UniqueIdentifier>{08DD8AEE-74F5-7118-3DA2-01B2A97906B2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="vendor\Snowflake">
       <UniqueIdentifier>{2C921B61-188B-3AB3-41BD-1F382D151ABF}</UniqueIdentifier>
     </Filter>
@@ -281,12 +272,6 @@
     </ClInclude>
     <ClInclude Include="vendor\ImGui\misc\cpp\imgui_stdlib.h">
       <Filter>vendor\ImGui\misc\cpp</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\misc\freetype\imgui_freetype.h">
-      <Filter>vendor\ImGui\misc\freetype</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\ImGui\misc\single_file\imgui_single_file.h">
-      <Filter>vendor\ImGui\misc\single_file</Filter>
     </ClInclude>
     <ClInclude Include="vendor\Snowflake\Serializer.hpp">
       <Filter>vendor\Snowflake</Filter>
@@ -703,12 +688,6 @@
     </ClCompile>
     <ClCompile Include="vendor\ImGui\misc\cpp\imgui_stdlib.cpp">
       <Filter>vendor\ImGui\misc\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\misc\fonts\binary_to_compressed_c.cpp">
-      <Filter>vendor\ImGui\misc\fonts</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
-      <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <Filter>vendor\dx12helpers</Filter>

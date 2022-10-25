@@ -39,7 +39,7 @@ namespace Titan
 		createInfo.enabledLayerCount = 0;
 #endif
 
-		const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, "VK_KHR_dynamic_rendering" };
+		const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 		bool extensionsSupported = CheckDeviceExtensionSupport(physicalDevice, deviceExtensions);
 		if (!(indices.HasValue() && extensionsSupported && GraphicsContext::SwapchainAdequate()))
 		{
@@ -48,9 +48,9 @@ namespace Titan
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
-		constexpr VkPhysicalDeviceDynamicRenderingFeaturesKHR dynamic_rendering_feature
+		constexpr VkPhysicalDeviceDynamicRenderingFeatures dynamic_rendering_feature
 		{
-		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR,
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,
 		.dynamicRendering = VK_TRUE,
 		};
 

@@ -37,7 +37,6 @@ void Titan::Application::Run()
 		}
 		s_Window->OnUpdate();
 		Renderer::Begin();
-		TitanImGui::End();
 	}
 	ResourceRegistry::Dump();
 	

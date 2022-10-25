@@ -11,8 +11,6 @@ namespace Titan
 	void Swapchain::Create(PhysicalDevice& physicalDevice, Device& device)
 	{
 		Validate(physicalDevice, device);
-		CreateRenderPass();
-		CreateFrameBuffer();
 	}
 	uint32_t Swapchain::GetNextImage()
 	{
@@ -42,14 +40,18 @@ namespace Titan
 	void Swapchain::CleanUp()
 	{
 		auto& device = GraphicsContext::GetDevice();
+
 		for (size_t i = 0; i < g_FramesInFlight; ++i)
 		{
+			vkDestroyFramebuffer(GraphicsContext::GetDevice().GetHandle(), m_SwapchainFrameBuffers[i], nullptr);
 			vkDestroyImageView(device.GetHandle(), m_SwapchainViews[i], nullptr);
 		}
 		vkDestroySwapchainKHR(device.GetHandle(), m_Swapchain, nullptr);
 	}
 	void Swapchain::Shutdown(Device& device)
 	{
+		vkDestroyRenderPass(device.GetHandle(), m_SwapchainRenderPass, nullptr);
+
 		for (size_t i = 0; i < g_FramesInFlight; ++i)
 		{
 			vkDestroySemaphore(device.GetHandle(), m_ImageAvailableSemaphores[i], nullptr);
@@ -147,6 +149,8 @@ namespace Titan
 			TN_VK_CHECK(vkCreateImageView(GraphicsContext::GetDevice().GetHandle(), &viewCreateInfo, nullptr, &m_SwapchainViews[i]));
 		}
 		CreateSyncObject();
+		CreateRenderPass();
+		CreateFrameBuffer();
 	}
 	void Swapchain::CreateSyncObject()
 	{
@@ -169,7 +173,7 @@ namespace Titan
 		VkAttachmentDescription colorAttachment{};
 		colorAttachment.format = m_SwapchainFormat;
 		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -192,7 +196,6 @@ namespace Titan
 		renderPassInfo.pSubpasses = &subpass;
 
 		TN_VK_CHECK(vkCreateRenderPass(GraphicsContext::GetDevice().GetHandle(), &renderPassInfo, nullptr, &m_SwapchainRenderPass));
-		TitanAllocator::QueueDeletion([&]() {vkDestroyRenderPass(GraphicsContext::GetDevice().GetHandle(), m_SwapchainRenderPass, nullptr); });
 	}
 	void Swapchain::CreateFrameBuffer()
 	{
@@ -211,14 +214,13 @@ namespace Titan
 			framebufferInfo.layers = 1;
 
 			TN_VK_CHECK(vkCreateFramebuffer(GraphicsContext::GetDevice().GetHandle(), &framebufferInfo, nullptr, &m_SwapchainFrameBuffers[i]));
-			TitanAllocator::QueueDeletion([&, i]() {vkDestroyFramebuffer(GraphicsContext::GetDevice().GetHandle(), m_SwapchainFrameBuffers[i], nullptr); });
 		}
 	}
 	VkSurfaceFormatKHR Swapchain::ChooseSwapchainFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
 	{
 		for (const auto& availableFormat : availableFormats)
 		{
-			if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+			if (availableFormat.format == VK_FORMAT_B8G8R8A8_UNORM && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
 			{
 				return availableFormat;
 			}

@@ -17,12 +17,15 @@
 #include <Optick/src/optick.h>
 #include "Titan/Assets/ResourceRegistry.h"
 #include <Titan/Assets/Texture/Texture.h>
+#include "Titan/ImGui/TitanImGui.h"
 namespace Titan
 {
 	struct Cache
 	{
 		CameraCmd currentCamera = {};
 		std::vector<MeshCmd> meshCmds;
+
+		Ref<Framebuffer> mainFB;
 		Ref<VertexBuffer> vbtest;
 		Ref<IndexBuffer> ibtest;
 		Ref<Framebuffer> testFB;
@@ -69,27 +72,6 @@ namespace Titan
 		info.vsPath = "Engine/Shaders/triangle_vs.spv";
 		info.psPath = "Engine/Shaders/triangle_fs.spv";
 		s_Cache->pipeline = Pipeline::Create(info);
-		const std::vector<Vertex> vertices = {
-			{{-0.5f, -0.5f, 0}, {1.0f, 0.0f, 0.0f}},
-			{{0.5f, -0.5f, 0}, {0.0f, 1.0f, 0.0f}},
-			{{0.5f, 0.5f, 0}, {0.0f, 0.0f, 1.0f}},
-			{{-0.5f, 0.5f, 0}, {1.0f, 1.0f, 1.0f}}
-		};
-		VertexBufferInfo vbInfo{};
-		vbInfo.sizeOfArray = vertices.size();
-		vbInfo.sizeOfVertex = sizeof(Vertex);
-		vbInfo.vertexData = (void*)vertices.data();
-
-		const std::vector<uint32_t> indices = {
-			0, 1, 2, 2, 3, 0
-		};
-
-		IndexBufferInfo ibInfo{};
-		ibInfo.indexData = (void*)indices.data();
-		ibInfo.sizeOfArray = indices.size();
-
-		s_Cache->vbtest = VertexBuffer::Create(vbInfo);
-		s_Cache->ibtest = IndexBuffer::Create(ibInfo);
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
 
@@ -100,6 +82,11 @@ namespace Titan
 		allocInfo.descriptorSetCount = (g_FramesInFlight);
 		allocInfo.pSetLayouts = layouts.data();
 
+		FramebufferInfo fbInfo{};
+		fbInfo.width = Application::GetWindow().GetWidth();
+		fbInfo.height = Application::GetWindow().GetHeight();
+		fbInfo.imageFormats = { ImageFormat::R8G8B8A8_SRGB };
+		s_Cache->mainFB = Framebuffer::Create(fbInfo);
 
 		TN_VK_CHECK(vkAllocateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), &allocInfo, descriptorSets.data()));
 	}
@@ -147,6 +134,7 @@ namespace Titan
 
 		vkResetCommandBuffer(commandBuffer, 0);
 
+
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		beginInfo.flags = 0; // Optional
@@ -160,7 +148,7 @@ namespace Titan
 				.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
 				.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
 				.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-				.image = swapchain.GetImage(imageIndex),
+				.image = s_Cache->mainFB->GetImages()[0].Image,
 				.subresourceRange =
 				{
 					.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -187,11 +175,11 @@ namespace Titan
 
 		VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
 
-		const VkRenderingAttachmentInfoKHR colorAttachmentInfo
+		const VkRenderingAttachmentInfo colorAttachmentInfo
 		{
-			.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO_KHR,
-			.imageView = swapchain.GetCurrentView(imageIndex),
-			.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR,
+			.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+			.imageView = s_Cache->mainFB->GetViews()[0],
+			.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL,
 			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.clearValue = clearColor,
@@ -199,15 +187,14 @@ namespace Titan
 		VkRect2D rec;
 		rec.extent = swapchain.GetExtent();
 		rec.offset = { 0,0 };
-		const VkRenderingInfoKHR render_info{
-			.sType = VK_STRUCTURE_TYPE_RENDERING_INFO_KHR,
+		const VkRenderingInfo render_info{
+			.sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
 			.renderArea = rec,
 			.layerCount = 1,
 			.colorAttachmentCount = 1,
 			.pColorAttachments = &colorAttachmentInfo,
 		};
-		auto BeginRendering = (PFN_vkCmdBeginRenderingKHR)vkGetInstanceProcAddr(GraphicsContext::GetInstance(), "vkCmdBeginRenderingKHR");
-		BeginRendering(commandBuffer, &render_info);
+		vkCmdBeginRendering(commandBuffer, &render_info);
 
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, handle);
 		VkViewport viewport{};
@@ -246,8 +233,7 @@ namespace Titan
 			vkCmdDrawIndexed(commandBuffer, index->GetIndexCount(), 1, 0, 0, 0);
 		}
 
-		auto EndRendering = (PFN_vkCmdEndRenderingKHR)vkGetInstanceProcAddr(GraphicsContext::GetInstance(), "vkCmdEndRenderingKHR");
-		EndRendering(commandBuffer);
+		vkCmdEndRendering(commandBuffer);
 		{
 			VkImageMemoryBarrier image_memory_barrier
 			{
@@ -281,7 +267,12 @@ namespace Titan
 			);
 		}
 
+		TitanImGui::End();
+
 		TN_VK_CHECK(vkEndCommandBuffer(commandBuffer));
+
+
+
 
 		VkSubmitInfo submitInfo{};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
