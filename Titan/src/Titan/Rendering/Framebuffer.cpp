@@ -32,6 +32,12 @@ namespace Titan
 			for (size_t imageFormatIndex = 0; imageFormatIndex < m_Info.imageFormats.size(); ++imageFormatIndex)
 			{
 				vkDestroyImageView(GraphicsContext::GetDevice().GetHandle(), m_Views[i][imageFormatIndex], nullptr);
+			}
+		}
+		for (size_t i = 0; i < g_FramesInFlight; ++i)
+		{
+			for (size_t imageFormatIndex = 0; imageFormatIndex < m_Info.imageFormats.size(); ++imageFormatIndex)
+			{
 				TitanAllocator::DeAllocate(m_Images[i][imageFormatIndex]);
 			}
 		}

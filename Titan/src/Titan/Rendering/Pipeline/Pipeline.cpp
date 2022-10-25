@@ -144,12 +144,12 @@ namespace Titan
 		pipelineInfo.pDynamicState = &dynamicState;
 
 		pipelineInfo.layout = m_PipelineLayout;
-
+		auto format = FormatToVkFormat(ImageFormat::R8G8B8A8_SRGB);
 		const VkPipelineRenderingCreateInfoKHR pipeline_rendering_create_info
 		{
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR,
 			.colorAttachmentCount = 1,
-			.pColorAttachmentFormats = &GraphicsContext::GetSwapchain().GetFormat(),
+			.pColorAttachmentFormats = &format,
 		};
 
 		pipelineInfo.pNext = &pipeline_rendering_create_info;
