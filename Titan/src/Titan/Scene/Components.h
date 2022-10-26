@@ -3,12 +3,13 @@
 #include "glm/gtc/quaternion.hpp"
 #include "Serializer.hpp"
 #include "Snowflake.hpp"
+#include "String.hpp"
 #include "Titan/Core/TitanMemory.h"
 
 COMPONENT(TagComponent)
 {
 	REGISTER_COMPONENT("{0A07B7F9-8312-40B1-81AA-773BE3B295B9}"_guid);
-	char tag[512];
+	String tag;
 };
 
 COMPONENT(TransformComponent)

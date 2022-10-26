@@ -13,6 +13,7 @@ namespace Titan
 		Validate(physicalDevice, device);
 		m_Width = m_SwapchainExtent.width;
 		m_Height = m_SwapchainExtent.height;
+		CreateSyncObject();
 		CreateRenderPass();
 		m_SwapchainFrameBuffers.resize(m_SwapchainViews.size());
 		CreateFrameBuffer();
@@ -154,7 +155,6 @@ namespace Titan
 
 			TN_VK_CHECK(vkCreateImageView(GraphicsContext::GetDevice().GetHandle(), &viewCreateInfo, nullptr, &m_SwapchainViews[i]));
 		}
-		CreateSyncObject();
 	}
 	void Swapchain::InternalResize(size_t width, size_t height)
 	{

@@ -49,6 +49,7 @@ namespace Titan
 
 	void EditorLayer::OnUpdate()
 	{
+		m_SceneHierarchyPanel->OnImGuiRender();
 		m_ActiveScene->OnEditorUpdate();
 		ImGui::Begin("Test");
 		ImGui::Text("Titan is saying hi in imgui");

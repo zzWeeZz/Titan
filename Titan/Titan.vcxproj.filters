@@ -282,6 +282,9 @@
     <ClInclude Include="vendor\Snowflake\Snowflake.hpp">
       <Filter>vendor\Snowflake</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\Snowflake\String.hpp">
+      <Filter>vendor\Snowflake</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\dx12helpers\D3D12MemAlloc.h">
       <Filter>vendor\dx12helpers</Filter>
     </ClInclude>

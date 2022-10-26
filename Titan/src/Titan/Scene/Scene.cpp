@@ -31,7 +31,7 @@ namespace Titan
 	Entity Scene::CreateEntity()
 	{
 		Entity ent = { m_Registry.CreateEntity(), this };
-		ent.AddComponent<TagComponent>();
+		ent.AddComponent<TagComponent>().tag = "new Entity";
 		ent.AddComponent<TransformComponent>();
 		return ent;
 	}

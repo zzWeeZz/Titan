@@ -45,6 +45,11 @@ namespace Titan
 		glfwSetWindowUserPointer(m_Window, &m_WindowInfo);
 		SetVSync(true);
 
+		if (glfwRawMouseMotionSupported())
+		{
+			glfwSetInputMode(m_Window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+		}
+
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 			{
 				WindowInfo* info = static_cast<WindowInfo*>(glfwGetWindowUserPointer(window));
@@ -61,7 +66,12 @@ namespace Titan
 				WindowCloseEvent event;
 				info->EventCallback(event);
 			});
-
+		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos)
+		{
+				WindowInfo* info = static_cast<WindowInfo*>(glfwGetWindowUserPointer(window));
+				WindowCloseEvent event;
+				info->EventCallback(event);
+		});
 	}
 
 	void WindowsWindow::Shutdown()
