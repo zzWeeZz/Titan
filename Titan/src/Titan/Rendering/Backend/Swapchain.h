@@ -19,7 +19,7 @@ namespace Titan
 		~Swapchain() = default;
 
 		void Create(PhysicalDevice& physicalDevice, Device& device);
-		uint32_t GetNextImage();
+		int32_t GetNextImage();
 		uint32_t GetCurrentImageIndex();
 		VkImage& GetImage(size_t index);
 		VkImageView& GetCurrentView(size_t index);
@@ -35,9 +35,10 @@ namespace Titan
 
 		void Resize(size_t width, size_t height);
 		void CleanUp();
-		void Shutdown(Device& device);
+		void Shutdown(Device& device, bool destroyRenderTarget = true);
 	private:
 		void Validate(PhysicalDevice& physicalDevice, Device& device, int32_t width = -1, int32_t height = -1);
+		void InternalResize(size_t width, size_t height);
 		void CreateSyncObject();
 		void CreateRenderPass();
 		void CreateFrameBuffer();
@@ -47,11 +48,16 @@ namespace Titan
 
 		uint32_t m_CurrentImage;
 
+		size_t m_Width;
+		size_t m_Height;
+
 		VkSwapchainKHR m_Swapchain;
 		std::vector<VkImage> m_SwapchainImages;
 		std::vector<VkImageView> m_SwapchainViews;
 		VkFormat m_SwapchainFormat;
 		VkExtent2D m_SwapchainExtent;
+
+		bool m_NeedsToResize;
 
 		VkRenderPass m_SwapchainRenderPass;
 		std::vector<VkFramebuffer> m_SwapchainFrameBuffers;

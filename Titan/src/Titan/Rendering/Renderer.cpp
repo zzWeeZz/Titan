@@ -18,6 +18,7 @@
 #include "Titan/Assets/ResourceRegistry.h"
 #include <Titan/Assets/Texture/Texture.h>
 #include "Titan/ImGui/TitanImGui.h"
+#include <imgui.h>
 namespace Titan
 {
 	struct Cache
@@ -126,12 +127,15 @@ namespace Titan
 		descriptorWrite[1].pImageInfo = &imageInfo;
 
 		vkUpdateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), descriptorWrite.size(), descriptorWrite.data(), 0, nullptr);
-
-
 		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
+		auto index = GraphicsContext::GetSwapchain().GetNextImage();
+		if (index < 0)
+		{
+			ImGui::EndFrame();
+			return;
+		}
 		vkResetFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame));
-		auto imageIndex = GraphicsContext::GetSwapchain().GetNextImage();
-
+		uint32_t imageIndex = index;
 		vkResetCommandBuffer(commandBuffer, 0);
 
 
@@ -185,7 +189,8 @@ namespace Titan
 			.clearValue = clearColor,
 		};
 		VkRect2D rec;
-		rec.extent = swapchain.GetExtent();
+		rec.extent.width = s_Cache->mainFB->GetInfo().width;
+		rec.extent.height = s_Cache->mainFB->GetInfo().height;
 		rec.offset = { 0,0 };
 		const VkRenderingInfo render_info{
 			.sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
@@ -200,8 +205,8 @@ namespace Titan
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = static_cast<float>(Application::GetWindow().GetWidth());
-		viewport.height = static_cast<float>(Application::GetWindow().GetHeight());
+		viewport.width = s_Cache->mainFB->GetInfo().width;
+		viewport.height = s_Cache->mainFB->GetInfo().height;
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
@@ -234,41 +239,41 @@ namespace Titan
 		}
 
 		vkCmdEndRendering(commandBuffer);
-		{
-			VkImageMemoryBarrier image_memory_barrier
-			{
-				.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-				.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-				.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-				.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-				.image = swapchain.GetImage(imageIndex),
-				.subresourceRange =
-				{
-					.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-					.baseMipLevel = 0,
-					.levelCount = 1,
-					.baseArrayLayer = 0,
-					.layerCount = 1,
-				}
-			};
-
-
-			vkCmdPipelineBarrier(
-				commandBuffer,
-				VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // srcStageMask
-				VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, // dstStageMask
-				0,
-				0,
-				nullptr,
-				0,
-				nullptr,
-				1, // imageMemoryBarrierCount
-				&image_memory_barrier // pImageMemoryBarriers
-			);
-		}
+		
 
 		TitanImGui::End();
+		//{
+		//	VkImageMemoryBarrier image_memory_barrier
+		//	{
+		//		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		//		.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		//		.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		//		.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		//		.image = swapchain.GetImage(imageIndex),
+		//		.subresourceRange =
+		//		{
+		//			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+		//			.baseMipLevel = 0,
+		//			.levelCount = 1,
+		//			.baseArrayLayer = 0,
+		//			.layerCount = 1,
+		//		}
+		//	};
 
+
+		//	vkCmdPipelineBarrier(
+		//		commandBuffer,
+		//		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // srcStageMask
+		//		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, // dstStageMask
+		//		0,
+		//		0,
+		//		nullptr,
+		//		0,
+		//		nullptr,
+		//		1, // imageMemoryBarrierCount
+		//		&image_memory_barrier // pImageMemoryBarriers
+		//	);
+		//}
 		TN_VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
 
@@ -314,5 +319,6 @@ namespace Titan
 
 	void Renderer::Shutdown()
 	{
+		s_Cache->mainFB->CleanUp();
 	}
 }

@@ -64,6 +64,11 @@ namespace Titan
 		CreateCommandPools(physicalDevice);
 	}
 
+	void Device::WaitForIdle()
+	{
+		vkDeviceWaitIdle(m_Device);
+	}
+
 	VkCommandBuffer Device::CreateSecondaryCommandBuffer()
 	{
 		VkCommandBuffer commandBuffer;

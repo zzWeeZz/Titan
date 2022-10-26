@@ -12,7 +12,6 @@ namespace Titan
             m_Views[i].resize(m_Info.imageFormats.size());
         }
         Validate();
-		TitanAllocator::QueueDeletion([this]() { CleanUp(); });
     }
 
     void Framebuffer::Resize(size_t width, size_t height)
@@ -21,12 +20,15 @@ namespace Titan
 		{
 			TN_CORE_ASSERT(false, "resize failed, width or height were 0!");
 		}
+		m_Info.height = height;
+		m_Info.width = width;
 		CleanUp();
 		Validate();
     }
 
     void Framebuffer::CleanUp()
     {
+		GraphicsContext::GetDevice().WaitForIdle();
 		for (size_t i = 0; i < g_FramesInFlight; ++i)
 		{
 			for (size_t imageFormatIndex = 0; imageFormatIndex < m_Info.imageFormats.size(); ++imageFormatIndex)
@@ -74,7 +76,7 @@ namespace Titan
 				imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 				imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 				imageInfo.flags = 0; // Optional
-
+		
 				VmaAllocationCreateInfo imgAllocInfo{};
 				imgAllocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
@@ -84,7 +86,7 @@ namespace Titan
 				viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 				viewInfo.image = m_Images[i][imageFormatIndex].Image;
 				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-				viewInfo.format = FormatToVkFormat(m_Info.imageFormats[imageFormatIndex]);;
+				viewInfo.format = FormatToVkFormat(m_Info.imageFormats[imageFormatIndex]);
 				viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 				viewInfo.subresourceRange.baseMipLevel = 0;
 				viewInfo.subresourceRange.levelCount = 1;

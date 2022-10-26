@@ -16,11 +16,11 @@ namespace Titan
 	void TitanAllocator::Allocate(AllocatedBuffer& allocation, VkBufferCreateInfo* bufferInfo, VmaAllocationCreateInfo* allocationInfo)
 	{
 		allocation.id = s_ID;
-		TN_CORE_INFO("TitanAllocator: id {0} Allocating: {1} bytes.", allocation.id, bufferInfo->size);
+		TN_CORE_INFO("TitanAllocator: id {0} Allocating buffer: {1} bytes.", allocation.id, bufferInfo->size);
 		allocation.sizeOfBuffer = bufferInfo->size;
 		TN_VK_CHECK(vmaCreateBuffer(s_Allocator, bufferInfo, allocationInfo, &allocation.buffer, &allocation.allocation, nullptr));
 		s_AllocateDestructorOrder.push_back(allocation.id);
-		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_CORE_INFO("TitanAllocator: id {0} Deallocating: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation); };
+		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_CORE_INFO("TitanAllocator: id {0} Deallocating buffer: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation); };
 		s_ID++;
 	}
 
@@ -32,14 +32,14 @@ namespace Titan
 		vmaGetAllocationInfo(s_Allocator, allocation.allocation, &allocInfo);
 		allocation.sizeOfBuffer = allocInfo.size;
 		s_AllocateDestructorOrder.push_back(allocation.id);
-		TN_CORE_INFO("TitanAllocator: id {0} Allocating: {1} bytes.", allocation.id, allocation.sizeOfBuffer);
-		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_CORE_INFO("TitanAllocator: id {0} Deallocating: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation); };
+		TN_CORE_INFO("TitanAllocator: id {0} Allocating image: {1} bytes.", allocation.id, allocation.sizeOfBuffer);
+		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_CORE_INFO("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation); };
 		s_ID++;
 	}
 
 	void TitanAllocator::DeAllocate(AllocatedBuffer& allocation)
 	{
-		TN_CORE_INFO("TitanAllocator: id {0} Deallocating: {1} bytes", allocation.id, allocation.sizeOfBuffer);
+		TN_CORE_INFO("TitanAllocator: id {0} Deallocating buffer: {1} bytes", allocation.id, allocation.sizeOfBuffer);
 		vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation);
 		s_DestroyFunctions.erase(allocation.id);
 		auto it = std::find(s_AllocateDestructorOrder.begin(), s_AllocateDestructorOrder.end(), allocation.id);
@@ -51,7 +51,7 @@ namespace Titan
 
 	void TitanAllocator::DeAllocate(AllocatedImage& allocation)
 	{
-		TN_CORE_INFO("TitanAllocator: id {0} Deallocating: {1} bytes", allocation.id, allocation.sizeOfBuffer);
+		TN_CORE_INFO("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
 		vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation);
 		s_DestroyFunctions.erase(allocation.id);
 		auto it = std::find(s_AllocateDestructorOrder.begin(), s_AllocateDestructorOrder.end(), allocation.id);

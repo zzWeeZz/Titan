@@ -41,9 +41,9 @@ void Titan::Application::Run()
 	ResourceRegistry::Dump();
 	
 	GraphicsContext::GetSwapchain().CleanUp();
+	Renderer::Shutdown();
 	TitanAllocator::Flush();
 	TitanAllocator::Shutdown();
-	Renderer::Shutdown();
 	GraphicsContext::Shutdown();
 	
 }

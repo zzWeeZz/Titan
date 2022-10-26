@@ -22,6 +22,8 @@ namespace Titan
 		std::vector<AllocatedImage> GetImages() { return m_Images[GraphicsContext::GetCurrentFrame()]; }
 		std::vector<VkImageView> GetViews() { return m_Views[GraphicsContext::GetCurrentFrame()]; }
 
+		FramebufferInfo& GetInfo() { return m_Info; }
+
 		void CleanUp();
 		static Ref<Framebuffer> Create(const FramebufferInfo& info);
 	private:

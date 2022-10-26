@@ -11,11 +11,24 @@ namespace Titan
 	void Swapchain::Create(PhysicalDevice& physicalDevice, Device& device)
 	{
 		Validate(physicalDevice, device);
+		m_Width = m_SwapchainExtent.width;
+		m_Height = m_SwapchainExtent.height;
+		CreateRenderPass();
+		m_SwapchainFrameBuffers.resize(m_SwapchainViews.size());
+		CreateFrameBuffer();
 	}
-	uint32_t Swapchain::GetNextImage()
+	int32_t Swapchain::GetNextImage()
 	{
 		uint32_t imageIndex;
-		vkAcquireNextImageKHR(GraphicsContext::GetDevice().GetHandle(), m_Swapchain, UINT64_MAX, GetImageAvailableSemaphore(GraphicsContext::GetCurrentFrame()), VK_NULL_HANDLE, &imageIndex);
+		auto result = vkAcquireNextImageKHR(GraphicsContext::GetDevice().GetHandle(), m_Swapchain, UINT64_MAX, GetImageAvailableSemaphore(GraphicsContext::GetCurrentFrame()), VK_NULL_HANDLE, &imageIndex);
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || m_NeedsToResize)
+		{
+			InternalResize(m_Width, m_Height);
+			m_Width = m_SwapchainExtent.width;
+			m_Height = m_SwapchainExtent.height;
+			m_NeedsToResize = false;
+			return -1;
+		}
 		m_CurrentImage = imageIndex;
 		return imageIndex;
 	}
@@ -33,24 +46,26 @@ namespace Titan
 	}
 	void Swapchain::Resize(size_t width, size_t height)
 	{
-		CleanUp();
-		Shutdown(GraphicsContext::GetDevice());
-		Validate(GraphicsContext::GetPhysicalDevice(), GraphicsContext::GetDevice(), (int32_t)width, (int32_t)height);
+		m_NeedsToResize = true;
+		m_Width = width;
+		m_Height = height;
 	}
 	void Swapchain::CleanUp()
 	{
 		auto& device = GraphicsContext::GetDevice();
-
-		for (size_t i = 0; i < g_FramesInFlight; ++i)
+		for (size_t i = 0; i < m_SwapchainFrameBuffers.size(); ++i)
 		{
-			vkDestroyFramebuffer(GraphicsContext::GetDevice().GetHandle(), m_SwapchainFrameBuffers[i], nullptr);
+			vkDestroyFramebuffer(device.GetHandle(), m_SwapchainFrameBuffers[i], nullptr);
+		}
+		for (size_t i = 0; i < m_SwapchainViews.size(); ++i)
+		{
 			vkDestroyImageView(device.GetHandle(), m_SwapchainViews[i], nullptr);
 		}
 		vkDestroySwapchainKHR(device.GetHandle(), m_Swapchain, nullptr);
 	}
-	void Swapchain::Shutdown(Device& device)
+	void Swapchain::Shutdown(Device& device, bool destroyRenderTarget)
 	{
-		vkDestroyRenderPass(device.GetHandle(), m_SwapchainRenderPass, nullptr);
+		if (destroyRenderTarget) vkDestroyRenderPass(device.GetHandle(), m_SwapchainRenderPass, nullptr);
 
 		for (size_t i = 0; i < g_FramesInFlight; ++i)
 		{
@@ -66,20 +81,11 @@ namespace Titan
 
 		VkSurfaceFormatKHR surfaceFormat = ChooseSwapchainFormat(supportDetails.formats);
 		VkPresentModeKHR presentMode = ChooseSwapchainPresentMode(supportDetails.presentModes);
-		
+
 		VkExtent2D extent = ChooseSwapchainExtent(supportDetails.capabilities);
 
-	
+		m_SwapchainExtent = extent;
 		m_SwapchainFormat = surfaceFormat.format;
-		if (width < 0 || height < 0)
-		{
-			m_SwapchainExtent = extent;
-		}
-		else
-		{
-			m_SwapchainExtent.height = height;
-			m_SwapchainExtent.width = width;
-		}
 
 		uint32_t imageCount = supportDetails.capabilities.minImageCount + 1;
 		if (supportDetails.capabilities.maxImageCount > 0 && imageCount > supportDetails.capabilities.maxImageCount)
@@ -149,7 +155,12 @@ namespace Titan
 			TN_VK_CHECK(vkCreateImageView(GraphicsContext::GetDevice().GetHandle(), &viewCreateInfo, nullptr, &m_SwapchainViews[i]));
 		}
 		CreateSyncObject();
-		CreateRenderPass();
+	}
+	void Swapchain::InternalResize(size_t width, size_t height)
+	{
+		GraphicsContext::GetDevice().WaitForIdle();
+		CleanUp();
+		Validate(GraphicsContext::GetPhysicalDevice(), GraphicsContext::GetDevice(), (int32_t)width, (int32_t)height);
 		CreateFrameBuffer();
 	}
 	void Swapchain::CreateSyncObject()
@@ -199,7 +210,6 @@ namespace Titan
 	}
 	void Swapchain::CreateFrameBuffer()
 	{
-		m_SwapchainFrameBuffers.resize(m_SwapchainViews.size());
 		for (size_t i = 0; i < m_SwapchainViews.size(); i++)
 		{
 			VkImageView attachments[] = { m_SwapchainViews[i] };

@@ -12,7 +12,7 @@ namespace Titan
 		VkCommandPool& GetCommandPool(size_t index) { return m_CommandPools[index]; }
 		VkQueue& GetGraphicsQueue() { return m_GraphicsQueue; }
 		VkQueue& GetPresentQueue() { return m_PresentQueue; }
-
+		void WaitForIdle();
 		VkCommandBuffer CreateSecondaryCommandBuffer();
 		void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& func);
 		void Shutdown();

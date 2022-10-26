@@ -135,6 +135,7 @@ namespace Titan
 
 	void GraphicsContext::Shutdown()
 	{
+		s_Device.WaitForIdle();
 		s_Swapchain.Shutdown(s_Device);
 		s_Device.Shutdown();
 #ifdef TN_CONFIG_DEBUG
