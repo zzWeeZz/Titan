@@ -4,6 +4,7 @@
 #include "Titan/Core/Core.h"
 #include "Titan/Core/Log.h"
 #include "Titan/Events/ApplicationEvent.h"
+#include <Titan/Events/InputEvent.h>
 
 namespace Titan
 {
@@ -69,7 +70,7 @@ namespace Titan
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos)
 		{
 				WindowInfo* info = static_cast<WindowInfo*>(glfwGetWindowUserPointer(window));
-				WindowCloseEvent event;
+				MouseMoveEvent event(xpos, ypos);
 				info->EventCallback(event);
 		});
 	}

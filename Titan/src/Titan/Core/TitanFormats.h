@@ -17,6 +17,30 @@ namespace Titan
 		Back,
 	};
 
+#pragma region Samplers
+	
+	enum class Filter
+	{
+		Nearest = 0,
+		Linear = 1,
+	};
+	enum class Address
+	{
+		Repeat = 0,
+		MirroredRepeat = 1,
+		ClampToEdge = 2,
+		ClampToBorder = 3,
+		MirrorClampToEdge = 4,
+	};
+	enum class MipmapMode
+	{
+		Nearest = 0,
+		Linear = 1,
+	};
+
+#pragma endregion
+
+#pragma region ImageFormats
 	enum class ImageFormat
 	{
 		Undefined = 0,
@@ -206,14 +230,6 @@ namespace Titan
 		ASTC_12x12_SRGB_BLOCK = 184,
 	};
 
-	inline VkFormat FormatToVkFormat(const ImageFormat& format)
-	{
-		return static_cast<VkFormat>(format);
-	}
-	inline ImageFormat VkFormatToFormat(const VkFormat& format)
-	{
-		return static_cast<ImageFormat>(format);
-	}
 	inline bool IsDepth(ImageFormat& format)
 	{
 		if (format == ImageFormat::D16_UN
@@ -226,5 +242,42 @@ namespace Titan
 			return true;
 		}
 		return false;
+	}
+#pragma endregion
+
+
+	inline VkFormat FormatToVkFormat(const ImageFormat& format)
+	{
+		return static_cast<VkFormat>(format);
+	}
+	inline VkSamplerMipmapMode FormatToVkFormat(const MipmapMode& address)
+	{
+		return static_cast<VkSamplerMipmapMode>(address);
+	}
+	inline VkFilter FormatToVkFormat(const Filter& address)
+	{
+		return static_cast<VkFilter>(address);
+	}
+	inline VkSamplerAddressMode FormatToVkFormat(const Address& address)
+	{
+		return static_cast<VkSamplerAddressMode>(address);
+	}
+
+
+	inline ImageFormat VkFormatToFormat(const VkFormat& format)
+	{
+		return static_cast<ImageFormat>(format);
+	}
+	inline Filter VkFormatToFormat(const VkFilter& address)
+	{
+		return static_cast<Filter>(address);
+	}
+	inline MipmapMode VkFormatToFormat(const VkSamplerMipmapMode& address)
+	{
+		return static_cast<MipmapMode>(address);
+	}
+	inline Address VkFormatToFormat(const VkSamplerAddressMode& address)
+	{
+		return static_cast<Address>(address);
 	}
 }

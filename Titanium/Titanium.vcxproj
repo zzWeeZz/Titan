@@ -148,10 +148,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titanium\Panels\PropertiesPanel.h" />
     <ClInclude Include="src\Titanium\Editorlayer\EditorLayer.h" />
     <ClInclude Include="src\Titanium\Panels\SceneHierarchyPanel.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titanium\Panels\PropertiesPanel.cpp" />
     <ClCompile Include="src\Titanium\Editorlayer\EditorLayer.cpp" />
     <ClCompile Include="src\Titanium\Panels\SceneHierarchyPanel.cpp" />
   </ItemGroup>

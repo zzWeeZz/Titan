@@ -90,6 +90,11 @@ namespace Snowflake
 			return entity;
 		}
 
+		std::vector<SnowID>& GetComponentIDsFromEntity(Entity entity)
+		{
+			return m_Registry[entity];
+		}
+
 		// fix complexety to O(1)
 		bool DestroyEntity(Entity& entity)
 		{

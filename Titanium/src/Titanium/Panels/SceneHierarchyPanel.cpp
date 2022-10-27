@@ -17,6 +17,8 @@ namespace Titan
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Hierarchy");
+
+		ImGui::Text("Scene: NAME");
 		ImGui::BeginChild("hirarchyPanel");
 		m_Context->m_Registry.ForEach([&](Snowflake::Entity ent)
 			{
@@ -41,6 +43,11 @@ namespace Titan
 		}
 
 		ImGui::End();
+	}
+
+	void SceneHierarchyPanel::EntitySelectedCallback(std::function<void(Entity& selectedEntity)>&& callback)
+	{
+		callback(m_SelectedEntity);
 	}
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)

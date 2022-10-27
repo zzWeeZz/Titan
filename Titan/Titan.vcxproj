@@ -154,6 +154,10 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titan\Rendering\Libraries\SamplerLibrary.h" />
+    <ClInclude Include="src\Titan\Events\InputEvent.h" />
+    <ClInclude Include="src\Titan\Scene\PropertyRegistry.h" />
+    <ClInclude Include="src\Titan\Utils\VulkanUtils.h" />
     <ClInclude Include="src\TNpch.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
@@ -313,6 +317,8 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titan\Rendering\Libraries\SamplerLibrary.cpp" />
+    <ClCompile Include="src\Titan\Utils\VulkanUtils.cpp" />
     <ClCompile Include="src\TNpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

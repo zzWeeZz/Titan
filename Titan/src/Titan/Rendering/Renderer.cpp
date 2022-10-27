@@ -40,7 +40,8 @@ namespace Titan
 		VkDescriptorPool descriptorPool;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
-	static PerFrameInFlight<VkDescriptorSet> descriptorSets;
+	static PerFrameInFlight<VkDescriptorSet> s_DescriptorSets;
+	static std::vector<PerFrameInFlight<VkDescriptorSet>> s_ExternalDescriptorSets;
 	void Renderer::Submit(const CameraCmd& cameraCmd)
 	{
 		s_Cache->currentCamera = cameraCmd;
@@ -48,6 +49,20 @@ namespace Titan
 	void Renderer::Submit(const MeshCmd& meshCmd)
 	{
 		s_Cache->meshCmds.push_back(meshCmd);
+	}
+	VkDescriptorSet& Renderer::AllocateDescriptorSet(VkDescriptorSetLayout& layout)
+	{
+		auto& sets = s_ExternalDescriptorSets.emplace_back();
+		for (size_t i = 0; i < g_FramesInFlight; ++i)
+		{
+			VkDescriptorSetAllocateInfo alloc_info = {};
+			alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+			alloc_info.descriptorPool = s_Cache->descriptorPool;
+			alloc_info.descriptorSetCount = g_FramesInFlight;
+			alloc_info.pSetLayouts = &layout;
+			TN_VK_CHECK(vkAllocateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), &alloc_info, &sets[i]));
+		}
+		return sets[GraphicsContext::GetCurrentFrame()];
 	}
 	void Renderer::Initialize()
 	{
@@ -66,7 +81,7 @@ namespace Titan
 
 		TN_VK_CHECK(vkCreateDescriptorPool(GraphicsContext::GetDevice().GetHandle(), &poolInfo, nullptr, &s_Cache->descriptorPool));
 		TitanAllocator::QueueDeletion([&]() {vkDestroyDescriptorPool(GraphicsContext::GetDevice().GetHandle(), s_Cache->descriptorPool, nullptr); });
-		
+
 		ResourceRegistry::GetItem<Texture>(s_Cache->textureID)->Initialize("Assets/Texture/Titan.png");
 
 		PipelineInfo info{};
@@ -89,7 +104,7 @@ namespace Titan
 		fbInfo.imageFormats = { ImageFormat::R8G8B8A8_SRGB };
 		s_Cache->mainFB = Framebuffer::Create(fbInfo);
 
-		TN_VK_CHECK(vkAllocateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), &allocInfo, descriptorSets.data()));
+		TN_VK_CHECK(vkAllocateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), &allocInfo, s_DescriptorSets.data()));
 	}
 
 	void Renderer::Begin()
@@ -117,13 +132,13 @@ namespace Titan
 		descriptorWrite[0].descriptorCount = 1;
 		descriptorWrite[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		descriptorWrite[0].pBufferInfo = &bufferInfo;
-		descriptorWrite[0].dstSet = descriptorSets[GraphicsContext::GetCurrentFrame()];
-		
+		descriptorWrite[0].dstSet = s_DescriptorSets[GraphicsContext::GetCurrentFrame()];
+
 		descriptorWrite[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrite[1].dstBinding = 1;
 		descriptorWrite[1].descriptorCount = 1;
 		descriptorWrite[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		descriptorWrite[1].dstSet = descriptorSets[GraphicsContext::GetCurrentFrame()];
+		descriptorWrite[1].dstSet = s_DescriptorSets[GraphicsContext::GetCurrentFrame()];
 		descriptorWrite[1].pImageInfo = &imageInfo;
 
 		vkUpdateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), descriptorWrite.size(), descriptorWrite.data(), 0, nullptr);
@@ -215,9 +230,9 @@ namespace Titan
 		scissor.offset = { 0, 0 };
 		scissor.extent = swapchain.GetExtent();
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-		
 
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s_Cache->pipeline->GetLayout(), 0, 1, &descriptorSets[GraphicsContext::GetCurrentFrame()], 0, nullptr);
+
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s_Cache->pipeline->GetLayout(), 0, 1, &s_DescriptorSets[GraphicsContext::GetCurrentFrame()], 0, nullptr);
 
 		s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 		s_Cache->cameraData.view = s_Cache->currentCamera.view;
@@ -239,41 +254,9 @@ namespace Titan
 		}
 
 		vkCmdEndRendering(commandBuffer);
-		
+
 
 		TitanImGui::End();
-		//{
-		//	VkImageMemoryBarrier image_memory_barrier
-		//	{
-		//		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		//		.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		//		.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		//		.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-		//		.image = swapchain.GetImage(imageIndex),
-		//		.subresourceRange =
-		//		{
-		//			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-		//			.baseMipLevel = 0,
-		//			.levelCount = 1,
-		//			.baseArrayLayer = 0,
-		//			.layerCount = 1,
-		//		}
-		//	};
-
-
-		//	vkCmdPipelineBarrier(
-		//		commandBuffer,
-		//		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // srcStageMask
-		//		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, // dstStageMask
-		//		0,
-		//		0,
-		//		nullptr,
-		//		0,
-		//		nullptr,
-		//		1, // imageMemoryBarrierCount
-		//		&image_memory_barrier // pImageMemoryBarriers
-		//	);
-		//}
 		TN_VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
 
@@ -315,10 +298,18 @@ namespace Titan
 		currentFrame = (currentFrame + 1) % g_FramesInFlight;
 
 		s_Cache->meshCmds.clear();
+		FreeExternalDescriptorSets();
 	}
 
 	void Renderer::Shutdown()
 	{
 		s_Cache->mainFB->CleanUp();
+	}
+	void Renderer::FreeExternalDescriptorSets()
+	{
+		for (auto& sets : s_ExternalDescriptorSets)
+		{
+			vkFreeDescriptorSets(GraphicsContext::GetDevice().GetHandle(), s_Cache->descriptorPool, g_FramesInFlight, sets.data());
+		}
 	}
 }

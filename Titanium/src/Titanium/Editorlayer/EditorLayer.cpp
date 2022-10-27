@@ -13,6 +13,7 @@ namespace Titan
 	{
 		m_ActiveScene = CreateRef<Scene>();
 		m_SceneHierarchyPanel = std::make_shared<SceneHierarchyPanel>(m_ActiveScene);
+		m_PropertiesPanel = std::make_shared<PropertiesPanel>();
 		{
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();
@@ -49,7 +50,13 @@ namespace Titan
 
 	void EditorLayer::OnUpdate()
 	{
+		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 		m_SceneHierarchyPanel->OnImGuiRender();
+		m_SceneHierarchyPanel->EntitySelectedCallback([this](Entity& entity)
+			{
+				m_PropertiesPanel->Inspect(entity);
+			});
+		m_PropertiesPanel->ImGuiBeginRender();
 		m_ActiveScene->OnEditorUpdate();
 		ImGui::Begin("Test");
 		ImGui::Text("Titan is saying hi in imgui");
