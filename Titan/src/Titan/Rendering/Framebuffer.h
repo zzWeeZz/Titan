@@ -21,7 +21,8 @@ namespace Titan
 		void Resize(size_t width, size_t height);
 		std::vector<AllocatedImage> GetImages() { return m_Images[GraphicsContext::GetCurrentFrame()]; }
 		std::vector<VkImageView> GetViews() { return m_Views[GraphicsContext::GetCurrentFrame()]; }
-
+		AllocatedImage& GetAllocatedImage(size_t index) { return m_Images[GraphicsContext::GetCurrentFrame()][index]; }
+		VkImageView& GetImageView(size_t index) { return m_Views[GraphicsContext::GetCurrentFrame()][index]; }
 		FramebufferInfo& GetInfo() { return m_Info; }
 
 		void CleanUp();

@@ -23,7 +23,7 @@ void Titan::SamplerLibrary::Add(const std::string& key, const Filter& filter, co
 	info.maxAnisotropy = 1.0f;
     s_Samplers[key] = VkSampler();
     TN_VK_CHECK(vkCreateSampler(GraphicsContext::GetDevice().GetHandle(), &info, nullptr, &s_Samplers[key]));
-    TitanAllocator::QueueDeletion([&, key]() {vkDestroySampler(GraphicsContext::GetDevice().GetHandle(), s_Samplers[key], nullptr); });
+    TitanAllocator::QueueDeletion([&, key]() {TN_CORE_TRACE("TitanAllocator: Destroying sampler: {0}", key.c_str()); vkDestroySampler(GraphicsContext::GetDevice().GetHandle(), s_Samplers[key], nullptr); });
 }
 
 VkSampler& Titan::SamplerLibrary::Get(const std::string& key)

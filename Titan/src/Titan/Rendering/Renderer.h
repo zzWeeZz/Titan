@@ -5,6 +5,7 @@
 #include "Titan/Rendering/Buffers/VertexPacket.h"
 namespace Titan
 {
+	class Framebuffer;
 	struct CameraCmd
 	{
 		glm::mat4 view;
@@ -22,6 +23,7 @@ namespace Titan
 	public:
 		static void Submit(const CameraCmd& cameraCmd);
 		static void Submit(const MeshCmd& meshCmd);
+		static Ref<Framebuffer> GetMainFramebuffer();
 		static VkDescriptorSet& AllocateDescriptorSet(VkDescriptorSetLayout& layout);
 		static void Initialize();
 		static void Begin();

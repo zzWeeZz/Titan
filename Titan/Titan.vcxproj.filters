@@ -46,6 +46,9 @@
     <Filter Include="src\Titan\Rendering\Buffers">
       <UniqueIdentifier>{C5530107-3161-2FED-BA47-2BD82654FBA3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Rendering\Libraries">
+      <UniqueIdentifier>{F53D382E-6156-1F58-2A03-AFF196DAB3F1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Rendering\Pipeline">
       <UniqueIdentifier>{8EC54F4E-7A80-3FFA-2338-B8440FD2898A}</UniqueIdentifier>
     </Filter>
@@ -69,6 +72,15 @@
     </Filter>
     <Filter Include="vendor\ImGui\misc\cpp">
       <UniqueIdentifier>{EAF585DC-5662-41D7-1F56-D9348B81633F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGui\misc\fonts">
+      <UniqueIdentifier>{71DC1016-DD13-59AD-E61D-BDD052D47FA6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGui\misc\freetype">
+      <UniqueIdentifier>{CBC9D465-B7D9-8036-2093-E5540CC26FCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGui\misc\single_file">
+      <UniqueIdentifier>{08DD8AEE-74F5-7118-3DA2-01B2A97906B2}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\Snowflake">
       <UniqueIdentifier>{2C921B61-188B-3AB3-41BD-1F382D151ABF}</UniqueIdentifier>
@@ -165,6 +177,9 @@
     <ClInclude Include="src\Titan\Events\Event.h">
       <Filter>src\Titan\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Events\InputEvent.h">
+      <Filter>src\Titan\Events</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\ImGui\TitanImGui.h">
       <Filter>src\Titan\ImGui</Filter>
     </ClInclude>
@@ -207,6 +222,12 @@
     <ClInclude Include="src\Titan\Rendering\GraphicsContext.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Libraries\SamplerLibrary.h">
+      <Filter>src\Titan\Rendering\Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Libraries\ShaderLibrary.h">
+      <Filter>src\Titan\Rendering\Libraries</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Pipeline\Pipeline.h">
       <Filter>src\Titan\Rendering\Pipeline</Filter>
     </ClInclude>
@@ -225,6 +246,9 @@
     <ClInclude Include="src\Titan\Scene\Entity.h">
       <Filter>src\Titan\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Scene\PropertyRegistry.h">
+      <Filter>src\Titan\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Scene\Scene.h">
       <Filter>src\Titan\Scene</Filter>
     </ClInclude>
@@ -241,6 +265,9 @@
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Utils\TitanAllocator.h">
+      <Filter>src\Titan\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Utils\VulkanUtils.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Window.h">
@@ -272,6 +299,12 @@
     </ClInclude>
     <ClInclude Include="vendor\ImGui\misc\cpp\imgui_stdlib.h">
       <Filter>vendor\ImGui\misc\cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\misc\freetype\imgui_freetype.h">
+      <Filter>vendor\ImGui\misc\freetype</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGui\misc\single_file\imgui_single_file.h">
+      <Filter>vendor\ImGui\misc\single_file</Filter>
     </ClInclude>
     <ClInclude Include="vendor\Snowflake\Serializer.hpp">
       <Filter>vendor\Snowflake</Filter>
@@ -576,10 +609,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Events\InputEvent.h" />
-    <ClInclude Include="src\Titan\Utils\VulkanUtils.h" />
-    <ClInclude Include="src\Titan\Rendering\Libraries\SamplerLibrary.h" />
-    <ClInclude Include="src\Titan\Scene\PropertyRegistry.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -648,6 +677,12 @@
     <ClCompile Include="src\Titan\Rendering\GraphicsContext.cpp">
       <Filter>src\Titan\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Libraries\SamplerLibrary.cpp">
+      <Filter>src\Titan\Rendering\Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Libraries\ShaderLibrary.cpp">
+      <Filter>src\Titan\Rendering\Libraries</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Pipeline\Pipeline.cpp">
       <Filter>src\Titan\Rendering\Pipeline</Filter>
     </ClCompile>
@@ -670,6 +705,9 @@
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Utils\TitanAllocator.cpp">
+      <Filter>src\Titan\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Utils\VulkanUtils.cpp">
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
     <ClCompile Include="vendor\ImGui\backends\imgui_impl_glfw.cpp">
@@ -696,10 +734,14 @@
     <ClCompile Include="vendor\ImGui\misc\cpp\imgui_stdlib.cpp">
       <Filter>vendor\ImGui\misc\cpp</Filter>
     </ClCompile>
+    <ClCompile Include="vendor\ImGui\misc\fonts\binary_to_compressed_c.cpp">
+      <Filter>vendor\ImGui\misc\fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
+      <Filter>vendor\ImGui\misc\freetype</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <Filter>vendor\dx12helpers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Utils\VulkanUtils.cpp" />
-    <ClCompile Include="src\Titan\Rendering\Libraries\SamplerLibrary.cpp" />
   </ItemGroup>
 </Project>

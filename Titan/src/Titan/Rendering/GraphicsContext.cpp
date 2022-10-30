@@ -10,7 +10,7 @@
 
 #include "Titan/Platform/WindowsWindow.h"
 #include "d3d12sdklayers.h"
-
+#include "Optick/src/optick.h"
 
 namespace Titan
 {

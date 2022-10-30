@@ -8,6 +8,23 @@
 #include "Titan/Utils/TitanAllocator.h"
 namespace Titan
 {
+	Swapchain::Swapchain()
+	{
+		m_CurrentImage = 0;
+		m_Width = 0;
+		m_Height = 0;
+		m_NeedsToResize = false;
+		m_Swapchain = {};
+		for (size_t i = 0; i < g_FramesInFlight; ++i)
+		{
+			m_ImageAvailableSemaphores[i] = {};
+			m_RenderFinishedSemaphores[i] = {};
+			m_InFlightFences[i] = {};
+		}
+		m_SwapchainExtent = {};
+		m_SwapchainFormat = VK_FORMAT_UNDEFINED;
+		m_SwapchainRenderPass = {};
+	}
 	void Swapchain::Create(PhysicalDevice& physicalDevice, Device& device)
 	{
 		Validate(physicalDevice, device);

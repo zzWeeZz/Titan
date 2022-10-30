@@ -16,7 +16,7 @@ namespace Titan
 	public:
 		IndexBuffer(const IndexBufferInfo& info);
 		AllocatedBuffer& GetAllocatedBuffer() { return m_GpuBuffer; }
-		size_t GetIndexCount();
+		uint32_t GetIndexCount();
 		static Ref<IndexBuffer> Create(const IndexBufferInfo& info);
 		~IndexBuffer();
 	private:

@@ -50,6 +50,10 @@ namespace Titan
 	{
 		s_Cache->meshCmds.push_back(meshCmd);
 	}
+	Ref<Framebuffer> Renderer::GetMainFramebuffer()
+	{
+		return s_Cache->mainFB;
+	}
 	VkDescriptorSet& Renderer::AllocateDescriptorSet(VkDescriptorSetLayout& layout)
 	{
 		auto& sets = s_ExternalDescriptorSets.emplace_back();
@@ -74,7 +78,7 @@ namespace Titan
 
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		poolInfo.poolSizeCount = poolSize.size();
+		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSize.size());
 		poolInfo.pPoolSizes = poolSize.data();
 
 		poolInfo.maxSets = g_FramesInFlight;
@@ -85,8 +89,8 @@ namespace Titan
 		ResourceRegistry::GetItem<Texture>(s_Cache->textureID)->Initialize("Assets/Texture/Titan.png");
 
 		PipelineInfo info{};
-		info.vsPath = "Engine/Shaders/triangle_vs.spv";
-		info.psPath = "Engine/Shaders/triangle_fs.spv";
+		info.vsPath = "Engine/Shaders/triangle_vs.vert";
+		info.psPath = "Engine/Shaders/triangle_fs.frag";
 		s_Cache->pipeline = Pipeline::Create(info);
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
@@ -109,6 +113,7 @@ namespace Titan
 
 	void Renderer::Begin()
 	{
+		OPTICK_EVENT();
 		auto& currentFrame = GraphicsContext::GetCurrentFrame();
 		auto& commandBuffer = GraphicsContext::GetDevice().GetCommandBuffer(currentFrame, 0);
 		auto& swapchain = GraphicsContext::GetSwapchain();
@@ -141,7 +146,7 @@ namespace Titan
 		descriptorWrite[1].dstSet = s_DescriptorSets[GraphicsContext::GetCurrentFrame()];
 		descriptorWrite[1].pImageInfo = &imageInfo;
 
-		vkUpdateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), descriptorWrite.size(), descriptorWrite.data(), 0, nullptr);
+		vkUpdateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
 		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		auto index = GraphicsContext::GetSwapchain().GetNextImage();
 		if (index < 0)
@@ -203,9 +208,9 @@ namespace Titan
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.clearValue = clearColor,
 		};
-		VkRect2D rec;
-		rec.extent.width = s_Cache->mainFB->GetInfo().width;
-		rec.extent.height = s_Cache->mainFB->GetInfo().height;
+		VkRect2D rec{};
+		rec.extent.width = static_cast<uint32_t>(s_Cache->mainFB->GetInfo().width);
+		rec.extent.height = static_cast<uint32_t>(s_Cache->mainFB->GetInfo().height);
 		rec.offset = { 0,0 };
 		const VkRenderingInfo render_info{
 			.sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
@@ -220,8 +225,8 @@ namespace Titan
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = s_Cache->mainFB->GetInfo().width;
-		viewport.height = s_Cache->mainFB->GetInfo().height;
+		viewport.width = static_cast<float>(s_Cache->mainFB->GetInfo().width);
+		viewport.height = static_cast<float>(s_Cache->mainFB->GetInfo().height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);

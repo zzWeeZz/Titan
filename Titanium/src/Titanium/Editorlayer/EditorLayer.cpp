@@ -6,6 +6,7 @@
 #include "Titan/Assets/Model/Model.h"
 #include "Titan/Assets/Texture/Texture.h"
 #include <imgui.h>
+#include <Titan/Events/InputEvent.h>
 
 namespace Titan
 {
@@ -58,9 +59,7 @@ namespace Titan
 			});
 		m_PropertiesPanel->ImGuiBeginRender();
 		m_ActiveScene->OnEditorUpdate();
-		ImGui::Begin("Test");
-		ImGui::Text("Titan is saying hi in imgui");
-		ImGui::End();
+		
 		RunEditorCamera();
 	}
 
@@ -71,7 +70,8 @@ namespace Titan
 
 	void EditorLayer::OnEvent(Event& e)
 	{
-
+		EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<MouseMoveEvent>(TN_BIND_FUNC(EditorLayer::MouseMove));
 	}
 	void EditorLayer::RunEditorCamera()
 	{
@@ -94,5 +94,11 @@ namespace Titan
 
 
 		CameraSystem(m_cameraData, m_transformData);
+	}
+	bool EditorLayer::MouseMove(MouseMoveEvent& event)
+	{
+		TN_CORE_TRACE("{0}, {1} - {2}", event.ToString().c_str(), event.GetMousePos().first, event.GetMousePos().second);
+
+		return false;
 	}
 }

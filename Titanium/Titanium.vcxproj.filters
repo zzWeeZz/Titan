@@ -12,18 +12,22 @@
     <ClInclude Include="src\Titanium\Editorlayer\EditorLayer.h">
       <Filter>Editorlayer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titanium\Panels\PropertiesPanel.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titanium\Panels\SceneHierarchyPanel.h">
       <Filter>Panels</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titanium\Panels\PropertiesPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titanium\Editorlayer\EditorLayer.cpp">
       <Filter>Editorlayer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titanium\Panels\PropertiesPanel.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titanium\Panels\SceneHierarchyPanel.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titanium\Panels\PropertiesPanel.cpp" />
   </ItemGroup>
 </Project>

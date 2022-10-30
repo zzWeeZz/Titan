@@ -19,9 +19,9 @@ namespace Titan
 	private:
 		void CreateCommandPools(PhysicalDevice& physicalDevice, size_t amount = 1);
 		bool CheckDeviceExtensionSupport(PhysicalDevice& physicalDevice, const std::vector<const char*> deviceExtensions);
-		VkDevice m_Device;
-		VkQueue m_GraphicsQueue;
-		VkQueue m_PresentQueue;
+		VkDevice m_Device{};
+		VkQueue m_GraphicsQueue{};
+		VkQueue m_PresentQueue{};
 		std::vector<PerFrameInFlight<VkCommandBuffer>> m_CommandBuffers;
 		std::vector<VkCommandPool> m_CommandPools;
 	};

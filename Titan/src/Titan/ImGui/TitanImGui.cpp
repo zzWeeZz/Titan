@@ -33,7 +33,7 @@ namespace Titan
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 		pool_info.maxSets = 1000;
-		pool_info.poolSizeCount = std::size(poolSizes);
+		pool_info.poolSizeCount = static_cast<uint32_t>(std::size(poolSizes));
 		pool_info.pPoolSizes = poolSizes;
 
 		VkDescriptorPool imguiPool;
@@ -160,7 +160,7 @@ namespace Titan
 
 
 		{
-			VkClearValue clearValues[2];
+			VkClearValue clearValues[2]{};
 			clearValues[0].color = { { 0.1f, 0.1f, 0.1f, 0.f } };
 			clearValues[1].depthStencil = { 1.0f, 0 };
 

@@ -22,7 +22,7 @@ namespace Titan
 		VkDescriptorSetLayout& DescLayout() { return m_DescriptorSetLayout; }
 		static Ref<Pipeline> Create(const PipelineInfo& info);
 	private:
-		VkShaderModule CreateShaderModule(const std::filesystem::path& shaderPath);
+		VkShaderModule CreateShaderModule(std::vector<uint32_t> assembly);
 		void CreateDescriptorSetLayout();
 		VkDescriptorSetLayout m_DescriptorSetLayout;
 		VkPipelineLayout m_PipelineLayout;

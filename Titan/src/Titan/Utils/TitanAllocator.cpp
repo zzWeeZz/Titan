@@ -16,7 +16,7 @@ namespace Titan
 	void TitanAllocator::Allocate(AllocatedBuffer& allocation, VkBufferCreateInfo* bufferInfo, VmaAllocationCreateInfo* allocationInfo)
 	{
 		allocation.id = s_ID;
-		TN_CORE_INFO("TitanAllocator: id {0} Allocating buffer: {1} bytes.", allocation.id, bufferInfo->size);
+		TN_CORE_INFO("TitanAllocator: id {0} Allocating buffer: {1} bytes", allocation.id, bufferInfo->size);
 		allocation.sizeOfBuffer = bufferInfo->size;
 		TN_VK_CHECK(vmaCreateBuffer(s_Allocator, bufferInfo, allocationInfo, &allocation.buffer, &allocation.allocation, nullptr));
 		s_AllocateDestructorOrder.push_back(allocation.id);
@@ -32,7 +32,7 @@ namespace Titan
 		vmaGetAllocationInfo(s_Allocator, allocation.allocation, &allocInfo);
 		allocation.sizeOfBuffer = allocInfo.size;
 		s_AllocateDestructorOrder.push_back(allocation.id);
-		TN_CORE_INFO("TitanAllocator: id {0} Allocating image: {1} bytes.", allocation.id, allocation.sizeOfBuffer);
+		TN_CORE_INFO("TitanAllocator: id {0} Allocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
 		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_CORE_INFO("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation); };
 		s_ID++;
 	}
@@ -78,7 +78,7 @@ namespace Titan
 
 	void TitanAllocator::Flush()
 	{
-		for (int32_t Index = s_AllocateDestructorOrder.size() - 1; Index >= 0 ; Index--)
+		for (int32_t Index = static_cast<int32_t>(s_AllocateDestructorOrder.size() - 1u); Index >= 0; Index--)
 		{
 			s_DestroyFunctions[s_AllocateDestructorOrder[Index]]();
 		}

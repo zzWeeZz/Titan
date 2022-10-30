@@ -118,7 +118,7 @@ project "SandBox"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"
-
+    disablewarnings { "4996", "6285", "26437", "26451", "26498", "26800", "26495", "26439" }
     debugdir "AssetData/"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -222,7 +222,7 @@ project "Titan"
     kind "StaticLib"
     language "C++"
     cppdialect "C++20"
-    disablewarnings { "4996" }
+    disablewarnings { "4996", "6285", "26437", "26451", "26498", "26800", "26495", "26439" }
     debugdir "AssetData/"
     
     pchheader "TNpch.h"
@@ -272,13 +272,16 @@ project "Titan"
 	}
     
     filter "files:Titan/vendor/**.h"
+        warnings "off"
         disablewarnings { "26451", "6387", "26812", "26439", "26800", "26495", "4717", "5232", "4067" }
 
     filter "files:Titan/vendor/**.cpp"
+        warnings "off"
         flags {"noPCH"}
         disablewarnings { "26451", "6387", "26812", "26439", "26800", "26495", "4717", "5232", "4067" }
 
     filter "files:Titan/vendor/**.hpp"
+        warnings "off"
         disablewarnings { "26451", "6387", "26812", "26439", "26800", "26495", "4717", "5232", "4067" }
 
     defines {"_CONSOLE"}
@@ -340,7 +343,7 @@ project "Titan"
     kind "StaticLib"
     language "C++"
     cppdialect "C++20"
-        
+    disablewarnings { "4996", "6285", "26437", "26451", "26498", "26800", "26495", "26439" }
     debugdir "Assets/"
         
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")

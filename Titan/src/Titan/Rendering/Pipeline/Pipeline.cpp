@@ -5,13 +5,14 @@
 #include "Titan/Utils/FilesystemUtils.h"
 #include "Titan/Utils/TitanAllocator.h"
 #include "Titan/Application.h"
+#include "Titan/Rendering/Libraries/ShaderLibrary.h"
 #include <Titan/Rendering/Vertices.h>
 namespace Titan
 {
 	Pipeline::Pipeline(const PipelineInfo& info)
 	{
-		auto vertShaderModule = CreateShaderModule(info.vsPath);
-		auto fragShaderModule = CreateShaderModule(info.psPath);
+		auto vertShaderModule = CreateShaderModule(ShaderLibrary::Get(info.vsPath).spvBinary);
+		auto fragShaderModule = CreateShaderModule(ShaderLibrary::Get(info.psPath).spvBinary);
 
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -41,9 +42,9 @@ namespace Titan
 
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputInfo.vertexBindingDescriptionCount = vertexInfo.Bindings.size();
+		vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(vertexInfo.Bindings.size());
 		vertexInputInfo.pVertexBindingDescriptions = vertexInfo.Bindings.data(); // Optional
-		vertexInputInfo.vertexAttributeDescriptionCount = vertexInfo.Attributes.size();
+		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexInfo.Attributes.size());
 		vertexInputInfo.pVertexAttributeDescriptions = vertexInfo.Attributes.data(); // Optional
 
 		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
@@ -167,14 +168,12 @@ namespace Titan
 		return CreateRef<Pipeline>(info);
 	}
 
-	VkShaderModule Pipeline::CreateShaderModule(const std::filesystem::path& shaderPath)
+	VkShaderModule Pipeline::CreateShaderModule(std::vector<uint32_t> assembly)
 	{
-		std::vector<char> byteVector;
-		FilesystemUtils::ReadBinary(shaderPath, byteVector);
 		VkShaderModuleCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = byteVector.size();
-		createInfo.pCode = reinterpret_cast<const uint32_t*>(byteVector.data());
+		createInfo.codeSize = assembly.size() * 4;
+		createInfo.pCode = assembly.data();
 
 		VkShaderModule shaderModule;
 		TN_VK_CHECK(vkCreateShaderModule(GraphicsContext::GetDevice().GetHandle(), &createInfo, nullptr, &shaderModule));
@@ -201,7 +200,7 @@ namespace Titan
 
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		layoutInfo.bindingCount = bindings.size();
+		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
 		layoutInfo.pBindings = bindings.data();
 
 		TN_VK_CHECK(vkCreateDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), &layoutInfo, nullptr, &m_DescriptorSetLayout));

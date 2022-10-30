@@ -44,35 +44,35 @@ inline String::String()
 inline String::String(String& str)
 {
 	m_CurrentSize = str.m_CurrentSize;
-	strcpy(m_Data, str.m_Data);
+	strcpy_s(m_Data, str.m_Data);
 }
 
 inline String::String(const char* cptr)
 {
-	int size = strlen(cptr);
-	assert(size < 2048 && L"const char* is bigger than 2048");
+	size_t size = strlen(cptr);
+	assert(size < 2048u && L"const char* is bigger than 2048");
 	m_CurrentSize = size;
-	strcpy(m_Data, cptr);
+	strcpy_s(m_Data, cptr);
 }
 
 inline String::String(const std::string& str)
 {
 	m_CurrentSize = str.size();
-	strcpy(m_Data, str.c_str());
+	strcpy_s(m_Data, str.c_str());
 }
 
 inline void String::operator=(const std::string& str)
 {
 	m_CurrentSize = str.size();
 	strset(m_Data, 0);
-	strcpy(m_Data, str.c_str());
+	strcpy_s(m_Data, str.c_str());
 }
 
 inline void String::operator=(const char* cptr)
 {
-	int size = strlen(cptr);
+	size_t size = strlen(cptr);
 	m_CurrentSize = size;
-	strcpy(m_Data, cptr);
+	strcpy_s(m_Data, cptr);
 }
 
 inline bool String::operator==(const std::string& str)

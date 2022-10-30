@@ -15,7 +15,7 @@ namespace Titan
 	class Swapchain
 	{
 	public:
-		Swapchain() = default;
+		Swapchain();
 		~Swapchain() = default;
 
 		void Create(PhysicalDevice& physicalDevice, Device& device);

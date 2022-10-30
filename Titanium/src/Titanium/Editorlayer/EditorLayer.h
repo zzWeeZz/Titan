@@ -5,7 +5,7 @@
 
 #include "Titan/Assets/Camera/Camera.h"
 #include "Titan/Scene/Components.h"
-
+#include <Titan/Events/InputEvent.h>
 namespace Titan
 {
 	class EditorLayer : public Layer
@@ -17,6 +17,7 @@ namespace Titan
 		void OnEvent(Event& e) override;
 	private:
 		void RunEditorCamera();
+		bool MouseMove(MouseMoveEvent& event);
 		CameraComponent m_cameraData;
 		TransformComponent m_transformData;
 		Ref<Scene> m_ActiveScene;

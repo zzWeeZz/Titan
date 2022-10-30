@@ -36,7 +36,7 @@ namespace Titan
 
 		GraphicsContext::GetDevice().ImmediateSubmit([=](VkCommandBuffer cmd)
 			{
-				VkBufferCopy copy;
+				VkBufferCopy copy{};
 				copy.dstOffset = 0;
 				copy.srcOffset = 0;
 				copy.size = bufferSize;
@@ -46,9 +46,9 @@ namespace Titan
 		TitanAllocator::DeAllocate(cpuBuffer);
 	}
 	
-	size_t IndexBuffer::GetIndexCount()
+	uint32_t IndexBuffer::GetIndexCount()
 	{
-		return	m_IndexCount;
+		return	static_cast<uint32_t>(m_IndexCount);
 	}
 	Ref<IndexBuffer> IndexBuffer::Create(const IndexBufferInfo& info)
 	{
