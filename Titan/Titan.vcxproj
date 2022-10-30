@@ -221,8 +221,6 @@
     <ClInclude Include="vendor\Snowflake\SnowID.h" />
     <ClInclude Include="vendor\Snowflake\Snowflake.hpp" />
     <ClInclude Include="vendor\Snowflake\String.hpp" />
-    <ClInclude Include="vendor\dx12helpers\D3D12MemAlloc.h" />
-    <ClInclude Include="vendor\dx12helpers\d3dx12.h" />
     <ClInclude Include="vendor\freetype\Include\freetype\config\ftconfig.h" />
     <ClInclude Include="vendor\freetype\Include\freetype\config\ftheader.h" />
     <ClInclude Include="vendor\freetype\Include\freetype\config\ftmodule.h" />
@@ -401,11 +399,6 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
     </ClCompile>
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-    </ClCompile>
-    <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>

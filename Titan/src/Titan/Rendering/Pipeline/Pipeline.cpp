@@ -163,6 +163,11 @@ namespace Titan
 		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), fragShaderModule, nullptr);
 	}
 	
+	void Pipeline::Bind(VkCommandBuffer& cmd)
+	{
+		vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+	}
+
 	Ref<Pipeline> Pipeline::Create(const PipelineInfo& info)
 	{
 		return CreateRef<Pipeline>(info);

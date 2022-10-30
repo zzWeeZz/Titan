@@ -26,6 +26,24 @@ namespace Titan
 		Validate();
     }
 
+	void Framebuffer::Bind(VkCommandBuffer& cmd)
+	{
+		VkViewport viewport{};
+		viewport.x = 0.0f;
+		viewport.y = 0.0f;
+		viewport.width = static_cast<float>(GetInfo().width);
+		viewport.height = static_cast<float>(GetInfo().height);
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+		vkCmdSetViewport(cmd, 0, 1, &viewport);
+
+		VkRect2D scissor{};
+		scissor.offset = { 0, 0 };
+		scissor.extent.width = static_cast<uint32_t>(GetInfo().width);
+		scissor.extent.height = static_cast<uint32_t>(GetInfo().height);
+		vkCmdSetScissor(cmd, 0, 1, &scissor);
+	}
+
     void Framebuffer::CleanUp()
     {
 		GraphicsContext::GetDevice().WaitForIdle();

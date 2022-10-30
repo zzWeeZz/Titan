@@ -85,9 +85,6 @@
     <Filter Include="vendor\Snowflake">
       <UniqueIdentifier>{2C921B61-188B-3AB3-41BD-1F382D151ABF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="vendor\dx12helpers">
-      <UniqueIdentifier>{94FA62C0-80DE-2316-E93E-1E69D5410E98}</UniqueIdentifier>
-    </Filter>
     <Filter Include="vendor\freetype">
       <UniqueIdentifier>{C64BB7D5-32D7-249A-3BE8-A78EA7F2809A}</UniqueIdentifier>
     </Filter>
@@ -317,12 +314,6 @@
     </ClInclude>
     <ClInclude Include="vendor\Snowflake\String.hpp">
       <Filter>vendor\Snowflake</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\dx12helpers\D3D12MemAlloc.h">
-      <Filter>vendor\dx12helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\dx12helpers\d3dx12.h">
-      <Filter>vendor\dx12helpers</Filter>
     </ClInclude>
     <ClInclude Include="vendor\freetype\Include\freetype\config\ftconfig.h">
       <Filter>vendor\freetype\Include\freetype\config</Filter>
@@ -739,9 +730,6 @@
     </ClCompile>
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
-    </ClCompile>
-    <ClCompile Include="vendor\dx12helpers\D3D12MemAlloc.cpp">
-      <Filter>vendor\dx12helpers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -11,7 +11,6 @@
 #include <Titan/Rendering/Buffers/IndexBuffer.h>
 #include <Titan/Rendering/Vertices.h>
 #include <Titan/Rendering/Framebuffer.h>
-#include <dx12helpers/d3dx12.h>
 #include <Titan/Rendering/Buffers/UniformBuffer.h>
 #include "Titan/Rendering/Buffers/UniformBuffers.h"
 #include <Optick/src/optick.h>
@@ -221,20 +220,8 @@ namespace Titan
 		};
 		vkCmdBeginRendering(commandBuffer, &render_info);
 
-		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, handle);
-		VkViewport viewport{};
-		viewport.x = 0.0f;
-		viewport.y = 0.0f;
-		viewport.width = static_cast<float>(s_Cache->mainFB->GetInfo().width);
-		viewport.height = static_cast<float>(s_Cache->mainFB->GetInfo().height);
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
-
-		VkRect2D scissor{};
-		scissor.offset = { 0, 0 };
-		scissor.extent = swapchain.GetExtent();
-		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
+		s_Cache->pipeline->Bind(commandBuffer);
+		s_Cache->mainFB->Bind(commandBuffer);
 
 
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s_Cache->pipeline->GetLayout(), 0, 1, &s_DescriptorSets[GraphicsContext::GetCurrentFrame()], 0, nullptr);

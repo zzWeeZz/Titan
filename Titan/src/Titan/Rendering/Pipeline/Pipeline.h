@@ -19,6 +19,9 @@ namespace Titan
 
 		VkPipeline& GetHandle() { return m_Pipeline; }
 		VkPipelineLayout& GetLayout() { return m_PipelineLayout; }
+
+		void Bind(VkCommandBuffer& cmd);
+
 		VkDescriptorSetLayout& DescLayout() { return m_DescriptorSetLayout; }
 		static Ref<Pipeline> Create(const PipelineInfo& info);
 	private:
