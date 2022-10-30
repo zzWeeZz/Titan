@@ -18,7 +18,6 @@ namespace Titan
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
 		Shader shader{};
-		options.AddMacroDefinition("MY_DEFINE", "1");
 #ifdef TN_CONFIG_DEBUG
 		options.SetOptimizationLevel(shaderc_optimization_level_zero);
 #else

@@ -154,6 +154,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titan\Rendering\Libraries\PipelineLibrary.h" />
     <ClInclude Include="src\TNpch.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
@@ -191,8 +192,7 @@
     <ClInclude Include="src\Titan\Rendering\GraphicsContext.h" />
     <ClInclude Include="src\Titan\Rendering\Libraries\SamplerLibrary.h" />
     <ClInclude Include="src\Titan\Rendering\Libraries\ShaderLibrary.h" />
-    <ClInclude Include="src\Titan\Rendering\Pipeline\Pipeline.h" />
-    <ClInclude Include="src\Titan\Rendering\Pipeline\ShaderCompiler.h" />
+    <ClInclude Include="src\Titan\Rendering\Pipeline\GraphicsPipeline.h" />
     <ClInclude Include="src\Titan\Rendering\Renderer.h" />
     <ClInclude Include="src\Titan\Rendering\Vertices.h" />
     <ClInclude Include="src\Titan\Scene\Components.h" />
@@ -318,6 +318,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titan\Rendering\Libraries\PipelineLibrary.cpp" />
     <ClCompile Include="src\TNpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -344,8 +345,7 @@
     <ClCompile Include="src\Titan\Rendering\GraphicsContext.cpp" />
     <ClCompile Include="src\Titan\Rendering\Libraries\SamplerLibrary.cpp" />
     <ClCompile Include="src\Titan\Rendering\Libraries\ShaderLibrary.cpp" />
-    <ClCompile Include="src\Titan\Rendering\Pipeline\Pipeline.cpp" />
-    <ClCompile Include="src\Titan\Rendering\Pipeline\ShaderCompiler.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Pipeline\GraphicsPipeline.cpp" />
     <ClCompile Include="src\Titan\Rendering\Renderer.cpp" />
     <ClCompile Include="src\Titan\Scene\Entity.cpp" />
     <ClCompile Include="src\Titan\Scene\Scene.cpp" />

@@ -1,5 +1,5 @@
 #include "TNpch.h"
-#include "Pipeline.h"
+#include "GraphicsPipeline.h"
 #include "Titan/Rendering/GraphicsContext.h"
 #include <Titan/Core/TitanFormats.h>
 #include "Titan/Utils/FilesystemUtils.h"
@@ -9,7 +9,7 @@
 #include <Titan/Rendering/Vertices.h>
 namespace Titan
 {
-	Pipeline::Pipeline(const PipelineInfo& info)
+	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info)
 	{
 		auto vertShaderModule = CreateShaderModule(ShaderLibrary::Get(info.vsPath).spvBinary);
 		auto fragShaderModule = CreateShaderModule(ShaderLibrary::Get(info.psPath).spvBinary);
@@ -49,7 +49,7 @@ namespace Titan
 
 		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-		inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		inputAssembly.topology = FormatToVkFormat(info.topology);
 		inputAssembly.primitiveRestartEnable = VK_FALSE;
 
 		VkViewport viewport{};
@@ -145,12 +145,16 @@ namespace Titan
 		pipelineInfo.pDynamicState = &dynamicState;
 
 		pipelineInfo.layout = m_PipelineLayout;
-		auto format = FormatToVkFormat(ImageFormat::R8G8B8A8_SRGB);
+		std::vector<VkFormat> formats(info.imageFormats.size());
+		for (size_t i = 0; i < formats.size(); ++i)
+		{
+			formats[i] = FormatToVkFormat(info.imageFormats[i]);
+		}
 		const VkPipelineRenderingCreateInfoKHR pipeline_rendering_create_info
 		{
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR,
-			.colorAttachmentCount = 1,
-			.pColorAttachmentFormats = &format,
+			.colorAttachmentCount = static_cast<uint32_t>(formats.size()),
+			.pColorAttachmentFormats = formats.data(),
 		};
 
 		pipelineInfo.pNext = &pipeline_rendering_create_info;
@@ -163,17 +167,17 @@ namespace Titan
 		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), fragShaderModule, nullptr);
 	}
 	
-	void Pipeline::Bind(VkCommandBuffer& cmd)
+	void GraphicsPipeline::Bind(VkCommandBuffer& cmd)
 	{
 		vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
 	}
 
-	Ref<Pipeline> Pipeline::Create(const PipelineInfo& info)
+	Ref<GraphicsPipeline> GraphicsPipeline::Create(const GraphicsPipelineInfo& info)
 	{
-		return CreateRef<Pipeline>(info);
+		return CreateRef<GraphicsPipeline>(info);
 	}
 
-	VkShaderModule Pipeline::CreateShaderModule(std::vector<uint32_t> assembly)
+	VkShaderModule GraphicsPipeline::CreateShaderModule(std::vector<uint32_t> assembly)
 	{
 		VkShaderModuleCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -185,7 +189,7 @@ namespace Titan
 		return shaderModule;
 	}
 
-	void Pipeline::CreateDescriptorSetLayout()
+	void GraphicsPipeline::CreateDescriptorSetLayout()
 	{
 		VkDescriptorSetLayoutBinding uboLayoutBinding{};
 		uboLayoutBinding.binding = 0;

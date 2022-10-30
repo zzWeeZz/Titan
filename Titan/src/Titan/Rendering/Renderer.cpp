@@ -6,7 +6,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include "Titan/Rendering/GraphicsContext.h"
-#include "Titan/Rendering/Pipeline/Pipeline.h"
+#include "Titan/Rendering/Libraries/PipelineLibrary.h"
 #include <Titan/Rendering/Buffers/VertexBuffer.h>
 #include <Titan/Rendering/Buffers/IndexBuffer.h>
 #include <Titan/Rendering/Vertices.h>
@@ -29,7 +29,6 @@ namespace Titan
 		Ref<VertexBuffer> vbtest;
 		Ref<IndexBuffer> ibtest;
 		Ref<Framebuffer> testFB;
-		Ref<Pipeline> pipeline;
 		CameraData cameraData = {};
 		Ref<UniformBuffer> cameraBuffer;
 		TitanID textureID;
@@ -87,14 +86,17 @@ namespace Titan
 
 		ResourceRegistry::GetItem<Texture>(s_Cache->textureID)->Initialize("Assets/Texture/Titan.png");
 
-		PipelineInfo info{};
+		GraphicsPipelineInfo info{};
 		info.vsPath = "Engine/Shaders/triangle_vs.vert";
 		info.psPath = "Engine/Shaders/triangle_fs.frag";
-		s_Cache->pipeline = Pipeline::Create(info);
+
+		info.topology = Topology::TriangleList;
+		info.imageFormats = { ImageFormat::R8G8B8A8_SRGB };
+		PipelineLibrary::Add("Mesh", info);
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
 
-		std::vector<VkDescriptorSetLayout> layouts(g_FramesInFlight, s_Cache->pipeline->DescLayout());
+		std::vector<VkDescriptorSetLayout> layouts(g_FramesInFlight, PipelineLibrary::Get("Mesh")->DescLayout());
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocInfo.descriptorPool = s_Cache->descriptorPool;
@@ -117,7 +119,7 @@ namespace Titan
 		auto& commandBuffer = GraphicsContext::GetDevice().GetCommandBuffer(currentFrame, 0);
 		auto& swapchain = GraphicsContext::GetSwapchain();
 		auto& device = GraphicsContext::GetDevice();
-		auto& handle = s_Cache->pipeline->GetHandle();
+		auto& handle = PipelineLibrary::Get("Mesh")->GetHandle();
 
 		VkDescriptorBufferInfo bufferInfo{};
 		bufferInfo.buffer = s_Cache->cameraBuffer->GetAllocation().buffer;
@@ -220,11 +222,11 @@ namespace Titan
 		};
 		vkCmdBeginRendering(commandBuffer, &render_info);
 
-		s_Cache->pipeline->Bind(commandBuffer);
+		PipelineLibrary::BindPipline("Mesh", commandBuffer);
 		s_Cache->mainFB->Bind(commandBuffer);
 
 
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s_Cache->pipeline->GetLayout(), 0, 1, &s_DescriptorSets[GraphicsContext::GetCurrentFrame()], 0, nullptr);
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("Mesh")->GetLayout(), 0, 1, &s_DescriptorSets[GraphicsContext::GetCurrentFrame()], 0, nullptr);
 
 		s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 		s_Cache->cameraData.view = s_Cache->currentCamera.view;
@@ -238,7 +240,7 @@ namespace Titan
 			auto& vertex = mdlCmd.package.vertexBuffer;
 			auto& index = mdlCmd.package.indexBuffer;
 
-			vkCmdPushConstants(commandBuffer, s_Cache->pipeline->GetLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &mdlCmd.transform);
+			vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("Mesh")->GetLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &mdlCmd.transform);
 
 			vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertex->GetAllocation().buffer, &offset);
 			vkCmdBindIndexBuffer(commandBuffer, index->GetAllocatedBuffer().buffer, 0, VK_INDEX_TYPE_UINT32);

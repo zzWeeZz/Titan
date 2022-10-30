@@ -4,18 +4,18 @@
 #include "Titan/Core/TitanFormats.h"
 namespace Titan
 {
-	struct PipelineInfo
+	struct GraphicsPipelineInfo
 	{
 		std::filesystem::path vsPath = "";
 		std::filesystem::path psPath = "";
 
-		DepthState depthState;
-		CullState depthCullState;
+		Topology topology;
+		std::vector<ImageFormat> imageFormats;
 	};
-	class Pipeline
+	class GraphicsPipeline
 	{
 	public:
-		Pipeline(const PipelineInfo& info);
+		GraphicsPipeline(const GraphicsPipelineInfo& info);
 
 		VkPipeline& GetHandle() { return m_Pipeline; }
 		VkPipelineLayout& GetLayout() { return m_PipelineLayout; }
@@ -23,7 +23,7 @@ namespace Titan
 		void Bind(VkCommandBuffer& cmd);
 
 		VkDescriptorSetLayout& DescLayout() { return m_DescriptorSetLayout; }
-		static Ref<Pipeline> Create(const PipelineInfo& info);
+		static Ref<GraphicsPipeline> Create(const GraphicsPipelineInfo& info);
 	private:
 		VkShaderModule CreateShaderModule(std::vector<uint32_t> assembly);
 		void CreateDescriptorSetLayout();

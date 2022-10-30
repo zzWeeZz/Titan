@@ -17,6 +17,21 @@ namespace Titan
 		Back,
 	};
 
+	enum class Topology
+	{
+		PointList = 0,
+		LineList = 1,
+		LineStrip = 2,
+		TriangleList = 3,
+		TriangleStrip = 4,
+		TriangleFan = 5,
+		LineListAdj = 6,
+		LineStripAdj = 7,
+		TriangleListAdj = 8,
+		TriangleStripAdj = 9,
+		PatchList = 10,
+	};
+
 #pragma region Samplers
 	
 	enum class Filter
@@ -262,6 +277,10 @@ namespace Titan
 	{
 		return static_cast<VkSamplerAddressMode>(address);
 	}
+	inline VkPrimitiveTopology FormatToVkFormat(const Topology& topology)
+	{
+		return static_cast<VkPrimitiveTopology>(topology);
+	}
 
 
 	inline ImageFormat VkFormatToFormat(const VkFormat& format)
@@ -279,5 +298,9 @@ namespace Titan
 	inline Address VkFormatToFormat(const VkSamplerAddressMode& address)
 	{
 		return static_cast<Address>(address);
+	}
+	inline Topology VkFormatToFormat(const VkPrimitiveTopology& address)
+	{
+		return static_cast<Topology>(address);
 	}
 }
