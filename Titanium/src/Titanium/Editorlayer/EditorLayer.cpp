@@ -7,6 +7,7 @@
 #include "Titan/Assets/Texture/Texture.h"
 #include <imgui.h>
 #include <Titan/Events/InputEvent.h>
+#include <backends/imgui_impl_vulkan.h>
 
 namespace Titan
 {
@@ -58,6 +59,10 @@ namespace Titan
 				m_PropertiesPanel->Inspect(entity);
 			});
 		m_PropertiesPanel->ImGuiBeginRender();
+
+		auto desc = ImGui_ImplVulkan_AddTexture( , Renderer::GetMainFramebuffer()->GetViews()[0], );
+
+
 		m_ActiveScene->OnEditorUpdate();
 		
 		RunEditorCamera();
