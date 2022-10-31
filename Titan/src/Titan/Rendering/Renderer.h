@@ -3,9 +3,9 @@
 #include "glm/glm.hpp"
 #include <vulkan/vulkan.h>
 #include "Titan/Rendering/Buffers/VertexPacket.h"
+#include "Titan/Rendering/Framebuffer.h"
 namespace Titan
 {
-	class Framebuffer;
 	struct CameraCmd
 	{
 		glm::mat4 view;

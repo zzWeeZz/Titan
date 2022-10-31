@@ -22,3 +22,4 @@
 
 //TITAN RENDERING
 #include "Titan/Rendering/Renderer.h"
+#include "Titan/Rendering/Libraries/SamplerLibrary.h"

@@ -8,6 +8,7 @@
 #include <imgui.h>
 #include <Titan/Events/InputEvent.h>
 #include <backends/imgui_impl_vulkan.h>
+#include "Titan.h"
 
 namespace Titan
 {
@@ -60,8 +61,8 @@ namespace Titan
 			});
 		m_PropertiesPanel->ImGuiBeginRender();
 
-		auto desc = ImGui_ImplVulkan_AddTexture( , Renderer::GetMainFramebuffer()->GetViews()[0], );
-
+		auto desc = ImGui_ImplVulkan_AddTexture(SamplerLibrary::Get("Clamp"), Renderer::GetMainFramebuffer()->GetViews()[0], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		ImGui::Image(desc, ImGui::GetContentRegionAvail());
 
 		m_ActiveScene->OnEditorUpdate();
 		
@@ -102,7 +103,6 @@ namespace Titan
 	}
 	bool EditorLayer::MouseMove(MouseMoveEvent& event)
 	{
-		TN_CORE_TRACE("{0}, {1} - {2}", event.ToString().c_str(), event.GetMousePos().first, event.GetMousePos().second);
 
 		return false;
 	}

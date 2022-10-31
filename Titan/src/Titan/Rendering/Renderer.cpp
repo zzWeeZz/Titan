@@ -18,6 +18,7 @@
 #include <Titan/Assets/Texture/Texture.h>
 #include "Titan/ImGui/TitanImGui.h"
 #include <imgui.h>
+#include "Titan/Rendering/Libraries/SamplerLibrary.h"
 namespace Titan
 {
 	struct Cache
@@ -110,6 +111,9 @@ namespace Titan
 		s_Cache->mainFB = Framebuffer::Create(fbInfo);
 
 		TN_VK_CHECK(vkAllocateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), &allocInfo, s_DescriptorSets.data()));
+
+
+		SamplerLibrary::Add("Clamp", Filter::Linear, Address::ClampToEdge, MipmapMode::Linear);
 	}
 
 	void Renderer::Begin()
