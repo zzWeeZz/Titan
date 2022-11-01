@@ -23,6 +23,7 @@ namespace Titan
 		std::vector<VkImageView> GetViews() { return m_Views[GraphicsContext::GetCurrentFrame()]; }
 		AllocatedImage& GetAllocatedImage(size_t index) { return m_Images[GraphicsContext::GetCurrentFrame()][index]; }
 		VkImageView& GetImageView(size_t index) { return m_Views[GraphicsContext::GetCurrentFrame()][index]; }
+		VkDescriptorSet GetDescriptorSet();
 		FramebufferInfo& GetInfo() { return m_Info; }
 		void Bind(VkCommandBuffer& cmd);
 		void CleanUp();

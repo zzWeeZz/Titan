@@ -1,6 +1,9 @@
 #include "TNpch.h"
 #include "Framebuffer.h"
 #include "Titan/Rendering/GraphicsContext.h"
+#include <backends/imgui_impl_vulkan.h>
+#include "Titan/Rendering/Libraries/SamplerLibrary.h"
+#include "Titan/ImGui/TitanImGui.h"
 namespace Titan
 {
     Framebuffer::Framebuffer(const FramebufferInfo& info) 
@@ -42,6 +45,13 @@ namespace Titan
 		scissor.extent.width = static_cast<uint32_t>(GetInfo().width);
 		scissor.extent.height = static_cast<uint32_t>(GetInfo().height);
 		vkCmdSetScissor(cmd, 0, 1, &scissor);
+	}
+
+	VkDescriptorSet Framebuffer::GetDescriptorSet()
+	{
+		auto desc = ImGui_ImplVulkan_AddTexture(SamplerLibrary::Get("Clamp"), GetViews()[0], VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL);
+		TitanImGui::HandleDescriptorSet(desc);
+		return desc;
 	}
 
     void Framebuffer::CleanUp()
@@ -90,7 +100,7 @@ namespace Titan
 				imageInfo.format = FormatToVkFormat(m_Info.imageFormats[imageFormatIndex]);
 				imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 				imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-				imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+				imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 				imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 				imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 				imageInfo.flags = 0; // Optional
@@ -105,7 +115,7 @@ namespace Titan
 				viewInfo.image = m_Images[i][imageFormatIndex].Image;
 				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 				viewInfo.format = FormatToVkFormat(m_Info.imageFormats[imageFormatIndex]);
-				viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 				viewInfo.subresourceRange.baseMipLevel = 0;
 				viewInfo.subresourceRange.levelCount = 1;
 				viewInfo.subresourceRange.baseArrayLayer = 0;

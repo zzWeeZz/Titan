@@ -1,6 +1,8 @@
 #include "PropertiesPanel.h"
 #include "ImGui/imgui.h"
+#include "ImGui/imgui_internal.h"
 #include "Titan/Scene/Components.h"
+#include "Titanium/Utils/ImGuiUtils.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 namespace Titan
 {
@@ -8,7 +10,7 @@ namespace Titan
 	{
 		m_InspectedItem = entity;
 	}
-	void PropertiesPanel::ImGuiBeginRender()
+	void PropertiesPanel::OnImGuiDraw()
 	{
 		ImGui::Begin("Properties");
 		if (!m_InspectedItem())
@@ -29,7 +31,12 @@ namespace Titan
 			}
 		}
 
-
+		{
+			auto& transComp = m_InspectedItem.GetComponent<TransformComponent>();
+			ImGuiUtils::DrawVec3("Pos:", transComp.position);
+			ImGuiUtils::DrawQuat("Rot:", transComp.quaternion);
+			ImGuiUtils::DrawVec3("Scale:", transComp.scale);
+		}
 		ImGui::End();
 	}
 }

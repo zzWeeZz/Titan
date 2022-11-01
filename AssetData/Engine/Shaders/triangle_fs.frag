@@ -10,7 +10,7 @@ layout(binding = 1) uniform sampler2D texSampler;
 void main()
 {
     vec4 col = texture(texSampler, i_TexCoord);
-
+    col = pow(col, vec4(1.0 / 2.2));
     outColor = col;
 
 }

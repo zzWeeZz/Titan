@@ -77,7 +77,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4996;6285;26437;26451;26498;26800;26495;26439;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CONSOLE;TN_CONFIG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\dxil\include;..\Titan\vendor\glm;..\Titan\vendor\YAML\include;..\Titan\vendor\Optick\src;C:\VulkanSDK\1.3.216.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\dxil\include;..\Titan\vendor\glm;..\Titan\vendor\YAML\include;..\Titan\vendor\Optick\src;C:\VulkanSDK\1.3.224.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -90,7 +90,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -100,7 +100,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4996;6285;26437;26451;26498;26800;26495;26439;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CONSOLE;TN_CONFIG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\dxil\include;..\Titan\vendor\glm;..\Titan\vendor\YAML\include;..\Titan\vendor\Optick\src;C:\VulkanSDK\1.3.216.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\dxil\include;..\Titan\vendor\glm;..\Titan\vendor\YAML\include;..\Titan\vendor\Optick\src;C:\VulkanSDK\1.3.224.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -118,7 +118,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -128,7 +128,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DisableSpecificWarnings>4996;6285;26437;26451;26498;26800;26495;26439;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_CONSOLE;TN_CONFIG_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\dxil\include;..\Titan\vendor\glm;..\Titan\vendor\YAML\include;..\Titan\vendor\Optick\src;C:\VulkanSDK\1.3.216.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Titan\src;src;..\Titan\vendor\tinygltf;..\Titan\vendor\Snowflake;..\Titan\vendor\ImGui;..\Titan\vendor\freetype\Include;..\Titan\vendor\stb_image;..\Titan\vendor;..\Titan\vendor\spdlog\include;..\Titan\vendor\GLFW\include;..\Titan\vendor\dxil\include;..\Titan\vendor\glm;..\Titan\vendor\YAML\include;..\Titan\vendor\Optick\src;C:\VulkanSDK\1.3.224.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -146,16 +146,20 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titanium\Panels\Panel.h" />
+    <ClInclude Include="src\Titanium\Panels\PanelHandler.h" />
     <ClInclude Include="src\Titanium\Editorlayer\EditorLayer.h" />
     <ClInclude Include="src\Titanium\Panels\PropertiesPanel.h" />
     <ClInclude Include="src\Titanium\Panels\SceneHierarchyPanel.h" />
+    <ClInclude Include="src\Titanium\Utils\ImGuiUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titanium\Panels\PanelHandler.cpp" />
     <ClCompile Include="src\Titanium\Editorlayer\EditorLayer.cpp" />
     <ClCompile Include="src\Titanium\Panels\PropertiesPanel.cpp" />
     <ClCompile Include="src\Titanium\Panels\SceneHierarchyPanel.cpp" />

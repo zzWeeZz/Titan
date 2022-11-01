@@ -8,15 +8,16 @@
 #include <imgui.h>
 #include <Titan/Events/InputEvent.h>
 #include <backends/imgui_impl_vulkan.h>
-#include "Titan.h"
-
+#include "Titan/Rendering/Renderer.h"
+#include "Titan/Rendering/Libraries/SamplerLibrary.h"
+#include "Titan/ImGui/TitanImGui.h"
 namespace Titan
 {
 	void EditorLayer::OnAttach()
 	{
 		m_ActiveScene = CreateRef<Scene>();
-		m_SceneHierarchyPanel = std::make_shared<SceneHierarchyPanel>(m_ActiveScene);
-		m_PropertiesPanel = std::make_shared<PropertiesPanel>();
+		m_PanelHandler.Add<SceneHierarchyPanel>("SceneHierarchy", std::make_shared<SceneHierarchyPanel>(m_ActiveScene));
+		m_PanelHandler.Add<PropertiesPanel>("PropertiesPanel", std::make_shared<PropertiesPanel>());
 		{
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();
@@ -54,18 +55,24 @@ namespace Titan
 	void EditorLayer::OnUpdate()
 	{
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-		m_SceneHierarchyPanel->OnImGuiRender();
-		m_SceneHierarchyPanel->EntitySelectedCallback([this](Entity& entity)
+		m_PanelHandler.SendCallback();
+		m_PanelHandler.Get<SceneHierarchyPanel>("SceneHierarchy")->EntitySelectedCallback([this](Entity& entity)
 			{
-				m_PropertiesPanel->Inspect(entity);
+				m_PanelHandler.Get<PropertiesPanel>("PropertiesPanel")->Inspect(entity);
 			});
-		m_PropertiesPanel->ImGuiBeginRender();
 
-		auto desc = ImGui_ImplVulkan_AddTexture(SamplerLibrary::Get("Clamp"), Renderer::GetMainFramebuffer()->GetViews()[0], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		ImGui::Image(desc, ImGui::GetContentRegionAvail());
+		ImGui::Begin("ViewPort");
+		if (ImGui::GetContentRegionAvail().x != Renderer::GetMainFramebuffer()->GetInfo().width
+			|| ImGui::GetContentRegionAvail().y != Renderer::GetMainFramebuffer()->GetInfo().height)
+		{
+			Renderer::GetMainFramebuffer()->Resize(static_cast<size_t>(ImGui::GetContentRegionAvail().x), static_cast<size_t>(ImGui::GetContentRegionAvail().y));
+			m_cameraData.AspectRatio = ImGui::GetContentRegionAvail().x / ImGui::GetContentRegionAvail().y;
+		}
 
+		ImGui::Image(Renderer::GetMainFramebuffer()->GetDescriptorSet(), ImGui::GetContentRegionAvail());
+		ImGui::End();
 		m_ActiveScene->OnEditorUpdate();
-		
+
 		RunEditorCamera();
 	}
 

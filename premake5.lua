@@ -29,9 +29,6 @@ externalLinks =
     "ImGui",
     "yaml-cpp",
     "Optick",
-    "d3d12.lib",
-    "dxgi.lib",
-    "dxguid.lib",
     "Titan/vendor/dxil/lib/dxcompiler.lib",
 }
 
@@ -261,10 +258,7 @@ project "Titan"
     libdirs
     {
     }
-    links
-    {
-        externalLinks
-    }
+
     linkoptions 
 	{
 		"/ignore:4006",

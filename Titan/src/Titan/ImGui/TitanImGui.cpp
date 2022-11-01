@@ -141,6 +141,11 @@ namespace Titan
 		}
 	}
 
+	void TitanImGui::HandleDescriptorSet(VkDescriptorSet& desc)
+	{
+		s_HndledDescriptors.push_back(desc);
+	}
+
 	void TitanImGui::Begin()
 	{
 		ImGui_ImplVulkan_NewFrame();
@@ -212,7 +217,7 @@ namespace Titan
 		ImGui_ImplVulkan_RenderDrawData(drawData, secondaryCmd);
 
 		vkEndCommandBuffer(secondaryCmd);
-
+		
 		vkCmdExecuteCommands(cmd, 1, &secondaryCmd);
 
 		vkCmdEndRenderPass(cmd);
@@ -223,5 +228,13 @@ namespace Titan
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 		}
+	}
+	void TitanImGui::FlushDescriptors()
+	{
+		for (auto& desc : s_HndledDescriptors)
+		{
+			ImGui_ImplVulkan_RemoveTexture(desc);
+		}
+		s_HndledDescriptors.clear();
 	}
 }

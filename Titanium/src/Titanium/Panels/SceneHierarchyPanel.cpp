@@ -14,7 +14,7 @@ namespace Titan
 		m_Context = context;
 	}
 
-	void SceneHierarchyPanel::OnImGuiRender()
+	void SceneHierarchyPanel::OnImGuiDraw()
 	{
 		ImGui::Begin("Hierarchy");
 
@@ -82,4 +82,5 @@ namespace Titan
 			}
 		}
 	}
+	
 }

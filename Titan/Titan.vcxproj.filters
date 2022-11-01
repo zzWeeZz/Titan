@@ -219,6 +219,9 @@
     <ClInclude Include="src\Titan\Rendering\GraphicsContext.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Libraries\PipelineLibrary.h">
+      <Filter>src\Titan\Rendering\Libraries</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Libraries\SamplerLibrary.h">
       <Filter>src\Titan\Rendering\Libraries</Filter>
     </ClInclude>
@@ -597,7 +600,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Libraries\PipelineLibrary.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -666,6 +668,9 @@
     <ClCompile Include="src\Titan\Rendering\GraphicsContext.cpp">
       <Filter>src\Titan\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Libraries\PipelineLibrary.cpp">
+      <Filter>src\Titan\Rendering\Libraries</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Libraries\SamplerLibrary.cpp">
       <Filter>src\Titan\Rendering\Libraries</Filter>
     </ClCompile>
@@ -726,6 +731,5 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\Libraries\PipelineLibrary.cpp" />
   </ItemGroup>
 </Project>

@@ -92,7 +92,7 @@ namespace Titan
 		info.psPath = "Engine/Shaders/triangle_fs.frag";
 
 		info.topology = Topology::TriangleList;
-		info.imageFormats = { ImageFormat::R8G8B8A8_SRGB };
+		info.imageFormats = { ImageFormat::R8G8B8A8_UN };
 		PipelineLibrary::Add("Mesh", info);
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
@@ -107,7 +107,7 @@ namespace Titan
 		FramebufferInfo fbInfo{};
 		fbInfo.width = Application::GetWindow().GetWidth();
 		fbInfo.height = Application::GetWindow().GetHeight();
-		fbInfo.imageFormats = { ImageFormat::R8G8B8A8_SRGB };
+		fbInfo.imageFormats = { ImageFormat::R8G8B8A8_UN };
 		s_Cache->mainFB = Framebuffer::Create(fbInfo);
 
 		TN_VK_CHECK(vkAllocateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), &allocInfo, s_DescriptorSets.data()));
@@ -294,6 +294,7 @@ namespace Titan
 		vkQueuePresentKHR(device.GetPresentQueue(), &presentInfo);
 
 		currentFrame = (currentFrame + 1) % g_FramesInFlight;
+		TitanImGui::FlushDescriptors();
 
 		s_Cache->meshCmds.clear();
 		FreeExternalDescriptorSets();
@@ -305,9 +306,6 @@ namespace Titan
 	}
 	void Renderer::FreeExternalDescriptorSets()
 	{
-		for (auto& sets : s_ExternalDescriptorSets)
-		{
-			vkFreeDescriptorSets(GraphicsContext::GetDevice().GetHandle(), s_Cache->descriptorPool, g_FramesInFlight, sets.data());
-		}
+
 	}
 }

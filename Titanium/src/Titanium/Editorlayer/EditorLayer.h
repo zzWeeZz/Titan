@@ -6,6 +6,7 @@
 #include "Titan/Assets/Camera/Camera.h"
 #include "Titan/Scene/Components.h"
 #include <Titan/Events/InputEvent.h>
+#include <Titanium/Panels/PanelHandler.h>
 namespace Titan
 {
 	class EditorLayer : public Layer
@@ -21,6 +22,7 @@ namespace Titan
 		CameraComponent m_cameraData;
 		TransformComponent m_transformData;
 		Ref<Scene> m_ActiveScene;
+		PanelHandler m_PanelHandler;
 		Ref<PropertiesPanel> m_PropertiesPanel;
 		Ref<SceneHierarchyPanel> m_SceneHierarchyPanel;
 	};
