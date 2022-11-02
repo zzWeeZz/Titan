@@ -16,6 +16,7 @@ namespace Titan
 	{
 		VertexPackage package;
 		glm::mat4 transform;
+		TitanID textureId;
 	};
 
 	class Renderer
@@ -24,7 +25,6 @@ namespace Titan
 		static void Submit(const CameraCmd& cameraCmd);
 		static void Submit(const MeshCmd& meshCmd);
 		static Ref<Framebuffer> GetMainFramebuffer();
-		static VkDescriptorSet& AllocateDescriptorSet(VkDescriptorSetLayout& layout);
 		static void Initialize();
 		static void Begin();
 		static void Shutdown();

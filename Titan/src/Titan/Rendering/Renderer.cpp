@@ -53,20 +53,7 @@ namespace Titan
 	{
 		return s_Cache->mainFB;
 	}
-	VkDescriptorSet& Renderer::AllocateDescriptorSet(VkDescriptorSetLayout& layout)
-	{
-		auto& sets = s_ExternalDescriptorSets.emplace_back();
-		for (size_t i = 0; i < g_FramesInFlight; ++i)
-		{
-			VkDescriptorSetAllocateInfo alloc_info = {};
-			alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-			alloc_info.descriptorPool = s_Cache->descriptorPool;
-			alloc_info.descriptorSetCount = g_FramesInFlight;
-			alloc_info.pSetLayouts = &layout;
-			TN_VK_CHECK(vkAllocateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), &alloc_info, &sets[i]));
-		}
-		return sets[GraphicsContext::GetCurrentFrame()];
-	}
+	
 	void Renderer::Initialize()
 	{
 		std::array<VkDescriptorPoolSize, 2> poolSize{};
@@ -130,12 +117,6 @@ namespace Titan
 		bufferInfo.offset = 0;
 		bufferInfo.range = sizeof(CameraData);
 
-		auto texture = ResourceRegistry::GetItem<Texture>(s_Cache->textureID);
-		VkDescriptorImageInfo imageInfo{};
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		imageInfo.imageView = texture->GetView();
-		imageInfo.sampler = texture->GetSampler();
-
 		std::array<VkWriteDescriptorSet, 2> descriptorWrite{};
 		descriptorWrite[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrite[0].dstBinding = 0;
@@ -143,6 +124,11 @@ namespace Titan
 		descriptorWrite[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		descriptorWrite[0].pBufferInfo = &bufferInfo;
 		descriptorWrite[0].dstSet = s_DescriptorSets[GraphicsContext::GetCurrentFrame()];
+		auto texture = ResourceRegistry::GetItem<Texture>(s_Cache->textureID);
+		VkDescriptorImageInfo imageInfo{};
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		imageInfo.imageView = texture->GetView();
+		imageInfo.sampler = texture->GetSampler();
 
 		descriptorWrite[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrite[1].dstBinding = 1;
@@ -244,6 +230,7 @@ namespace Titan
 			auto& vertex = mdlCmd.package.vertexBuffer;
 			auto& index = mdlCmd.package.indexBuffer;
 
+
 			vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("Mesh")->GetLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &mdlCmd.transform);
 
 			vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertex->GetAllocation().buffer, &offset);
@@ -304,8 +291,5 @@ namespace Titan
 	{
 		s_Cache->mainFB->CleanUp();
 	}
-	void Renderer::FreeExternalDescriptorSets()
-	{
 
-	}
 }

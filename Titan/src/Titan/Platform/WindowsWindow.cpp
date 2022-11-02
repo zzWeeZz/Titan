@@ -69,9 +69,13 @@ namespace Titan
 			});
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos)
 		{
+				static double oldX = 0;
+				static double oldY = 0;
 				WindowInfo* info = static_cast<WindowInfo*>(glfwGetWindowUserPointer(window));
-				MouseMoveEvent event(xpos, ypos);
+				MouseMoveEvent event(xpos, ypos, xpos - oldX, ypos - oldY);
 				info->EventCallback(event);
+				oldX = xpos;
+				oldY = ypos;
 		});
 	}
 

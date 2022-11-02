@@ -11,6 +11,7 @@
 #include "Titan/Rendering/Renderer.h"
 #include "Titan/Rendering/Libraries/SamplerLibrary.h"
 #include "Titan/ImGui/TitanImGui.h"
+#include <glm/glm/gtx/euler_angles.hpp>
 namespace Titan
 {
 	void EditorLayer::OnAttach()
@@ -24,37 +25,33 @@ namespace Titan
 			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Cube.gltf");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
-		{
-			auto entity = m_ActiveScene->CreateEntity();
-			auto& mdl = entity.AddComponent<ModelComponent>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/box01.glb");
-			entity.GetComponent<TransformComponent>().position.x = 10;
-		}
-		{
-			auto entity = m_ActiveScene->CreateEntity();
-			auto& mdl = entity.AddComponent<ModelComponent>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/box01.glb");
-			entity.GetComponent<TransformComponent>().position.x = -10;
-		}
-		{
-			auto entity = m_ActiveScene->CreateEntity();
-			auto& mdl = entity.AddComponent<ModelComponent>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/box01.glb");
-			entity.GetComponent<TransformComponent>().position.y = 10;
-		}
-		{
-			auto entity = m_ActiveScene->CreateEntity();
-			auto& mdl = entity.AddComponent<ModelComponent>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/box01.glb");
-			entity.GetComponent<TransformComponent>().position.y = -10;
-		}
-
 		m_transformData.position.z = -5.f;
 	}
 
 	void EditorLayer::OnUpdate()
 	{
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+		/*ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + 0));
+		ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, 50));
+		ImGui::SetNextWindowViewport(viewport->ID);
+
+		ImGuiWindowFlags window_flags = 0
+			| ImGuiWindowFlags_NoDocking
+			| ImGuiWindowFlags_NoTitleBar
+			| ImGuiWindowFlags_NoResize
+			| ImGuiWindowFlags_NoMove
+			| ImGuiWindowFlags_NoScrollbar
+			| ImGuiWindowFlags_NoSavedSettings
+			;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+		ImGui::Begin("TOOLBAR", NULL, window_flags);
+		ImGui::PopStyleVar();
+
+		ImGui::Button("Toolbar goes here", ImVec2(0, 37));
+
+		ImGui::End();*/
+
 		m_PanelHandler.SendCallback();
 		m_PanelHandler.Get<SceneHierarchyPanel>("SceneHierarchy")->EntitySelectedCallback([this](Entity& entity)
 			{
@@ -110,7 +107,12 @@ namespace Titan
 	}
 	bool EditorLayer::MouseMove(MouseMoveEvent& event)
 	{
-
+		//if (Input::MouseButton(Mouse::ButtonRight, InputMode::Down))
+		//{
+			/*auto delta = event.GetMouseDelta();
+			glm::mat4 rotation = glm::eulerAngleXYZ(static_cast<float>(delta.second) * 0.005f, static_cast<float>(delta.first) * 0.005f, 0.f);
+			m_transformData.quaternion += glm::quat_cast(rotation);*/
+		//}
 		return false;
 	}
 }

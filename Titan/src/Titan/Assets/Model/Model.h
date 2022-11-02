@@ -17,16 +17,9 @@ namespace Titan
 
 	inline void ModelSystem(ModelComponent& mdl, TransformComponent& tf)
 	{
-		static float time = 0;
-		time += 0.004f;
-		////tf.position.x = sinf(time);
-		tf.quaternion = glm::quat(cos(glm::radians(time / 2) * 10), 0, sin(glm::radians(time / 2) * 10) * 1, 0);
-		//tf.scale.x = (sinf(time) + 1.f) / 2.f;
-		//tf.scale.y = (sinf(time) + 1.f) / 2.f;
-		//tf.scale.z = (sinf(time) + 1.f) / 2.f;
-
 		MeshCmd cmd{};
 		cmd.package = ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->GetVertexPackage();
+		cmd.textureId = mdl.textureHandle;
 		auto pos = glm::translate(glm::mat4(1.0f), tf.position);
 		auto rot = glm::toMat4(tf.quaternion);
 		auto scale = glm::scale(glm::mat4(1.0f), tf.scale);
