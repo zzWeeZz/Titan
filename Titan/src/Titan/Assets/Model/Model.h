@@ -23,7 +23,7 @@ namespace Titan
 		auto pos = glm::translate(glm::mat4(1.0f), tf.position);
 		auto rot = glm::toMat4(tf.quaternion);
 		auto scale = glm::scale(glm::mat4(1.0f), tf.scale);
-		cmd.transform = scale * pos * rot;
+		cmd.transform = pos * rot * scale;
 		Renderer::Submit(cmd);
 	}
 }

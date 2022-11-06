@@ -22,20 +22,14 @@ namespace Titan
 
 		{
 			auto& tagComp = m_InspectedItem.GetComponent<TagComponent>();
-			ImGui::Text("Tag: ");
-			ImGui::SameLine();
-			std::string input = tagComp.tag.c_str();
-			if (ImGui::InputText("##Tag", &input))
-			{
-				tagComp.tag = input;
-			}
+			ImGuiUtils::String("Tag:", tagComp.tag);
 		}
 
 		{
 			auto& transComp = m_InspectedItem.GetComponent<TransformComponent>();
-			ImGuiUtils::DrawVec3("Pos:", transComp.position);
-			ImGuiUtils::DrawQuat("Rot:", transComp.quaternion);
-			ImGuiUtils::DrawVec3("Scale:", transComp.scale);
+			ImGuiUtils::Vec3("Pos:", transComp.position);
+			ImGuiUtils::Quat("Rot:", transComp.quaternion);
+			ImGuiUtils::Vec3("Scale:", transComp.scale);
 		}
 		ImGui::End();
 	}
