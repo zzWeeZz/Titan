@@ -49,7 +49,7 @@ namespace Titan
 
 	VkDescriptorSet Framebuffer::GetDescriptorSet()
 	{
-		auto desc = ImGui_ImplVulkan_AddTexture(SamplerLibrary::Get("Clamp"), GetViews()[0], VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL);
+		auto desc = ImGui_ImplVulkan_AddTexture(SamplerLibrary::Get("Clamp"), GetViews()[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		TitanImGui::HandleDescriptorSet(desc);
 		return desc;
 	}

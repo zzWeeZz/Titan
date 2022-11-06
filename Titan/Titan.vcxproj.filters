@@ -234,6 +234,9 @@
     <ClInclude Include="src\Titan\Rendering\Renderer.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\SceneRenderer.h">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Vertices.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
@@ -600,7 +603,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\SceneRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -684,6 +686,9 @@
     <ClCompile Include="src\Titan\Rendering\Renderer.cpp">
       <Filter>src\Titan\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\SceneRenderer.cpp">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Scene\Entity.cpp">
       <Filter>src\Titan\Scene</Filter>
     </ClCompile>
@@ -732,6 +737,5 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\SceneRenderer.cpp" />
   </ItemGroup>
 </Project>

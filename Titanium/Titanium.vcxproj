@@ -151,16 +151,16 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titanium\Editorlayer\EditorLayer.h" />
     <ClInclude Include="src\Titanium\Panels\Panel.h" />
     <ClInclude Include="src\Titanium\Panels\PanelHandler.h" />
-    <ClInclude Include="src\Titanium\Editorlayer\EditorLayer.h" />
     <ClInclude Include="src\Titanium\Panels\PropertiesPanel.h" />
     <ClInclude Include="src\Titanium\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="src\Titanium\Utils\ImGuiUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Titanium\Panels\PanelHandler.cpp" />
     <ClCompile Include="src\Titanium\Editorlayer\EditorLayer.cpp" />
+    <ClCompile Include="src\Titanium\Panels\PanelHandler.cpp" />
     <ClCompile Include="src\Titanium\Panels\PropertiesPanel.cpp" />
     <ClCompile Include="src\Titanium\Panels\SceneHierarchyPanel.cpp" />
   </ItemGroup>

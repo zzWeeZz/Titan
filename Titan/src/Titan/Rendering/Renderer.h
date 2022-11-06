@@ -29,6 +29,5 @@ namespace Titan
 		static void Begin();
 		static void Shutdown();
 	private:
-		static void FreeExternalDescriptorSets();
 	};
 }

@@ -284,7 +284,6 @@ namespace Titan
 		TitanImGui::FlushDescriptors();
 
 		s_Cache->meshCmds.clear();
-		FreeExternalDescriptorSets();
 	}
 
 	void Renderer::Shutdown()

@@ -7,10 +7,19 @@
     <Filter Include="Panels">
       <UniqueIdentifier>{A80D95C9-94AF-BF9F-7D6A-D3F369AB46F0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{F68B420E-62A0-6ABF-2B22-0E1F97F566F0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Titanium\Editorlayer\EditorLayer.h">
       <Filter>Editorlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titanium\Panels\Panel.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titanium\Panels\PanelHandler.h">
+      <Filter>Panels</Filter>
     </ClInclude>
     <ClInclude Include="src\Titanium\Panels\PropertiesPanel.h">
       <Filter>Panels</Filter>
@@ -18,13 +27,16 @@
     <ClInclude Include="src\Titanium\Panels\SceneHierarchyPanel.h">
       <Filter>Panels</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titanium\Panels\PanelHandler.h" />
-    <ClInclude Include="src\Titanium\Panels\Panel.h" />
-    <ClInclude Include="src\Titanium\Utils\ImGuiUtils.h" />
+    <ClInclude Include="src\Titanium\Utils\ImGuiUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titanium\Editorlayer\EditorLayer.cpp">
       <Filter>Editorlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titanium\Panels\PanelHandler.cpp">
+      <Filter>Panels</Filter>
     </ClCompile>
     <ClCompile Include="src\Titanium\Panels\PropertiesPanel.cpp">
       <Filter>Panels</Filter>
@@ -32,6 +44,5 @@
     <ClCompile Include="src\Titanium\Panels\SceneHierarchyPanel.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titanium\Panels\PanelHandler.cpp" />
   </ItemGroup>
 </Project>
