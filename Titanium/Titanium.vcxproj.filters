@@ -44,5 +44,6 @@
     <ClCompile Include="src\Titanium\Panels\SceneHierarchyPanel.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titanium\Utils\ImGuiUtils.cpp" />
   </ItemGroup>
 </Project>

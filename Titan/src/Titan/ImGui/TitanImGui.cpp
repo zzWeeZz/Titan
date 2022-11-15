@@ -143,7 +143,13 @@ namespace Titan
 
 	void TitanImGui::HandleDescriptorSet(VkDescriptorSet& desc)
 	{
-		s_HndledDescriptors.push_back(desc);
+		s_HandledDescriptors.push_back(desc);
+	}
+
+	void TitanImGui::HandleImageBarrier(VkImageMemoryBarrier& memBarrier, VkImageMemoryBarrier& memReturnBarrier)
+	{
+		s_HandledImageBarriers.push_back(memBarrier);
+		s_HandledImageReturnBarriers.push_back(memReturnBarrier);
 	}
 
 	void TitanImGui::Begin()
@@ -212,7 +218,6 @@ namespace Titan
 		scissor.extent = swapchain.GetExtent();
 		vkCmdSetScissor(secondaryCmd, 0, 1, &scissor);
 
-
 		ImDrawData* drawData = ImGui::GetDrawData();
 		ImGui_ImplVulkan_RenderDrawData(drawData, secondaryCmd);
 
@@ -231,10 +236,10 @@ namespace Titan
 	}
 	void TitanImGui::FlushDescriptors()
 	{
-		for (auto& desc : s_HndledDescriptors)
+		for (auto& desc : s_HandledDescriptors)
 		{
 			ImGui_ImplVulkan_RemoveTexture(desc);
 		}
-		s_HndledDescriptors.clear();
+		s_HandledDescriptors.clear();
 	}
 }

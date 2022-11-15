@@ -51,6 +51,39 @@ namespace Titan
 	{
 		auto desc = ImGui_ImplVulkan_AddTexture(SamplerLibrary::Get("Clamp"), GetViews()[0], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		TitanImGui::HandleDescriptorSet(desc);
+		/*VkImageMemoryBarrier image_memory_barrier
+		{
+			.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+			.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+			.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+			.image = GetImages()[0].Image,
+			.subresourceRange =
+			{
+				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+				.baseMipLevel = 0,
+				.levelCount = 1,
+				.baseArrayLayer = 0,
+				.layerCount = 1,
+			}
+		};
+		VkImageMemoryBarrier image_Returnmemory_barrier
+		{
+			.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+			.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			.oldLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+			.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+			.image = GetImages()[0].Image,
+			.subresourceRange =
+			{
+				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+				.baseMipLevel = 0,
+				.levelCount = 1,
+				.baseArrayLayer = 0,
+				.layerCount = 1,
+			}
+		};
+		TitanImGui::HandleImageBarrier(image_memory_barrier, image_Returnmemory_barrier);*/
 		return desc;
 	}
 
