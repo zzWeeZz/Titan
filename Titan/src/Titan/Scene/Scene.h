@@ -1,6 +1,6 @@
 #pragma once
 #include "Snowflake.hpp"
-
+#include "Titan/Rendering/SceneRenderer.h"
 namespace Titan
 {
 	class Scene
@@ -8,7 +8,7 @@ namespace Titan
 		friend class Entity;
 		friend class SceneHierarchyPanel;
 	public:
-		Scene() = default;
+		Scene();
 		void OnEditorStart();
 		void OnEditorUpdate();
 		void OnEditorRender();
@@ -18,5 +18,6 @@ namespace Titan
 
 	private:
 		Snowflake::Registry m_Registry;
+		SceneRenderer m_SceneRenderer;
 	};
 }

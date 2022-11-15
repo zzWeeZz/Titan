@@ -53,7 +53,7 @@ namespace Titan
 	{
 		return s_Cache->mainFB;
 	}
-	
+
 	void Renderer::Initialize()
 	{
 		std::array<VkDescriptorPoolSize, 2> poolSize{};
@@ -155,7 +155,6 @@ namespace Titan
 		beginInfo.flags = 0; // Optional
 		beginInfo.pInheritanceInfo = nullptr; // Optional
 		TN_VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo));
-
 		{
 			const VkImageMemoryBarrier image_memory_barrier
 			{
@@ -220,10 +219,10 @@ namespace Titan
 
 		s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 		s_Cache->cameraData.view = s_Cache->currentCamera.view;
-		s_Cache->cameraData.mdlSpace = glm::mat4(1.f);
 
 		s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
-
+		OPTICK_GPU_CONTEXT(commandBuffer);
+		OPTICK_GPU_EVENT("Draw scene");
 		for (auto& mdlCmd : s_Cache->meshCmds)
 		{
 			VkDeviceSize offset = 0;
@@ -245,40 +244,44 @@ namespace Titan
 		TN_VK_CHECK(vkEndCommandBuffer(commandBuffer));
 
 
-
-
-		VkSubmitInfo submitInfo{};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-		VkSemaphore waitSemaphores[] = { swapchain.GetImageAvailableSemaphore(currentFrame) };
-		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-		submitInfo.waitSemaphoreCount = 1;
-		submitInfo.pWaitSemaphores = waitSemaphores;
-		submitInfo.pWaitDstStageMask = waitStages;
-
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffer;
-
 		VkSemaphore signalSemaphores[] = { swapchain.GetRenderFinishedSemaphore(currentFrame) };
-		submitInfo.signalSemaphoreCount = 1;
-		submitInfo.pSignalSemaphores = signalSemaphores;
 
-		TN_VK_CHECK(vkQueueSubmit(device.GetGraphicsQueue(), 1, &submitInfo, swapchain.GetInFlight(currentFrame)));
+		{
+			OPTICK_GPU_EVENT("Queue submit");
+			VkSubmitInfo submitInfo{};
+			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
+			VkSemaphore waitSemaphores[] = { swapchain.GetImageAvailableSemaphore(currentFrame) };
+			VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+			submitInfo.waitSemaphoreCount = 1;
+			submitInfo.pWaitSemaphores = waitSemaphores;
+			submitInfo.pWaitDstStageMask = waitStages;
 
-		VkPresentInfoKHR presentInfo{};
-		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+			submitInfo.commandBufferCount = 1;
+			submitInfo.pCommandBuffers = &commandBuffer;
 
-		presentInfo.waitSemaphoreCount = 1;
-		presentInfo.pWaitSemaphores = signalSemaphores;
+			submitInfo.signalSemaphoreCount = 1;
+			submitInfo.pSignalSemaphores = signalSemaphores;
 
-		VkSwapchainKHR swapChains[] = { swapchain.GetHandle() };
-		presentInfo.swapchainCount = 1;
-		presentInfo.pSwapchains = swapChains;
-		presentInfo.pImageIndices = &imageIndex;
+			TN_VK_CHECK(vkQueueSubmit(device.GetGraphicsQueue(), 1, &submitInfo, swapchain.GetInFlight(currentFrame)));
+		}
+		{
+			OPTICK_GPU_EVENT("swapchain present");
+			vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 
-		vkQueuePresentKHR(device.GetPresentQueue(), &presentInfo);
+			VkPresentInfoKHR presentInfo{};
+			presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+			presentInfo.waitSemaphoreCount = 1;
+			presentInfo.pWaitSemaphores = signalSemaphores;
+
+			VkSwapchainKHR swapChains[] = { swapchain.GetHandle() };
+			presentInfo.swapchainCount = 1;
+			presentInfo.pSwapchains = swapChains;
+			presentInfo.pImageIndices = &imageIndex;
+			OPTICK_GPU_FLIP(&swapchain.GetHandle());
+			vkQueuePresentKHR(device.GetPresentQueue(), &presentInfo);
+		}
 
 		currentFrame = (currentFrame + 1) % g_FramesInFlight;
 		TitanImGui::FlushDescriptors();

@@ -4,3 +4,4 @@ Bin-Int
 .sln
 *.vcxproj
 *.vcxproj.user
+AssetData/Engine/Temp

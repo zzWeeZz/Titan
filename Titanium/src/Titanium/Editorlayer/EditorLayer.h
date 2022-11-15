@@ -23,6 +23,7 @@ namespace Titan
 		TransformComponent m_transformData;
 		Ref<Scene> m_ActiveScene;
 		PanelHandler m_PanelHandler;
+
 		Ref<PropertiesPanel> m_PropertiesPanel;
 		Ref<SceneHierarchyPanel> m_SceneHierarchyPanel;
 	};

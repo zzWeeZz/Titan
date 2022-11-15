@@ -8,6 +8,10 @@
 
 namespace Titan
 {
+	Scene::Scene() : m_SceneRenderer(m_Registry)
+	{
+	}
+
 	void Scene::OnEditorStart()
 	{
 	}
@@ -26,6 +30,7 @@ namespace Titan
 
 	void Scene::OnEditorRender()
 	{
+		m_SceneRenderer.Render();
 	}
 
 	Entity Scene::CreateEntity()

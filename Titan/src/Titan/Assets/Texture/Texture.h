@@ -9,6 +9,7 @@ namespace Titan
 		Texture();
 		// Inherited via Resource
 		virtual void Initialize(const std::filesystem::path& path) override;
+		VkDescriptorSet& GetDescriptorSet();
 		AllocatedImage& GetAllocation() { return m_GpuImage; }
 		VkSampler& GetSampler() { return m_Sampler; }
 		VkImageView& GetView() { return m_ImageView; }

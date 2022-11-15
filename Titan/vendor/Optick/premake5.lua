@@ -4,6 +4,7 @@ project "Optick"
 	cppdialect "C++17"
     staticruntime "off"
 	warnings "Off"
+	VULKAN_SDK = os.getenv("VULKAN_SDK")
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
@@ -12,7 +13,10 @@ project "Optick"
 		"src/**.h",
 		"src/**.cpp"
 	}
-
+	includedirs
+    {
+		"%{VULKAN_SDK}/Include/"
+    }
 	links
 	{
 		"d3d12.lib",

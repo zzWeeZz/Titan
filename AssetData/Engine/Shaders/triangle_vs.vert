@@ -8,7 +8,6 @@ layout (location = 3) in vec2 i_Texcoord;
 
 layout (binding = 0) uniform MvpBufferObject
 {
-    mat4 model;
     mat4 view;
     mat4 proj;
 } mvpObject;

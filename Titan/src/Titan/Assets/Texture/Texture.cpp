@@ -2,6 +2,8 @@
 #include "Texture.h"
 #include "stb_image.h"
 #include "Titan/Rendering/GraphicsContext.h"
+#include <backends/imgui_impl_vulkan.h>
+#include "Titan/ImGui/TitanImGui.h"
 namespace Titan
 {
 	Texture::Texture()
@@ -144,6 +146,13 @@ namespace Titan
 
 		TN_VK_CHECK(vkCreateSampler(GraphicsContext::GetDevice().GetHandle(), &samplerInfo, nullptr, &m_Sampler));
 		TitanAllocator::QueueDeletion([&]() {vkDestroySampler(GraphicsContext::GetDevice().GetHandle(), m_Sampler, nullptr); });
+	}
+
+	VkDescriptorSet& Texture::GetDescriptorSet()
+	{
+		auto set = ImGui_ImplVulkan_AddTexture(m_Sampler, m_ImageView, VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL);
+		TitanImGui::HandleDescriptorSet(set);
+		return set;
 	}
 
 	Ref<Texture> Texture::Create()

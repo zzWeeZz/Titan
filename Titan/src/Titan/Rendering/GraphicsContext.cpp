@@ -131,6 +131,8 @@ namespace Titan
 		s_PhysicalDevice.Create(s_Instance);
 		s_Device.Create(s_PhysicalDevice, validationLayers);
 		s_Swapchain.Create(s_PhysicalDevice, s_Device);
+		auto value = s_PhysicalDevice.FindQueueFamilies().graphicsFamily.value();
+		//OPTICK_GPU_INIT_VULKAN(&s_Device.GetHandle(), &s_PhysicalDevice.GetHandle(), &s_Device.GetGraphicsQueue(), &value, 1, nullptr);
 	}
 
 	void GraphicsContext::Shutdown()

@@ -1,17 +1,24 @@
 #include "EditorLayer.h"
 
-#include "Titan/Assets/Camera/Camera.h"
-#include "Titan/Scene/Components.h"
+#include <ImGui/imgui.h>
+#include <ImGui/backends/imgui_impl_vulkan.h>
+#include <glm/glm/gtx/euler_angles.hpp>
+
 #include "Titan/Utils/Input.h"
-#include "Titan/Assets/Model/Model.h"
-#include "Titan/Assets/Texture/Texture.h"
-#include <imgui.h>
-#include <Titan/Events/InputEvent.h>
-#include <backends/imgui_impl_vulkan.h>
+
+#include "Titan/Scene/Components.h"
+
+#include "Titan/ImGui/TitanImGui.h"
+
 #include "Titan/Rendering/Renderer.h"
 #include "Titan/Rendering/Libraries/SamplerLibrary.h"
-#include "Titan/ImGui/TitanImGui.h"
-#include <glm/glm/gtx/euler_angles.hpp>
+
+#include <Titan/Events/InputEvent.h>
+
+#include "Titan/Assets/Model/Model.h"
+#include "Titan/Assets/Texture/Texture.h"
+#include "Titan/Assets/Camera/Camera.h"
+
 namespace Titan
 {
 	void EditorLayer::OnAttach()
@@ -57,7 +64,8 @@ namespace Titan
 			{
 				m_PanelHandler.Get<PropertiesPanel>("PropertiesPanel")->Inspect(entity);
 			});
-
+		
+		
 		ImGui::Begin("ViewPort");
 		if (ImGui::GetContentRegionAvail().x != Renderer::GetMainFramebuffer()->GetInfo().width
 			|| ImGui::GetContentRegionAvail().y != Renderer::GetMainFramebuffer()->GetInfo().height)
