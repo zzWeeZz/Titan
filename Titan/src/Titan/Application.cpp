@@ -11,10 +11,18 @@
 #include <Optick/src/optick.h>
 #include "Titan/ImGui/TitanImGui.h"
 #include "Titan/Utils/TitanAllocator.h"
+#include "Titan/Utils/ThreadPool.h"
+
+static void ThreadCallback(std::string message, Titan::Severity severity)
+{
+	TN_CORE_INFO(message);
+}
+
 Titan::Application::Application() : m_Running(true)
 {
 	s_Window = Ref<Window>(Window::Create());
 	s_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+	ThreadPool::Initialize(ThreadCallback);
 	GraphicsContextInfo info{ };
 	info.width = s_Window->GetWidth();
 	info.height = s_Window->GetHeight();
@@ -45,7 +53,7 @@ void Titan::Application::Run()
 	TitanAllocator::Flush();
 	TitanAllocator::Shutdown();
 	GraphicsContext::Shutdown();
-	
+	ThreadPool::Shutdown();
 }
 
 void Titan::Application::OnEvent(Event& e)

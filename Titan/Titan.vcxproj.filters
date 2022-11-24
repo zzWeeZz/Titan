@@ -264,6 +264,9 @@
     <ClInclude Include="src\Titan\Utils\MouseCode.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Utils\ThreadPool.h">
+      <Filter>src\Titan\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Utils\TitanAllocator.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
@@ -305,6 +308,9 @@
     </ClInclude>
     <ClInclude Include="vendor\ImGui\misc\single_file\imgui_single_file.h">
       <Filter>vendor\ImGui\misc\single_file</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\Snowflake\Container.hpp">
+      <Filter>vendor\Snowflake</Filter>
     </ClInclude>
     <ClInclude Include="vendor\Snowflake\Serializer.hpp">
       <Filter>vendor\Snowflake</Filter>
@@ -603,7 +609,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\Snowflake\Container.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -700,6 +705,9 @@
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Utils\Input.cpp">
+      <Filter>src\Titan\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Utils\ThreadPool.cpp">
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Utils\TitanAllocator.cpp">
