@@ -1,5 +1,6 @@
 #include "TNpch.h"
 #include "Texture.h"
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "Titan/Rendering/GraphicsContext.h"
 #include <backends/imgui_impl_vulkan.h>
@@ -67,7 +68,7 @@ namespace Titan
 
 		GraphicsContext::GetDevice().ImmediateSubmit([=](VkCommandBuffer cmd)
 			{
-				VkImageSubresourceRange range;
+				VkImageSubresourceRange range{};
 				range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 				range.baseMipLevel = 0;
 				range.levelCount = 1;
@@ -148,7 +149,7 @@ namespace Titan
 		TitanAllocator::QueueDeletion([&]() {vkDestroySampler(GraphicsContext::GetDevice().GetHandle(), m_Sampler, nullptr); });
 	}
 
-	VkDescriptorSet& Texture::GetDescriptorSet()
+	VkDescriptorSet Texture::GetDescriptorSet()
 	{
 		auto set = ImGui_ImplVulkan_AddTexture(m_Sampler, m_ImageView, VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL);
 		TitanImGui::HandleDescriptorSet(set);

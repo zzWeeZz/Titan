@@ -135,7 +135,7 @@
     <ClInclude Include="src\Titan\Assets\Model\ModelHandle.h">
       <Filter>src\Titan\Assets\Model</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Assets\ModelImporters\GLTFImporter.h">
+    <ClInclude Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.h">
       <Filter>src\Titan\Assets\ModelImporters</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Resource.h">
@@ -609,6 +609,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Model\Submesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -626,7 +627,7 @@
     <ClCompile Include="src\Titan\Assets\Model\ModelHandle.cpp">
       <Filter>src\Titan\Assets\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Assets\ModelImporters\GLTFImporter.cpp">
+    <ClCompile Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.cpp">
       <Filter>src\Titan\Assets\ModelImporters</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\ResourceRegistry.cpp">
@@ -746,5 +747,6 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Assets\Model\Submesh.cpp" />
   </ItemGroup>
 </Project>

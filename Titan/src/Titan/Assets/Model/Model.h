@@ -6,6 +6,7 @@
 #include <Titan/Assets/Model/ModelHandle.h>
 #include <Titan/Rendering/Renderer.h>
 #include <glm/gtx/quaternion.hpp>
+#include "Titan/Assets/Model/Submesh.h"
 namespace Titan
 {
 	COMPONENT(ModelComponent)
@@ -17,13 +18,17 @@ namespace Titan
 
 	inline void ModelSystem(ModelComponent& mdl, TransformComponent& tf)
 	{
-		MeshCmd cmd{};
-		cmd.package = ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->GetVertexPackage();
-		cmd.textureId = mdl.textureHandle;
-		auto pos = glm::translate(glm::mat4(1.0f), tf.position);
-		auto rot = glm::toMat4(tf.quaternion);
-		auto scale = glm::scale(glm::mat4(1.0f), tf.scale);
-		cmd.transform = pos * rot * scale;
-		Renderer::Submit(cmd);
+		auto resource = ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle);
+		for (auto& submesh : resource->GetSubMeshes())
+		{
+			MeshCmd cmd{};
+			cmd.package = submesh.GetVertexPackage();
+			cmd.textureId = mdl.textureHandle;
+			auto pos = glm::translate(glm::mat4(1.0f), tf.position);
+			auto rot = glm::toMat4(tf.quaternion);
+			auto scale = glm::scale(glm::mat4(1.0f), tf.scale);
+			cmd.transform = pos * rot * scale;
+			Renderer::Submit(cmd);
+		}
 	}
 }

@@ -3,6 +3,7 @@
 
 #include "yaml-cpp/yaml.h"
 #include "Titan/Assets/Model/ModelHandle.h"
+#include "Titan/Assets/Model/Submesh.h"
 const std::string filePath = "Engine/Resources/ResourceRegistry.yaml";
 void Titan::ResourceRegistry::Initialize()
 {

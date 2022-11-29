@@ -2,7 +2,7 @@
 #include "VulkanUtils.h"
 namespace Titan
 {
-	void Titan::VulkanUtils::MemoryBarrier(VkCommandBuffer cmd, AllocatedImage& image)
+	void Titan::VulkanUtils::MemoryBarrier(VkCommandBuffer cmd, AllocatedImage& image, VkPipelineStageFlagBits src, VkPipelineStageFlagBits dst)
 	{
 		VkImageMemoryBarrier image_memory_barrier
 		{
@@ -24,8 +24,8 @@ namespace Titan
 
 		vkCmdPipelineBarrier(
 			cmd,
-			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // srcStageMask
-			VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, // dstStageMask
+			src,//VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // srcStageMask
+			dst,//VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, // dstStageMask
 			0,
 			0,
 			nullptr,

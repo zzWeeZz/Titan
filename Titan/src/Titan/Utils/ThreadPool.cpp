@@ -6,7 +6,7 @@ namespace Titan
 	
 	void ThreadPool::Initialize(std::function<void(std::string message, Severity severity)>&& messageCallback)
 	{
-		s_Logger = messageCallback;
+		/*s_Logger = messageCallback;
 		Log("Logger linked!", Severity::Log);
 		auto threadCount = std::thread::hardware_concurrency();
 		for (size_t i = 0; i < threadCount; ++i)
@@ -15,12 +15,12 @@ namespace Titan
 			info.thread = new std::thread(ThreadLoop);
 			info.status = ThreadStatus::Idle;
 			s_Threads[info.thread->get_id()] = info;
-		}
+		}*/
 
 	}
 	void ThreadPool::Shutdown()
 	{
-		for (auto& thrID : s_Threads)
+	/*	for (auto& thrID : s_Threads)
 		{
 			thrID.second.thread->join();
 		}
@@ -31,7 +31,7 @@ namespace Titan
 			thrID.second.thread = nullptr;
 		}
 
-		s_Threads.clear();
+		s_Threads.clear();*/
 	}
 	void ThreadPool::Log(const std::string& messsage, Severity severity)
 	{

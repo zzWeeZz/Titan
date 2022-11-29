@@ -6,6 +6,7 @@
 void Titan::SamplerLibrary::Add(const std::string& key, const Filter& filter, const Address& address, const MipmapMode& mipmapMode)
 {
     VkSamplerCreateInfo info{};
+    info.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     info.magFilter = FormatToVkFormat(filter);
     info.minFilter = FormatToVkFormat(filter);
     info.addressModeU = FormatToVkFormat(address);
@@ -21,8 +22,9 @@ void Titan::SamplerLibrary::Add(const std::string& key, const Filter& filter, co
 	info.maxLod = 0.0f;
 	info.anisotropyEnable = VK_FALSE;
 	info.maxAnisotropy = 1.0f;
-    s_Samplers[key] = VkSampler();
-    TN_VK_CHECK(vkCreateSampler(GraphicsContext::GetDevice().GetHandle(), &info, nullptr, &s_Samplers[key]));
+    VkSampler sampler;
+    TN_VK_CHECK(vkCreateSampler(GraphicsContext::GetDevice().GetHandle(), &info, nullptr, &sampler));
+    s_Samplers[key] = sampler;
     TitanAllocator::QueueDeletion([&, key]() {TN_CORE_INFO("TitanAllocator: Destroying sampler: {0}", key.c_str()); vkDestroySampler(GraphicsContext::GetDevice().GetHandle(), s_Samplers[key], nullptr); });
 }
 

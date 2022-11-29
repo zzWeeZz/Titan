@@ -1,17 +1,19 @@
 #include "TNpch.h"
 #include "GLTFImporter.h"
 #define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+#define TINYGLTF_NO_STB_IMAGE_WRITE
+#define TINYGLTF_NO_STB_IMAGE 
+#define TINYGLTF_NO_EXTERNAL_IMAGE
 #include <filesystem>
 #include <iostream>
 
 #include "tiny_gltf.h"
 #include "Titan/Core/Core.h"
 #include <Titan/Rendering/Vertices.h>
+#include <Titan/Assets/Model/Submesh.h>
 namespace Titan
 {
-	void GLTFImporter::Import(const std::filesystem::path& filepath, VertexPackage& outVertex)
+	void GLTFImporter::Import(const std::filesystem::path& filepath, std::vector<Submesh>& outMeshes)
 	{
 		tinygltf::Model model;
 		tinygltf::TinyGLTF loader;
@@ -51,80 +53,18 @@ namespace Titan
 				return;
 			}
 		}
-		std::vector<Vertex> tempVertices;
-		std::vector<uint32_t> tempIndex;
+		
 		const tinygltf::Scene& scene = model.scenes[model.defaultScene];
 		for (size_t i = 0; i < scene.nodes.size(); i++)
 		{
+			std::vector<Vertex> tempVertices;
+			std::vector<uint32_t> tempIndex;
 			const tinygltf::Node& node = model.nodes[scene.nodes[i]];
 			LoadNode(node, model, tempVertices, tempIndex);
-
-			//const tinygltf::Scene& scene = model.scenes[i];
-			//for (int j = 0; j < scene.nodes.size(); j++)
-			//{
-			//	const tinygltf::Node& node = model.nodes[scene.nodes[j]];
-			//	if (node.mesh >= 0)
-			//	{
-			//		const tinygltf::Mesh& mesh = model.meshes[node.mesh];
-			//		for (int k = 0; k < mesh.primitives.size(); k++)
-			//		{
-			//			const tinygltf::Primitive& primitive = mesh.primitives[k];
-			//			if (primitive.indices >= 0)
-			//			{
-			//				const tinygltf::Accessor& accessor = model.accessors[primitive.indices];
-			//				const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
-			//				const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
-
-			//				const uint16_t* indices = reinterpret_cast<const uint16_t*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
-
-			//				const tinygltf::Accessor& accessor2 = model.accessors[primitive.attributes.find("POSITION")->second];
-			//				const tinygltf::BufferView& bufferView2 = model.bufferViews[accessor2.bufferView];
-			//				const tinygltf::Buffer& buffer2 = model.buffers[bufferView2.buffer];
-			//				const float* positions = reinterpret_cast<const float*>(&buffer2.data[bufferView2.byteOffset + accessor2.byteOffset]);
-
-
-			//				const tinygltf::Accessor& accessor3 = model.accessors[primitive.attributes.find("NORMAL")->second];
-			//				const tinygltf::BufferView& bufferView3 = model.bufferViews[accessor3.bufferView];
-			//				const tinygltf::Buffer& buffer3 = model.buffers[bufferView3.buffer];
-			//				const float* normals = reinterpret_cast<const float*>(&buffer3.data[bufferView3.byteOffset + accessor3.byteOffset]);
-
-			//				const tinygltf::Accessor& accessor4 = model.accessors[primitive.attributes.find("TEXCOORD_0")->second];
-			//				const tinygltf::BufferView& bufferView4 = model.bufferViews[accessor4.bufferView];
-			//				const tinygltf::Buffer& buffer4 = model.buffers[bufferView4.buffer];
-			//				const float* texCoord = reinterpret_cast<const float*>(&buffer4.data[bufferView4.byteOffset + accessor4.byteOffset]);
-			//				for (size_t i = 0; i < accessor2.count; ++i) {
-			//					// Positions are Vec3 components, so for each vec3 stride, offset for x, y, and z.
-			//					Vertex vertex;
-			//					vertex.Position.x = positions[i * 3 + 0];
-			//					vertex.Position.y = positions[i * 3 + 1];
-			//					vertex.Position.z = positions[i * 3 + 2];
-			//					vertex.Normal.x = normals[i * 3 + 0];
-			//					vertex.Normal.y = normals[i * 3 + 1];
-			//					vertex.Normal.z = normals[i * 3 + 2];
-			//					vertex.TexCoords = glm::vec2(texCoord[i * 2 + 0], texCoord[i * 2 + 1]);
-			//					tempVertices.push_back(vertex);
-			//				}
-			//				for (size_t i = 0; i < accessor.count; ++i)
-			//				{
-			//					tempIndex.push_back(indices[i]);
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
+				
+			// constructs with (std::Vector<vertex>&, std::Vector<uint32_t>&).
+			outMeshes.emplace_back(tempVertices, tempIndex);
 		}
-
-		VertexBufferInfo vInfo{};
-		vInfo.vertexData = tempVertices.data();
-		vInfo.sizeOfArray = tempVertices.size();
-		vInfo.sizeOfVertex = sizeof(Vertex);
-		outVertex.vertexBuffer = VertexBuffer::Create(vInfo);
-		IndexBufferInfo iInfo{};
-		iInfo.indexData = tempIndex.data();
-		iInfo.sizeOfArray = tempIndex.size();
-		outVertex.indexBuffer = IndexBuffer::Create(iInfo);
-
-		TN_CORE_INFO("Done Loading {0}", filepath.string());
 	}
 	void GLTFImporter::LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, std::vector<Vertex>& outVerties, std::vector<uint32_t>& outIndices)
 	{
@@ -136,7 +76,108 @@ namespace Titan
 			{
 				const tinygltf::Primitive primative = mesh.primitives[i];
 
+				const float* positionBuffer = nullptr;
+				const float* normalBuffer = nullptr;
+				const float* texCoordsBuffer = nullptr;
+				const float* tangentBuffer = nullptr;
 
+				size_t vertexCount = 0;
+
+				if (primative.attributes.find("POSITION") != primative.attributes.end())
+				{
+					const tinygltf::Accessor& accessor = model.accessors[primative.attributes.find("POSITION")->second];
+					const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+					const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+					positionBuffer = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+
+					vertexCount = accessor.count;
+				}
+
+				if (primative.attributes.find("NORMAL") != primative.attributes.end())
+				{
+					const tinygltf::Accessor& accessor = model.accessors[primative.attributes.find("NORMAL")->second];
+					const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+					const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+					normalBuffer = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+				}
+
+				if (primative.attributes.find("TEXCOORD_0") != primative.attributes.end())
+				{
+					const tinygltf::Accessor& accessor = model.accessors[primative.attributes.find("TEXCOORD_0")->second];
+					const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+					const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+					texCoordsBuffer = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+				}
+
+				if (primative.attributes.find("TANGENT") != primative.attributes.end())
+				{
+					const tinygltf::Accessor& accessor = model.accessors[primative.attributes.find("TANGENT")->second];
+					const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+					const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+					tangentBuffer = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
+				}
+
+				outVerties.resize(vertexCount);
+				for (size_t index = 0; index < vertexCount; ++index)
+				{
+					Vertex& vertex = outVerties[index];
+					vertex.Position = positionBuffer ? *(glm::vec3*)&positionBuffer[index * 3] : glm::vec3();
+					vertex.Normal = glm::normalize(normalBuffer ? *(glm::vec3*)&normalBuffer[index * 3] : glm::vec3(1.f));
+					vertex.TexCoords = texCoordsBuffer ? *(glm::vec2*)&texCoordsBuffer[index * 2] : glm::vec2();
+				}
+				{
+					const tinygltf::Accessor& accessor = model.accessors[primative.indices];
+					const tinygltf::BufferView& bufferView = model.bufferViews[accessor.bufferView];
+					const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
+
+					switch (accessor.componentType)
+					{
+					case TINYGLTF_PARAMETER_TYPE_UNSIGNED_INT:
+					{
+						const uint32_t* buf = reinterpret_cast<const uint32_t*>(&buffer.data[accessor.byteOffset + bufferView.byteOffset]);
+						for (size_t index = 0; index < accessor.count; index++)
+						{
+							outIndices.emplace_back(buf[index]);
+						}
+
+						break;
+					}
+
+					case TINYGLTF_PARAMETER_TYPE_SHORT:
+					{
+						const int16_t* buf = reinterpret_cast<const int16_t*>(&buffer.data[accessor.byteOffset + bufferView.byteOffset]);
+						for (size_t index = 0; index < accessor.count; index++)
+						{
+							outIndices.emplace_back(buf[index]);
+						}
+						break;
+					}
+
+					case TINYGLTF_PARAMETER_TYPE_UNSIGNED_SHORT:
+					{
+						const uint16_t* buf = reinterpret_cast<const uint16_t*>(&buffer.data[accessor.byteOffset + bufferView.byteOffset]);
+						for (size_t index = 0; index < accessor.count; index++)
+						{
+							outIndices.emplace_back(buf[index]);
+						}
+						break;
+					}
+
+					case TINYGLTF_PARAMETER_TYPE_UNSIGNED_BYTE:
+					{
+						const uint8_t* buf = reinterpret_cast<const uint8_t*>(&buffer.data[accessor.byteOffset + bufferView.byteOffset]);
+						for (size_t index = 0; index < accessor.count; index++)
+						{
+							outIndices.emplace_back(buf[index]);
+						}
+						break;
+					}
+
+					default:
+						TN_CORE_ERROR("Index component not supported!");
+						return;
+					}
+				}
 			}
 		}
 	}

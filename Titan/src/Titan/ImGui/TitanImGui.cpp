@@ -222,8 +222,39 @@ namespace Titan
 		ImGui_ImplVulkan_RenderDrawData(drawData, secondaryCmd);
 
 		vkEndCommandBuffer(secondaryCmd);
-		
+
+		if (!s_HandledImageBarriers.empty())
+		{
+			vkCmdPipelineBarrier(
+				cmd,
+				VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // srcStageMask
+				VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // dstStageMask
+				0,
+				0,
+				nullptr,
+				0,
+				nullptr,
+				static_cast<uint32_t>(s_HandledImageBarriers.size()), // imageMemoryBarrierCount
+				s_HandledImageBarriers.data() // pImageMemoryBarriers
+			);
+		}
 		vkCmdExecuteCommands(cmd, 1, &secondaryCmd);
+		if (!s_HandledImageReturnBarriers.empty())
+		{
+
+			vkCmdPipelineBarrier(
+				cmd,
+				VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,  // srcStageMask
+				VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, // dstStageMask
+				0,
+				0,
+				nullptr,
+				0,
+				nullptr,
+				static_cast<uint32_t>(s_HandledImageReturnBarriers.size()), // imageMemoryBarrierCount
+				s_HandledImageReturnBarriers.data() // pImageMemoryBarriers
+			);
+		}
 
 		vkCmdEndRenderPass(cmd);
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -241,5 +272,7 @@ namespace Titan
 			ImGui_ImplVulkan_RemoveTexture(desc);
 		}
 		s_HandledDescriptors.clear();
+		s_HandledImageReturnBarriers.clear();
+		s_HandledImageBarriers.clear();
 	}
 }
