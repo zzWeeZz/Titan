@@ -64,6 +64,9 @@
     <Filter Include="src\Titan\Utils">
       <UniqueIdentifier>{5CF5C542-C880-3307-D191-B6FB3D9C8F07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Utils\Allocators">
+      <UniqueIdentifier>{9FD9FDFE-8BE9-A9CF-F4A2-0EEEE0D19868}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
@@ -267,6 +270,9 @@
     <ClInclude Include="src\Titan\Scene\Scene.h">
       <Filter>src\Titan\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Descriptors\DescriptorAllocator.h">
+      <Filter>src\Titan\Utils\Allocators</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Utils\FilesystemUtils.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
@@ -277,6 +283,9 @@
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Utils\MouseCode.h">
+      <Filter>src\Titan\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Utils\Profiler.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Utils\ThreadPool.h">
@@ -624,10 +633,8 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Utils\Profiler.h">
-      <Filter>src\Titan\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Titan\Utils\Allocators\DescriptorAllocator.h" />
+    <ClInclude Include="src\Titan\Rendering\Descriptors\DescriptorLayoutCache.h" />
+    <ClInclude Include="src\Titan\Rendering\Descriptors\DescriptorBuilder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -729,6 +736,9 @@
     <ClCompile Include="src\Titan\Scene\Scene.cpp">
       <Filter>src\Titan\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Descriptors\DescriptorAllocator.cpp">
+      <Filter>src\Titan\Utils\Allocators</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Utils\FilesystemUtils.cpp">
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
@@ -774,6 +784,7 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Utils\Allocators\DescriptorAllocator.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Descriptors\DescriptorLayoutCache.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Descriptors\DescriptorBuilder.cpp" />
   </ItemGroup>
 </Project>

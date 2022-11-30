@@ -45,15 +45,13 @@ namespace Titan
 
 		if (needReAlloc)
 		{
-			TN_CORE_INFO("(DescriptorAllocator::Allocate) Need to reallocate descriptor set.");
 			m_CurrentPool = GrabPool();
 			m_UsedPools.push_back(m_CurrentPool);
-
+			allocInfo.descriptorPool = m_CurrentPool;
 			allocResult = vkAllocateDescriptorSets(device.GetHandle(), &allocInfo, set);
 
 			if (allocResult == VK_SUCCESS)
 			{
-				TN_CORE_INFO("(DescriptorAllocator::Allocate) Reallocation was a success.");
 				return true;
 			}
 		}

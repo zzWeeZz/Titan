@@ -6,6 +6,14 @@ namespace Titan
 	class DescriptorAllocator
 	{
 	public:
+		
+
+		void Initialize();
+		bool Allocate(VkDescriptorSet* set, VkDescriptorSetLayout layout);
+		void ResetPools();
+
+		void Shutdown();
+	private:
 		struct PoolSizes
 		{
 			std::vector<std::pair<VkDescriptorType, float>> sizes =
@@ -24,12 +32,6 @@ namespace Titan
 			};
 		};
 
-		void Initialize();
-		bool Allocate(VkDescriptorSet* set, VkDescriptorSetLayout layout);
-		void ResetPools();
-
-		void Shutdown();
-	private:
 		VkDescriptorPool GrabPool();
 		VkDescriptorPool CreatePool(int32_t count, VkDescriptorPoolCreateFlags flags);
 

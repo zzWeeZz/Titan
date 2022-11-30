@@ -1,24 +1,33 @@
 #include "TNpch.h"
 #include "Renderer.h"
 
-#include "Titan/Application.h"
-
+#include <imgui.h>
+#include <Optick/src/optick.h>
 #include <glm/gtx/transform.hpp>
 
-#include "Titan/Rendering/GraphicsContext.h"
-#include "Titan/Rendering/Libraries/PipelineLibrary.h"
-#include <Titan/Rendering/Buffers/VertexBuffer.h>
-#include <Titan/Rendering/Buffers/IndexBuffer.h>
+#include "Titan/Application.h"
+
+#include "Titan/ImGui/TitanImGui.h"
+
+#include <Titan/Assets/Texture/Texture.h>
+#include "Titan/Assets/ResourceRegistry.h"
+
 #include <Titan/Rendering/Vertices.h>
 #include <Titan/Rendering/Framebuffer.h>
+#include "Titan/Rendering/GraphicsContext.h"
+
+#include <Titan/Rendering/Buffers/IndexBuffer.h>
+#include <Titan/Rendering/Buffers/VertexBuffer.h>
 #include <Titan/Rendering/Buffers/UniformBuffer.h>
 #include "Titan/Rendering/Buffers/UniformBuffers.h"
-#include <Optick/src/optick.h>
-#include "Titan/Assets/ResourceRegistry.h"
-#include <Titan/Assets/Texture/Texture.h>
-#include "Titan/ImGui/TitanImGui.h"
-#include <imgui.h>
+
 #include "Titan/Rendering/Libraries/SamplerLibrary.h"
+#include "Titan/Rendering/Libraries/PipelineLibrary.h"
+
+#include "Titan/Rendering/Descriptors/DescriptorBuilder.h"
+#include "Titan/Rendering/Descriptors/DescriptorAllocator.h"
+#include "Titan/Rendering/Descriptors/DescriptorLayoutCache.h"
+
 namespace Titan
 {
 	struct Cache
@@ -37,6 +46,9 @@ namespace Titan
 		Ref<UniformBuffer> modelBuffer;
 
 		VkDescriptorPool descriptorPool;
+
+		DescriptorAllocator allocator;
+		DescriptorLayoutCache cache;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
 	static PerFrameInFlight<VkDescriptorSet> s_DescriptorSets;
@@ -117,7 +129,19 @@ namespace Titan
 		bufferInfo.offset = 0;
 		bufferInfo.range = sizeof(CameraData);
 
-		std::array<VkWriteDescriptorSet, 2> descriptorWrite{};
+		auto texture = ResourceRegistry::GetItem<Texture>(s_Cache->textureID);
+		VkDescriptorImageInfo imageInfo{};
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		imageInfo.imageView = texture->GetView();
+		imageInfo.sampler = texture->GetSampler();
+
+		VkDescriptorSet globalSet;
+		DescriptorBuilder::Begin(&s_Cache->cache, &s_Cache->allocator)
+			.BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+			.BindImage(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+			.Build(globalSet);
+
+		/*std::array<VkWriteDescriptorSet, 2> descriptorWrite{};
 		descriptorWrite[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrite[0].dstBinding = 0;
 		descriptorWrite[0].descriptorCount = 1;
@@ -138,6 +162,7 @@ namespace Titan
 		descriptorWrite[1].pImageInfo = &imageInfo;
 
 		vkUpdateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
+		*/
 		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		auto index = GraphicsContext::GetSwapchain().GetNextImage();
 		if (index < 0)
@@ -219,7 +244,7 @@ namespace Titan
 			s_Cache->mainFB->Bind(commandBuffer);
 
 
-			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("Mesh")->GetLayout(), 0, 1, &s_DescriptorSets[GraphicsContext::GetCurrentFrame()], 0, nullptr);
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("Mesh")->GetLayout(), 0, 1, &globalSet, 0, nullptr);
 
 			s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 			s_Cache->cameraData.view = s_Cache->currentCamera.view;
@@ -306,6 +331,8 @@ namespace Titan
 
 	void Renderer::Shutdown()
 	{
+		s_Cache->allocator.Shutdown();
+		s_Cache->cache.Shutdown();
 		s_Cache->mainFB->CleanUp();
 	}
 
