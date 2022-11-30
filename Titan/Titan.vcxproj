@@ -158,10 +158,11 @@
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
     <ClInclude Include="src\Titan\Assets\Camera\Camera.h" />
+    <ClInclude Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.h" />
     <ClInclude Include="src\Titan\Assets\Material\Material.h" />
     <ClInclude Include="src\Titan\Assets\Model\Model.h" />
     <ClInclude Include="src\Titan\Assets\Model\ModelHandle.h" />
-    <ClInclude Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.h" />
+    <ClInclude Include="src\Titan\Assets\Model\Submesh.h" />
     <ClInclude Include="src\Titan\Assets\Resource.h" />
     <ClInclude Include="src\Titan\Assets\ResourceRegistry.h" />
     <ClInclude Include="src\Titan\Assets\Texture\Texture.h" />
@@ -208,7 +209,6 @@
     <ClInclude Include="src\Titan\Utils\TitanAllocator.h" />
     <ClInclude Include="src\Titan\Utils\VulkanUtils.h" />
     <ClInclude Include="src\Titan\Window.h" />
-    <ClInclude Include="src\Titan\Assets\Model\Submesh.h" />
     <ClInclude Include="vendor\ImGui\backends\imgui_impl_glfw.h" />
     <ClInclude Include="vendor\ImGui\backends\imgui_impl_vulkan.h" />
     <ClInclude Include="vendor\ImGui\imconfig.h" />
@@ -327,9 +327,10 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp" />
+    <ClCompile Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.cpp" />
     <ClCompile Include="src\Titan\Assets\Material\Material.cpp" />
     <ClCompile Include="src\Titan\Assets\Model\ModelHandle.cpp" />
-    <ClCompile Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.cpp" />
+    <ClCompile Include="src\Titan\Assets\Model\Submesh.cpp" />
     <ClCompile Include="src\Titan\Assets\ResourceRegistry.cpp" />
     <ClCompile Include="src\Titan\Assets\Texture\Texture.cpp" />
     <ClCompile Include="src\Titan\Core\Log.cpp" />
@@ -359,7 +360,6 @@
     <ClCompile Include="src\Titan\Utils\ThreadPool.cpp" />
     <ClCompile Include="src\Titan\Utils\TitanAllocator.cpp" />
     <ClCompile Include="src\Titan\Utils\VulkanUtils.cpp" />
-    <ClCompile Include="src\Titan\Assets\Model\Submesh.cpp" />
     <ClCompile Include="vendor\ImGui\backends\imgui_impl_glfw.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <DisableSpecificWarnings>26451;6387;26812;26439;26800;26495;4717;5232;4067;%(DisableSpecificWarnings)</DisableSpecificWarnings>

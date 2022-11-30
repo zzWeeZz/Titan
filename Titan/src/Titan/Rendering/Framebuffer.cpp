@@ -19,6 +19,7 @@ namespace Titan
 
     void Framebuffer::Resize(size_t width, size_t height)
     {
+		TitanImGui::FlushDescriptors();
 		if (width == 0 || height == 0)
 		{
 			TN_CORE_ASSERT(false, "resize failed, width or height were 0!");
@@ -55,6 +56,7 @@ namespace Titan
 		{
 			.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 			.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			.dstAccessMask = VK_ACCESS_SHADER_READ_BIT,
 			.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 			.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 			.image = GetImages()[0].Image,
@@ -70,7 +72,8 @@ namespace Titan
 		VkImageMemoryBarrier image_Returnmemory_barrier
 		{
 			.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-			.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			.srcAccessMask = VK_ACCESS_SHADER_READ_BIT,
+			.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
 			.oldLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 			.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 			.image = GetImages()[0].Image,
@@ -148,7 +151,7 @@ namespace Titan
 				viewInfo.image = m_Images[i][imageFormatIndex].Image;
 				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 				viewInfo.format = FormatToVkFormat(m_Info.imageFormats[imageFormatIndex]);
-				viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT /*| VK_IMAGE_USAGE_SAMPLED_BIT*/;
+				viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 				viewInfo.subresourceRange.baseMipLevel = 0;
 				viewInfo.subresourceRange.levelCount = 1;
 				viewInfo.subresourceRange.baseArrayLayer = 0;

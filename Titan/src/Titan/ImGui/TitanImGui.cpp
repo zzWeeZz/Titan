@@ -168,7 +168,21 @@ namespace Titan
 		VkCommandBuffer secondaryCmd;
 		cmd = GraphicsContext::GetDevice().GetCommandBuffer(GraphicsContext::GetCurrentFrame(), 0);
 		secondaryCmd = s_ImGuiCommandBuffer[GraphicsContext::GetCurrentFrame()];
-
+		if (!s_HandledImageBarriers.empty())
+		{
+			vkCmdPipelineBarrier(
+				cmd,
+				VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // srcStageMask
+				VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // dstStageMask
+				0,
+				0,
+				nullptr,
+				0,
+				nullptr,
+				static_cast<uint32_t>(s_HandledImageBarriers.size()), // imageMemoryBarrierCount
+				s_HandledImageBarriers.data() // pImageMemoryBarriers
+			);
+		}
 
 		{
 			VkClearValue clearValues[2]{};
@@ -223,22 +237,11 @@ namespace Titan
 
 		vkEndCommandBuffer(secondaryCmd);
 
-		if (!s_HandledImageBarriers.empty())
-		{
-			vkCmdPipelineBarrier(
-				cmd,
-				VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,  // srcStageMask
-				VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, // dstStageMask
-				0,
-				0,
-				nullptr,
-				0,
-				nullptr,
-				static_cast<uint32_t>(s_HandledImageBarriers.size()), // imageMemoryBarrierCount
-				s_HandledImageBarriers.data() // pImageMemoryBarriers
-			);
-		}
+		
 		vkCmdExecuteCommands(cmd, 1, &secondaryCmd);
+		
+		vkCmdEndRenderPass(cmd);
+
 		if (!s_HandledImageReturnBarriers.empty())
 		{
 
@@ -256,7 +259,6 @@ namespace Titan
 			);
 		}
 
-		vkCmdEndRenderPass(cmd);
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

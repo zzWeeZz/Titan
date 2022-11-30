@@ -13,14 +13,17 @@
     <Filter Include="src\Titan\Assets\Camera">
       <UniqueIdentifier>{1639FB3C-8270-43D4-8B7A-A7F7F7306ACD}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Assets\Importers">
+      <UniqueIdentifier>{72BEB74A-5ECE-631B-C787-C839B3B652B4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Titan\Assets\Importers\ModelImporters">
+      <UniqueIdentifier>{F7FE962F-6319-FAD0-AC3B-0A65189521D8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Assets\Material">
       <UniqueIdentifier>{BC7294B3-2835-C83D-71E5-56CADDE6A01B}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Titan\Assets\Model">
       <UniqueIdentifier>{1EF22850-0AEC-51A2-F358-E8B2DFF1B70E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Titan\Assets\ModelImporters">
-      <UniqueIdentifier>{6385D1FB-CF68-E03B-D86B-0E7844CEA68C}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Titan\Assets\Texture">
       <UniqueIdentifier>{BE5D2403-AA82-7383-D3CD-5813BF5172A1}</UniqueIdentifier>
@@ -126,6 +129,9 @@
     <ClInclude Include="src\Titan\Assets\Camera\Camera.h">
       <Filter>src\Titan\Assets\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.h">
+      <Filter>src\Titan\Assets\Importers\ModelImporters</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Assets\Material\Material.h">
       <Filter>src\Titan\Assets\Material</Filter>
     </ClInclude>
@@ -135,8 +141,8 @@
     <ClInclude Include="src\Titan\Assets\Model\ModelHandle.h">
       <Filter>src\Titan\Assets\Model</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.h">
-      <Filter>src\Titan\Assets\ModelImporters</Filter>
+    <ClInclude Include="src\Titan\Assets\Model\Submesh.h">
+      <Filter>src\Titan\Assets\Model</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Resource.h">
       <Filter>src\Titan\Assets</Filter>
@@ -609,7 +615,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Assets\Model\Submesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -621,14 +626,17 @@
     <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp">
       <Filter>src\Titan\Assets\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.cpp">
+      <Filter>src\Titan\Assets\Importers\ModelImporters</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Assets\Material\Material.cpp">
       <Filter>src\Titan\Assets\Material</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\Model\ModelHandle.cpp">
       <Filter>src\Titan\Assets\Model</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.cpp">
-      <Filter>src\Titan\Assets\ModelImporters</Filter>
+    <ClCompile Include="src\Titan\Assets\Model\Submesh.cpp">
+      <Filter>src\Titan\Assets\Model</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\ResourceRegistry.cpp">
       <Filter>src\Titan\Assets</Filter>
@@ -747,6 +755,5 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Assets\Model\Submesh.cpp" />
   </ItemGroup>
 </Project>

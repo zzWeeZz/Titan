@@ -216,13 +216,6 @@ namespace Titan
 		subpass.colorAttachmentCount = 1;
 		subpass.pColorAttachments = &colorAttachmentRef;
 
-		VkSubpassDependency dependency = {};
-		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-		dependency.dstSubpass = 0;
-		dependency.srcStageMask = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		dependency.dstStageMask = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		dependency.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		dependency.dstAccessMask = 0;
 
 		VkRenderPassCreateInfo renderPassInfo{};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -230,8 +223,6 @@ namespace Titan
 		renderPassInfo.pAttachments = &colorAttachment;
 		renderPassInfo.subpassCount = 1;
 		renderPassInfo.pSubpasses = &subpass;
-		renderPassInfo.dependencyCount = 1;
-		renderPassInfo.pDependencies = &dependency;
 
 		TN_VK_CHECK(vkCreateRenderPass(GraphicsContext::GetDevice().GetHandle(), &renderPassInfo, nullptr, &m_SwapchainRenderPass));
 	}

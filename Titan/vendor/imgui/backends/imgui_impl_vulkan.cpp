@@ -408,7 +408,7 @@ static void ImGui_ImplVulkan_SetupRenderState(ImDrawData* draw_data, VkPipeline 
 
     // Setup viewport:
     {
-        VkViewport viewport;
+        VkViewport viewport{};
         viewport.x = 0;
         viewport.y = 0;
         viewport.width = (float)fb_width;
@@ -421,10 +421,10 @@ static void ImGui_ImplVulkan_SetupRenderState(ImDrawData* draw_data, VkPipeline 
     // Setup scale and translation:
     // Our visible imgui space lies from draw_data->DisplayPps (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
     {
-        float scale[2];
+        float scale[2]{};
         scale[0] = 2.0f / draw_data->DisplaySize.x;
         scale[1] = 2.0f / draw_data->DisplaySize.y;
-        float translate[2];
+        float translate[2] = {0, 0};
         translate[0] = -1.0f - draw_data->DisplayPos.x * scale[0];
         translate[1] = -1.0f - draw_data->DisplayPos.y * scale[1];
         vkCmdPushConstants(command_buffer, bd->PipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(float) * 0, sizeof(float) * 2, scale);
@@ -538,7 +538,7 @@ void ImGui_ImplVulkan_RenderDrawData(ImDrawData* draw_data, VkCommandBuffer comm
                     continue;
 
                 // Apply scissor/clipping rectangle
-                VkRect2D scissor;
+                VkRect2D scissor{};
                 scissor.offset.x = (int32_t)(clip_min.x);
                 scissor.offset.y = (int32_t)(clip_min.y);
                 scissor.extent.width = (uint32_t)(clip_max.x - clip_min.x);
@@ -583,7 +583,7 @@ bool ImGui_ImplVulkan_CreateFontsTexture(VkCommandBuffer command_buffer)
     unsigned char* pixels;
     int width, height;
     io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
-    size_t upload_size = width * height * 4 * sizeof(char);
+    size_t upload_size = static_cast<unsigned long long>(width) * height * 4 * sizeof(char);
 
     VkResult err;
 
@@ -1172,7 +1172,7 @@ VkSurfaceFormatKHR ImGui_ImplVulkanH_SelectSurfaceFormat(VkPhysicalDevice physic
     {
         if (avail_format[0].format == VK_FORMAT_UNDEFINED)
         {
-            VkSurfaceFormatKHR ret;
+            VkSurfaceFormatKHR ret{};
             ret.format = request_formats[0];
             ret.colorSpace = request_color_space;
             return ret;
@@ -1427,7 +1427,7 @@ void ImGui_ImplVulkanH_CreateWindowSwapChain(VkPhysicalDevice physical_device, V
 
     // Create Framebuffer
     {
-        VkImageView attachment[1];
+        VkImageView attachment[1]{};
         VkFramebufferCreateInfo info = {};
         info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         info.renderPass = wd->RenderPass;
