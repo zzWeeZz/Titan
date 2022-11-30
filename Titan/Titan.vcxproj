@@ -154,10 +154,14 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titan\Utils\Allocators\DescriptorAllocator.h" />
+    <ClInclude Include="src\Titan\Utils\Profiler.h" />
     <ClInclude Include="src\TNpch.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
     <ClInclude Include="src\Titan\Assets\Camera\Camera.h" />
+    <ClInclude Include="src\Titan\Assets\Hydra\Hydra.h" />
+    <ClInclude Include="src\Titan\Assets\Importers\ModelImporters\FBXImporter.h" />
     <ClInclude Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.h" />
     <ClInclude Include="src\Titan\Assets\Material\Material.h" />
     <ClInclude Include="src\Titan\Assets\Model\Model.h" />
@@ -322,11 +326,14 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titan\Utils\Allocators\DescriptorAllocator.cpp" />
     <ClCompile Include="src\TNpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Titan\Application.cpp" />
     <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp" />
+    <ClCompile Include="src\Titan\Assets\Hydra\Hydra.cpp" />
+    <ClCompile Include="src\Titan\Assets\Importers\ModelImporters\FBXImporter.cpp" />
     <ClCompile Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.cpp" />
     <ClCompile Include="src\Titan\Assets\Material\Material.cpp" />
     <ClCompile Include="src\Titan\Assets\Model\ModelHandle.cpp" />

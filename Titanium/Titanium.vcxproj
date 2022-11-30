@@ -90,7 +90,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Titan\vendor\freetype\lib\freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -118,7 +118,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -146,7 +146,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>..\Titan\vendor\dxil\lib\dxcompiler.lib;..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Titan\vendor\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4006 /ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
@@ -164,23 +164,6 @@
     <ClCompile Include="src\Titanium\Panels\PropertiesPanel.cpp" />
     <ClCompile Include="src\Titanium\Panels\SceneHierarchyPanel.cpp" />
     <ClCompile Include="src\Titanium\Utils\ImGuiUtils.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Titan\Titan.vcxproj">
-      <Project>{A5982A0E-11AD-52BF-DA2E-F61E46024FF0}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Titan\vendor\GLFW\GLFW.vcxproj">
-      <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Titan\vendor\imgui\ImGui.vcxproj">
-      <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Titan\vendor\YAML\yaml-cpp.vcxproj">
-      <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Titan\vendor\Optick\Optick.vcxproj">
-      <Project>{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

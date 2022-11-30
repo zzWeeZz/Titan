@@ -1,11 +1,14 @@
 #pragma once
 #include <array>
-#include "Titan/Core/Core.h"
-#include <Titan/Rendering/Pipeline/GraphicsPipeline.h>
+
 #include <vulkan/vulkan.h>
-#include <Titan/Rendering/Backend/PhysicalDevice.h>
+
+#include "Titan/Core/Core.h"
+
 #include <Titan/Rendering/Backend/Device.h>
 #include <Titan/Rendering/Backend/Swapchain.h>
+#include <Titan/Rendering/Backend/PhysicalDevice.h>
+#include <Titan/Rendering/Pipeline/GraphicsPipeline.h>
 
 namespace Titan
 {

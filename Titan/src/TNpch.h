@@ -23,5 +23,6 @@
 
 //Titan includes
 #include "Titan/Core/Core.h"
+#include "Titan/Utils/Profiler.h"
 
 #endif

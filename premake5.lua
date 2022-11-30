@@ -29,6 +29,7 @@ externalLinks =
     "ImGui",
     "yaml-cpp",
     "Optick",
+    "OpenFBX",
     "Titan/vendor/dxil/lib/dxcompiler.lib",
 }
 
@@ -102,13 +103,14 @@ externalReleaseLinks =
     "%{VULKAN_SDK}/Lib/vulkan-1.lib",
 }
 
+group "Dependencies"
 include "Titan/vendor/GLFW/"
 include "Titan/vendor/glm/"
 include "Titan/vendor/YAML/"
 include "Titan/vendor/Optick/"
 include "Titan/vendor/imgui/"
-
-
+include "Titan/vendor/OpenFBX"
+group ""
 
 project "SandBox"
     location "SandBox"
@@ -214,6 +216,7 @@ project "SandBox"
 
 
         
+group "Core"
 project "Titan"
     location "Titan"
     kind "StaticLib"
@@ -323,7 +326,7 @@ project "Titan"
         { 
             "MultiProcessorCompile"
         }
- 
+group ""
 
 
 
@@ -331,8 +334,8 @@ project "Titan"
 
 
 
-
- project "Titanium"
+group "Tools"
+project "Titanium"
     location "Titanium"
     kind "StaticLib"
     language "C++"
@@ -362,11 +365,6 @@ project "Titan"
     }
     libdirs
     {
-    }
-    links
-    {
-        "Titan",
-        externalLinks
     }
     linkoptions 
 	{
@@ -420,3 +418,4 @@ project "Titan"
         { 
             "MultiProcessorCompile"
         }
+group ""

@@ -26,6 +26,10 @@ namespace Titan
 		static void Submit(const MeshCmd& meshCmd);
 		static Ref<Framebuffer> GetMainFramebuffer();
 		static void Initialize();
+
+		static void BeginPass(const std::string& passName);
+		static void EndPass();
+
 		static void Begin();
 		static void Shutdown();
 	private:

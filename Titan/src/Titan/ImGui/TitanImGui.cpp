@@ -161,6 +161,7 @@ namespace Titan
 
 	void TitanImGui::End()
 	{
+		TN_PROFILE_FUNCTION();
 		ImGui::Render();
 
 		auto& swapchain = GraphicsContext::GetSwapchain();
@@ -269,6 +270,7 @@ namespace Titan
 	}
 	void TitanImGui::FlushDescriptors()
 	{
+
 		for (auto& desc : s_HandledDescriptors)
 		{
 			ImGui_ImplVulkan_RemoveTexture(desc);

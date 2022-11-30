@@ -13,6 +13,9 @@
     <Filter Include="src\Titan\Assets\Camera">
       <UniqueIdentifier>{1639FB3C-8270-43D4-8B7A-A7F7F7306ACD}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Assets\Hydra">
+      <UniqueIdentifier>{05F5D34F-F1EE-FCA1-DA5B-93B2C6F4620E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Assets\Importers">
       <UniqueIdentifier>{72BEB74A-5ECE-631B-C787-C839B3B652B4}</UniqueIdentifier>
     </Filter>
@@ -128,6 +131,12 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Camera\Camera.h">
       <Filter>src\Titan\Assets\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Hydra\Hydra.h">
+      <Filter>src\Titan\Assets\Hydra</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Importers\ModelImporters\FBXImporter.h">
+      <Filter>src\Titan\Assets\Importers\ModelImporters</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.h">
       <Filter>src\Titan\Assets\Importers\ModelImporters</Filter>
@@ -615,6 +624,10 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Utils\Profiler.h">
+      <Filter>src\Titan\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Utils\Allocators\DescriptorAllocator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -625,6 +638,12 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\Camera\Camera.cpp">
       <Filter>src\Titan\Assets\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Assets\Hydra\Hydra.cpp">
+      <Filter>src\Titan\Assets\Hydra</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Assets\Importers\ModelImporters\FBXImporter.cpp">
+      <Filter>src\Titan\Assets\Importers\ModelImporters</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.cpp">
       <Filter>src\Titan\Assets\Importers\ModelImporters</Filter>
@@ -755,5 +774,6 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Utils\Allocators\DescriptorAllocator.cpp" />
   </ItemGroup>
 </Project>

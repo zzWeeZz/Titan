@@ -1,0 +1,16 @@
+#pragma once
+#include "Optick/src/optick.h"
+
+#ifndef TN_CONFIG_DIST
+#define TN_PROFILE_FRAME(...) OPTICK_FRAME(__VA_ARGS__)
+#define TN_PROFILE_SCOPE(NAME) OPTICK_EVENT_DYNAMIC(NAME)
+#define TN_PROFILE_FUNCTION(...) OPTICK_EVENT(__VA_ARGS__)
+#define TN_PROFILE_THREAD(NAME) OPTICK_THREAD(NAME)
+#define TN_PROFILE_CONTEXT(...) OPTICK_GPU_CONTEXT(__VA_ARGS__)
+#else
+#define TN_PROFILE_FRAME(...)
+#define TN_PROFILE_SCOPE(NAME)
+#define TN_PROFILE_FUNCTION(...)
+#define TN_PROFILE_THREAD(NAME)
+#define TN_PROFILE_CONTEXT(...)
+#endif

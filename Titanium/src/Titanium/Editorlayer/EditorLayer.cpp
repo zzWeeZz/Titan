@@ -32,6 +32,12 @@ namespace Titan
 			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Cube.gltf");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
+		/*{
+			auto entity = m_ActiveScene->CreateEntity();
+			auto& mdl = entity.AddComponent<ModelComponent>();
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/SM_Particle_Chest.fbx");
+			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
+		}*/
 		m_transformData.position.z = -5.f;
 	}
 

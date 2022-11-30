@@ -105,7 +105,7 @@ namespace Titan
 
 	void Renderer::Begin()
 	{
-		OPTICK_EVENT();
+		TN_PROFILE_FUNCTION();
 		auto& currentFrame = GraphicsContext::GetCurrentFrame();
 		auto& commandBuffer = GraphicsContext::GetDevice().GetCommandBuffer(currentFrame, 0);
 		auto& swapchain = GraphicsContext::GetSwapchain();
@@ -209,35 +209,40 @@ namespace Titan
 			.colorAttachmentCount = 1,
 			.pColorAttachments = &colorAttachmentInfo,
 		};
-		vkCmdBeginRendering(commandBuffer, &render_info);
 
-		PipelineLibrary::BindPipline("Mesh", commandBuffer);
-		s_Cache->mainFB->Bind(commandBuffer);
-
-
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("Mesh")->GetLayout(), 0, 1, &s_DescriptorSets[GraphicsContext::GetCurrentFrame()], 0, nullptr);
-
-		s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
-		s_Cache->cameraData.view = s_Cache->currentCamera.view;
-
-		s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
-		OPTICK_GPU_CONTEXT(commandBuffer);
-		OPTICK_GPU_EVENT("Draw scene");
-		for (auto& mdlCmd : s_Cache->meshCmds)
 		{
-			VkDeviceSize offset = 0;
-			auto& vertex = mdlCmd.package.vertexBuffer;
-			auto& index = mdlCmd.package.indexBuffer;
+			TN_PROFILE_CONTEXT(commandBuffer);
+			TN_PROFILE_SCOPE("Forward pass");
+			vkCmdBeginRendering(commandBuffer, &render_info);
+
+			PipelineLibrary::BindPipline("Mesh", commandBuffer);
+			s_Cache->mainFB->Bind(commandBuffer);
 
 
-			vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("Mesh")->GetLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &mdlCmd.transform);
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("Mesh")->GetLayout(), 0, 1, &s_DescriptorSets[GraphicsContext::GetCurrentFrame()], 0, nullptr);
 
-			vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertex->GetAllocation().buffer, &offset);
-			vkCmdBindIndexBuffer(commandBuffer, index->GetAllocatedBuffer().buffer, 0, VK_INDEX_TYPE_UINT32);
-			vkCmdDrawIndexed(commandBuffer, index->GetIndexCount(), 1, 0, 0, 0);
+			s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
+			s_Cache->cameraData.view = s_Cache->currentCamera.view;
+
+			s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
+			TN_PROFILE_CONTEXT(commandBuffer);
+			TN_PROFILE_SCOPE("Draw scene");
+			for (auto& mdlCmd : s_Cache->meshCmds)
+			{
+				VkDeviceSize offset = 0;
+				auto& vertex = mdlCmd.package.vertexBuffer;
+				auto& index = mdlCmd.package.indexBuffer;
+
+
+				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("Mesh")->GetLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &mdlCmd.transform);
+
+				vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertex->GetAllocation().buffer, &offset);
+				vkCmdBindIndexBuffer(commandBuffer, index->GetAllocatedBuffer().buffer, 0, VK_INDEX_TYPE_UINT32);
+				vkCmdDrawIndexed(commandBuffer, index->GetIndexCount(), 1, 0, 0, 0);
+			}
+
+			vkCmdEndRendering(commandBuffer);
 		}
-
-		vkCmdEndRendering(commandBuffer);
 
 
 		TitanImGui::End();
@@ -247,7 +252,7 @@ namespace Titan
 		VkSemaphore signalSemaphores[] = { swapchain.GetRenderFinishedSemaphore(currentFrame) };
 
 		{
-			OPTICK_GPU_EVENT("Queue submit");
+			TN_PROFILE_SCOPE("Queue submit");
 			VkSubmitInfo submitInfo{};
 			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -266,7 +271,7 @@ namespace Titan
 			TN_VK_CHECK(vkQueueSubmit(device.GetGraphicsQueue(), 1, &submitInfo, swapchain.GetInFlight(currentFrame)));
 		}
 		{
-			OPTICK_GPU_EVENT("swapchain present");
+			TN_PROFILE_SCOPE("swapchain present");
 			vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 
 			VkPresentInfoKHR presentInfo{};
@@ -287,6 +292,16 @@ namespace Titan
 		TitanImGui::FlushDescriptors();
 
 		s_Cache->meshCmds.clear();
+	}
+
+
+	void Renderer::BeginPass(const std::string& passName)
+	{
+
+	}
+
+	void Renderer::EndPass()
+	{
 	}
 
 	void Renderer::Shutdown()

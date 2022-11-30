@@ -169,6 +169,9 @@
     <ProjectReference Include="..\Titan\vendor\Optick\Optick.vcxproj">
       <Project>{AFAE52C8-9B50-7D9E-840B-91F2704C04EF}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Titan\vendor\OpenFBX\OpenFBX.vcxproj">
+      <Project>{97529BD1-0332-1A6D-0C4A-A54378A880CE}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
