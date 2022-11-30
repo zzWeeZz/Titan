@@ -45,8 +45,6 @@ namespace Titan
 		ModelData modelData = {};
 		Ref<UniformBuffer> modelBuffer;
 
-		VkDescriptorPool descriptorPool;
-
 		DescriptorAllocator allocator;
 		DescriptorLayoutCache cache;
 	};
@@ -81,9 +79,6 @@ namespace Titan
 
 		poolInfo.maxSets = g_FramesInFlight;
 
-		TN_VK_CHECK(vkCreateDescriptorPool(GraphicsContext::GetDevice().GetHandle(), &poolInfo, nullptr, &s_Cache->descriptorPool));
-		TitanAllocator::QueueDeletion([&]() {vkDestroyDescriptorPool(GraphicsContext::GetDevice().GetHandle(), s_Cache->descriptorPool, nullptr); });
-
 		ResourceRegistry::GetItem<Texture>(s_Cache->textureID)->Initialize("Assets/Texture/Titan.png");
 
 		GraphicsPipelineInfo info{};
@@ -96,12 +91,12 @@ namespace Titan
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
 
-		std::vector<VkDescriptorSetLayout> layouts(g_FramesInFlight, PipelineLibrary::Get("Mesh")->DescLayout());
+		/*std::vector<VkDescriptorSetLayout> layouts(g_FramesInFlight, PipelineLibrary::Get("Mesh")->DescLayout());
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocInfo.descriptorPool = s_Cache->descriptorPool;
 		allocInfo.descriptorSetCount = (g_FramesInFlight);
-		allocInfo.pSetLayouts = layouts.data();
+		allocInfo.pSetLayouts = layouts.data();*/
 
 		FramebufferInfo fbInfo{};
 		fbInfo.width = Application::GetWindow().GetWidth();
@@ -109,7 +104,7 @@ namespace Titan
 		fbInfo.imageFormats = { ImageFormat::R8G8B8A8_UN };
 		s_Cache->mainFB = Framebuffer::Create(fbInfo);
 
-		TN_VK_CHECK(vkAllocateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), &allocInfo, s_DescriptorSets.data()));
+		//TN_VK_CHECK(vkAllocateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), &allocInfo, s_DescriptorSets.data()));
 
 
 		SamplerLibrary::Add("Clamp", Filter::Linear, Address::ClampToEdge, MipmapMode::Linear);
@@ -141,28 +136,6 @@ namespace Titan
 			.BindImage(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
 			.Build(globalSet);
 
-		/*std::array<VkWriteDescriptorSet, 2> descriptorWrite{};
-		descriptorWrite[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrite[0].dstBinding = 0;
-		descriptorWrite[0].descriptorCount = 1;
-		descriptorWrite[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrite[0].pBufferInfo = &bufferInfo;
-		descriptorWrite[0].dstSet = s_DescriptorSets[GraphicsContext::GetCurrentFrame()];
-		auto texture = ResourceRegistry::GetItem<Texture>(s_Cache->textureID);
-		VkDescriptorImageInfo imageInfo{};
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		imageInfo.imageView = texture->GetView();
-		imageInfo.sampler = texture->GetSampler();
-
-		descriptorWrite[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrite[1].dstBinding = 1;
-		descriptorWrite[1].descriptorCount = 1;
-		descriptorWrite[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		descriptorWrite[1].dstSet = s_DescriptorSets[GraphicsContext::GetCurrentFrame()];
-		descriptorWrite[1].pImageInfo = &imageInfo;
-
-		vkUpdateDescriptorSets(GraphicsContext::GetDevice().GetHandle(), static_cast<uint32_t>(descriptorWrite.size()), descriptorWrite.data(), 0, nullptr);
-		*/
 		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		auto index = GraphicsContext::GetSwapchain().GetNextImage();
 		if (index < 0)
