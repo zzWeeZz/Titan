@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <functional>
 #include "SnowID.h"
+#include <execution>
 #include <stdexcept>
 #define COMPONENT(comp) struct comp \
 						
@@ -209,6 +210,14 @@ namespace Snowflake
 				func(entity);
 			}
 		}
+		template<class TFunction>
+		void ForEachParallel(TFunction&& func)
+		{
+			std::for_each(std::execution::par, m_Entities.begin(), m_Entities.end(), [=](Entity entity)
+				{
+					func(entity);
+				});
+		}
 
 		template<class ...TComponents, class TFunction>
 		void Execute(TFunction&& func)
@@ -220,6 +229,17 @@ namespace Snowflake
 					func(entity, GetComponent<TComponents>(entity)...);
 				}
 			}
+		}
+		template<class ...TComponents, class TFunction>
+		void ExecuteParallel(TFunction&& func)
+		{
+			std::for_each(std::execution::par, m_Entities.begin(), m_Entities.end(), [=](Entity entity)
+				{
+					if (HasComponents<TComponents...>(entity))
+					{
+						func(entity, GetComponent<TComponents>(entity)...);
+					}
+				});
 		}
 	private:
 

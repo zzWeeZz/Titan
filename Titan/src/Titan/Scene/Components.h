@@ -6,6 +6,7 @@
 #include "String.hpp"
 #include "Titan/Core/TitanMemory.h"
 #include "Titan/Scene/PropertyRegistry.h"
+
 COMPONENT(TagComponent)
 {
 	REGISTER_COMPONENT("{0A07B7F9-8312-40B1-81AA-773BE3B295B9}"_guid);
@@ -19,4 +20,11 @@ COMPONENT(TransformComponent)
 	glm::vec3 position = { 0,0,0 };
 	glm::quat quaternion = { 1,0,0,0 };
 	glm::vec3 scale = { 1, 1, 1 };
+};
+
+COMPONENT(LightComponent)
+{
+	REGISTER_COMPONENT("{4394346B-7D2F-4DDF-9BFF-B45FFB9DE175}"_guid);
+	glm::vec3 color = { 1,1,1 };
+	float intensity = 1.f;
 };

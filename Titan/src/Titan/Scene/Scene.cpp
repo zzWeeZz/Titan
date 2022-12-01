@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Entity.h"
 #include "Components.h"
+#include "Titan/Scene/Systems.h"
 #include "Titan/Assets/Camera/Camera.h"
 #include "Titan/Assets/Model/Model.h"
 #include "Titan/Rendering/Renderer.h"
@@ -25,6 +26,10 @@ namespace Titan
 		m_Registry.Execute<ModelComponent, TransformComponent>([&](auto& entity, ModelComponent& mdl, TransformComponent& tf)
 			{
 				ModelSystem(mdl, tf);
+			});
+		m_Registry.Execute<LightComponent, TransformComponent>([&](auto& entity, LightComponent& mdl, TransformComponent& tf)
+			{
+				LightSystem(mdl, tf);
 			});
 	}
 

@@ -19,11 +19,18 @@ namespace Titan
 		TitanID textureId;
 	};
 
+	struct LightCmd
+	{
+		glm::vec4 direction;
+		glm::vec4 color;
+	};
+
 	class Renderer
 	{
 	public:
 		static void Submit(const CameraCmd& cameraCmd);
 		static void Submit(const MeshCmd& meshCmd);
+		static void Submit(const LightCmd& lightCmd);
 		static Ref<Framebuffer> GetMainFramebuffer();
 		static void Initialize();
 
