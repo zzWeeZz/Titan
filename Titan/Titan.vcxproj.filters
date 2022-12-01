@@ -52,6 +52,9 @@
     <Filter Include="src\Titan\Rendering\Buffers">
       <UniqueIdentifier>{C5530107-3161-2FED-BA47-2BD82654FBA3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Rendering\Descriptors">
+      <UniqueIdentifier>{0A27BE4E-760A-CD8E-7F0D-FBCAEB6F93DF}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Rendering\Libraries">
       <UniqueIdentifier>{F53D382E-6156-1F58-2A03-AFF196DAB3F1}</UniqueIdentifier>
     </Filter>
@@ -63,9 +66,6 @@
     </Filter>
     <Filter Include="src\Titan\Utils">
       <UniqueIdentifier>{5CF5C542-C880-3307-D191-B6FB3D9C8F07}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Titan\Utils\Allocators">
-      <UniqueIdentifier>{9FD9FDFE-8BE9-A9CF-F4A2-0EEEE0D19868}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
@@ -231,6 +231,15 @@
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexPacket.h">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Descriptors\DescriptorAllocator.h">
+      <Filter>src\Titan\Rendering\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Descriptors\DescriptorBuilder.h">
+      <Filter>src\Titan\Rendering\Descriptors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Descriptors\DescriptorLayoutCache.h">
+      <Filter>src\Titan\Rendering\Descriptors</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Framebuffer.h">
       <Filter>src\Titan\Rendering</Filter>
     </ClInclude>
@@ -269,9 +278,6 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Scene\Scene.h">
       <Filter>src\Titan\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Descriptors\DescriptorAllocator.h">
-      <Filter>src\Titan\Utils\Allocators</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Utils\FilesystemUtils.h">
       <Filter>src\Titan\Utils</Filter>
@@ -633,8 +639,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Descriptors\DescriptorLayoutCache.h" />
-    <ClInclude Include="src\Titan\Rendering\Descriptors\DescriptorBuilder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -706,6 +710,15 @@
     <ClCompile Include="src\Titan\Rendering\Buffers\VertexBuffer.cpp">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Descriptors\DescriptorAllocator.cpp">
+      <Filter>src\Titan\Rendering\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Descriptors\DescriptorBuilder.cpp">
+      <Filter>src\Titan\Rendering\Descriptors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Descriptors\DescriptorLayoutCache.cpp">
+      <Filter>src\Titan\Rendering\Descriptors</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Framebuffer.cpp">
       <Filter>src\Titan\Rendering</Filter>
     </ClCompile>
@@ -735,9 +748,6 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Scene\Scene.cpp">
       <Filter>src\Titan\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\Descriptors\DescriptorAllocator.cpp">
-      <Filter>src\Titan\Utils\Allocators</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Utils\FilesystemUtils.cpp">
       <Filter>src\Titan\Utils</Filter>
@@ -784,7 +794,5 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\Descriptors\DescriptorLayoutCache.cpp" />
-    <ClCompile Include="src\Titan\Rendering\Descriptors\DescriptorBuilder.cpp" />
   </ItemGroup>
 </Project>
