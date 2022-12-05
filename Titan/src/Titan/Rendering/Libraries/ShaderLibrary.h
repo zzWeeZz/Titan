@@ -16,6 +16,8 @@ namespace Titan
 		Geometry,
 		TessControl,
 		TessEvaluation,
+		Task = 26,
+		Mesh = 27,
 		Count
 	};
 	struct Shader

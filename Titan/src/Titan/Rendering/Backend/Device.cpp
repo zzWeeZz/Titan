@@ -39,7 +39,7 @@ namespace Titan
 		createInfo.enabledLayerCount = 0;
 #endif
 
-		const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+		const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_NV_MESH_SHADER_EXTENSION_NAME};
 		bool extensionsSupported = CheckDeviceExtensionSupport(physicalDevice, deviceExtensions);
 		if (!(indices.HasValue() && extensionsSupported && GraphicsContext::SwapchainAdequate()))
 		{
@@ -47,10 +47,27 @@ namespace Titan
 		}
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+		
+		const VkPhysicalDeviceMeshShaderPropertiesNV meshShaderPropsFeature
+		{
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_NV,
 
-		constexpr VkPhysicalDeviceDynamicRenderingFeatures dynamic_rendering_feature
+		};
+
+
+		const VkPhysicalDeviceMeshShaderFeaturesNV meshShaderPropFeature
+		{
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV,
+		.pNext = (void*)&meshShaderPropsFeature,
+		.taskShader = VK_TRUE,
+		.meshShader = VK_TRUE,
+		
+		};
+		
+		const VkPhysicalDeviceDynamicRenderingFeatures dynamic_rendering_feature
 		{
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,
+		.pNext = (void*)&meshShaderPropFeature,
 		.dynamicRendering = VK_TRUE,
 		};
 

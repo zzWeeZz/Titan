@@ -11,7 +11,10 @@ namespace Titan
 {
 	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info)
 	{
-		auto vertShaderModule = CreateShaderModule(ShaderLibrary::Get(info.vsPath).spvBinary);
+		VkShaderModule vertShaderModule{};
+		vertShaderModule = CreateShaderModule(ShaderLibrary::Get(info.vsPath).spvBinary);
+
+
 		auto fragShaderModule = CreateShaderModule(ShaderLibrary::Get(info.psPath).spvBinary);
 
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
@@ -19,6 +22,7 @@ namespace Titan
 		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
 		vertShaderStageInfo.module = vertShaderModule;
 		vertShaderStageInfo.pName = "main";
+
 
 		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
 		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -112,7 +116,7 @@ namespace Titan
 		colorBlending.blendConstants[1] = 0.0f; // Optional
 		colorBlending.blendConstants[2] = 0.0f; // Optional
 		colorBlending.blendConstants[3] = 0.0f; // Optional
-		
+
 		VkPipelineDepthStencilStateCreateInfo depthStencil{};
 		depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		depthStencil.depthTestEnable = VK_TRUE;
@@ -125,26 +129,37 @@ namespace Titan
 		depthStencil.front = {}; // Optional
 		depthStencil.back = {}; // Optional
 
+
 		auto& vShader = ShaderLibrary::Get(info.vsPath);
 		auto& fShader = ShaderLibrary::Get(info.psPath);
-		
+
 		std::vector<VkDescriptorSetLayoutBinding> bindings = vShader.layoutBindings;
 		bindings.insert(bindings.end(), fShader.layoutBindings.begin(), fShader.layoutBindings.end());
+		m_DescriptorSetLayout = nullptr;
+		if (!bindings.empty())
+		{
 
-		VkDescriptorSetLayoutCreateInfo layoutInfo{};
-		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-		layoutInfo.pBindings = bindings.data();
+			VkDescriptorSetLayoutCreateInfo layoutInfo{};
+			layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+			layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+			layoutInfo.pBindings = bindings.data();
 
-		TN_VK_CHECK(vkCreateDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), &layoutInfo, nullptr, &m_DescriptorSetLayout));
-		TitanAllocator::QueueDeletion([&]() {vkDestroyDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), m_DescriptorSetLayout, nullptr); });
+			TN_VK_CHECK(vkCreateDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), &layoutInfo, nullptr, &m_DescriptorSetLayout));
+			TitanAllocator::QueueDeletion([&]() {vkDestroyDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), m_DescriptorSetLayout, nullptr); });
+		}
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 1; // Optional
-		pipelineLayoutInfo.pSetLayouts = &m_DescriptorSetLayout; // Optional
-		pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
-		pipelineLayoutInfo.pPushConstantRanges = &vShader.pushConstants; // Optional
+		if (m_DescriptorSetLayout)
+		{
+			pipelineLayoutInfo.setLayoutCount = 1; // Optional
+			pipelineLayoutInfo.pSetLayouts = &m_DescriptorSetLayout; // Optional
+		}
+		if (vShader.pushConstants.size != 0)
+		{
+			pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
+			pipelineLayoutInfo.pPushConstantRanges = &vShader.pushConstants; // Optional
+		}
 
 		TN_VK_CHECK(vkCreatePipelineLayout(GraphicsContext::GetDevice().GetHandle(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout));
 		TitanAllocator::QueueDeletion([&]() { vkDestroyPipelineLayout(GraphicsContext::GetDevice().GetHandle(), m_PipelineLayout, nullptr); });
@@ -155,7 +170,7 @@ namespace Titan
 		pipelineInfo.stageCount = 2;
 		pipelineInfo.pStages = shaderStages;
 		pipelineInfo.pVertexInputState = &vertexInputInfo;
-		pipelineInfo.pInputAssemblyState = &inputAssembly;
+		pipelineInfo.pInputAssemblyState = info.msPath.empty() ? &inputAssembly : nullptr;
 		pipelineInfo.pViewportState = &viewportState;
 		pipelineInfo.pRasterizationState = &rasterizer;
 		pipelineInfo.pMultisampleState = &multisampling;
@@ -194,7 +209,7 @@ namespace Titan
 		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), vertShaderModule, nullptr);
 		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), fragShaderModule, nullptr);
 	}
-	
+
 	void GraphicsPipeline::Bind(VkCommandBuffer& cmd)
 	{
 		vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);

@@ -7,6 +7,8 @@ namespace Titan
 	struct GraphicsPipelineInfo
 	{
 		std::filesystem::path vsPath = "";
+		std::filesystem::path tsPath = "";
+		std::filesystem::path msPath = "";
 		std::filesystem::path psPath = "";
 
 		Topology topology;

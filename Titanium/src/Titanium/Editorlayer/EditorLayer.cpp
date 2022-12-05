@@ -155,10 +155,7 @@ namespace Titan
 			direction.y = sin(glm::radians(m_Pitch));
 			direction.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
 			m_CameraFront = glm::normalize(direction);
-
-			
 		}
-	
 		return false;
 	}
 }

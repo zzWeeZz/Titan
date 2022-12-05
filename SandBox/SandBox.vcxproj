@@ -175,6 +175,9 @@
     <ProjectReference Include="..\Titan\vendor\SPIRV-Reflect\SPIRV-Reflect.vcxproj">
       <Project>{CB5A3E0C-371B-BA42-0056-03C06CD5FE1E}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Titan\vendor\Volk\Volk.vcxproj">
+      <Project>{A11E8E7C-8D55-8F0D-3642-751022580B0F}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

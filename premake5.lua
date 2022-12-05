@@ -31,6 +31,7 @@ externalLinks =
     "Optick",
     "OpenFBX",
     "SPIRV-Reflect",
+    "Volk",
     "Titan/vendor/dxil/lib/dxcompiler.lib",
 }
 
@@ -112,6 +113,7 @@ include "Titan/vendor/Optick/"
 include "Titan/vendor/imgui/"
 include "Titan/vendor/OpenFBX"
 include "Titan/vendor/SPIRV-Reflect"
+include "Titan/vendor/Volk"
 group ""
 
 project "SandBox"

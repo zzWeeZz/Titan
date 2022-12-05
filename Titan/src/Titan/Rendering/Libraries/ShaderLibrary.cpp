@@ -48,6 +48,14 @@ namespace Titan
 		{
 			shader.shaderType = ShaderType::Compute;
 		}
+		else if (extension == ".mesh")
+		{
+			shader.shaderType = ShaderType::Mesh;
+		}
+		else if (extension == ".Task")
+		{
+			shader.shaderType = ShaderType::Task;
+		}
 		else
 		{
 			TN_CORE_ASSERT(false, "could not find shadertype, can't continue compling");

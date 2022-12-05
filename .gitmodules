@@ -10,3 +10,6 @@
 [submodule "Titan/vendor/SPIRV-Reflect"]
 	path = Titan/vendor/SPIRV-Reflect
 	url = https://github.com/zzWeeZz/SPIRV-Reflect.git
+[submodule "Titan/vendor/volk"]
+	path = Titan/vendor/volk
+	url = https://github.com/zzWeeZz/volk.git

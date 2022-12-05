@@ -1,5 +1,4 @@
 #pragma once
-#include <vulkan/vulkan.h>
 #include "Titan/Utils/TitanAllocator.h"
 namespace Titan
 {
