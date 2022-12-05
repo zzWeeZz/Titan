@@ -7,3 +7,6 @@
 [submodule "Titan/vendor/glm"]
 	path = Titan/vendor/glm
 	url = https://github.com/g-truc/glm
+[submodule "Titan/vendor/SPIRV-Reflect"]
+	path = Titan/vendor/SPIRV-Reflect
+	url = https://github.com/zzWeeZz/SPIRV-Reflect.git

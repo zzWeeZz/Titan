@@ -282,6 +282,9 @@
     <ClInclude Include="src\Titan\Scene\Systems.h">
       <Filter>src\Titan\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Utils\Chrono.h">
+      <Filter>src\Titan\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Utils\FilesystemUtils.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
@@ -298,6 +301,9 @@
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Utils\ThreadPool.h">
+      <Filter>src\Titan\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Utils\Timer.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Utils\TitanAllocator.h">
@@ -642,8 +648,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Utils\Chrono.h" />
-    <ClInclude Include="src\Titan\Utils\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -754,6 +758,9 @@
     <ClCompile Include="src\Titan\Scene\Scene.cpp">
       <Filter>src\Titan\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Utils\Chrono.cpp">
+      <Filter>src\Titan\Utils</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Utils\FilesystemUtils.cpp">
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
@@ -761,6 +768,9 @@
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Utils\ThreadPool.cpp">
+      <Filter>src\Titan\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Utils\Timer.cpp">
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Utils\TitanAllocator.cpp">
@@ -799,7 +809,5 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Utils\Chrono.cpp" />
-    <ClCompile Include="src\Titan\Utils\Timer.cpp" />
   </ItemGroup>
 </Project>

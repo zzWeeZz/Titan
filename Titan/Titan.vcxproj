@@ -154,8 +154,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Titan\Utils\Chrono.h" />
-    <ClInclude Include="src\Titan\Utils\Timer.h" />
     <ClInclude Include="src\TNpch.h" />
     <ClInclude Include="src\Titan.h" />
     <ClInclude Include="src\Titan\Application.h" />
@@ -209,12 +207,14 @@
     <ClInclude Include="src\Titan\Scene\PropertyRegistry.h" />
     <ClInclude Include="src\Titan\Scene\Scene.h" />
     <ClInclude Include="src\Titan\Scene\Systems.h" />
+    <ClInclude Include="src\Titan\Utils\Chrono.h" />
     <ClInclude Include="src\Titan\Utils\FilesystemUtils.h" />
     <ClInclude Include="src\Titan\Utils\Input.h" />
     <ClInclude Include="src\Titan\Utils\KeyCode.h" />
     <ClInclude Include="src\Titan\Utils\MouseCode.h" />
     <ClInclude Include="src\Titan\Utils\Profiler.h" />
     <ClInclude Include="src\Titan\Utils\ThreadPool.h" />
+    <ClInclude Include="src\Titan\Utils\Timer.h" />
     <ClInclude Include="src\Titan\Utils\TitanAllocator.h" />
     <ClInclude Include="src\Titan\Utils\VulkanUtils.h" />
     <ClInclude Include="src\Titan\Window.h" />
@@ -331,8 +331,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Titan\Utils\Chrono.cpp" />
-    <ClCompile Include="src\Titan\Utils\Timer.cpp" />
     <ClCompile Include="src\TNpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -371,9 +369,11 @@
     <ClCompile Include="src\Titan\Rendering\SceneRenderer.cpp" />
     <ClCompile Include="src\Titan\Scene\Entity.cpp" />
     <ClCompile Include="src\Titan\Scene\Scene.cpp" />
+    <ClCompile Include="src\Titan\Utils\Chrono.cpp" />
     <ClCompile Include="src\Titan\Utils\FilesystemUtils.cpp" />
     <ClCompile Include="src\Titan\Utils\Input.cpp" />
     <ClCompile Include="src\Titan\Utils\ThreadPool.cpp" />
+    <ClCompile Include="src\Titan\Utils\Timer.cpp" />
     <ClCompile Include="src\Titan\Utils\TitanAllocator.cpp" />
     <ClCompile Include="src\Titan\Utils\VulkanUtils.cpp" />
     <ClCompile Include="vendor\ImGui\backends\imgui_impl_glfw.cpp">
