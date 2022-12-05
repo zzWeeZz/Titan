@@ -19,6 +19,9 @@ namespace Titan
 	private:
 		void RunEditorCamera();
 		bool MouseMove(MouseMoveEvent& event);
+		float m_Pitch;
+		float m_Yaw;
+		glm::vec3 m_CameraFront;
 		CameraComponent m_cameraData;
 		TransformComponent m_transformData;
 		Ref<Scene> m_ActiveScene;

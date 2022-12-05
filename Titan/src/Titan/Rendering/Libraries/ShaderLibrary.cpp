@@ -1,7 +1,7 @@
 #include "TNpch.h"
 #include "ShaderLibrary.h"
 #include "shaderc/shaderc.hpp"
-
+#include "SPIRV-Reflect/spirv_reflect.h"
 #include "Titan/Utils/FilesystemUtils.h"
 namespace Titan
 {
@@ -19,21 +19,21 @@ namespace Titan
 	{
 		std::filesystem::path binaryPath = FilesystemUtils::TempEntry;
 		binaryPath /= "shaders";
-		binaryPath /= path.stem();
-		binaryPath += "_sprv_assembly.tns";
 
-		
 
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
 		Shader shader{};
 #ifdef TN_CONFIG_DEBUG
 		options.SetOptimizationLevel(shaderc_optimization_level_zero);
+		binaryPath /= "OptiZero";
 #else
 		options.SetOptimizationLevel(shaderc_optimization_level_performance);
+		binaryPath /= "OptiPerformace";
 #endif // TN_CONFIG_DEBUG
 		
-
+		binaryPath /= path.stem();
+		binaryPath += "_sprv_assembly.tns";
 		// Get out what shadertype the shader is
 		auto extension = path.extension().string();
 		if (extension == ".vert")
@@ -58,6 +58,7 @@ namespace Titan
 			auto asmSprv = compiler.AssembleToSpv(shader.spvAssembly);
 			TN_CORE_ASSERT(asmSprv.GetCompilationStatus() == shaderc_compilation_status_success, asmSprv.GetErrorMessage().c_str());
 			shader.spvBinary = {asmSprv.cbegin(), asmSprv.cend()};
+			Reflect(shader);
 			return shader;
 		}
 
@@ -86,18 +87,100 @@ namespace Titan
 
 		shader.spvAssembly = { asmResult.cbegin(), asmResult.cend() };
 
+		Reflect(shader);
+
 		DumpBinary(binaryPath, shader);
 		return shader;
 	}
+
 	void ShaderLibrary::DumpBinary(const std::filesystem::path& dest, Shader& shader)
 	{
 		std::vector<char> charVec = { shader.spvAssembly.cbegin(), shader.spvAssembly.cend() };
 		FilesystemUtils::WriteBinary(dest, charVec);
 	}
+
+	void ShaderLibrary::Reflect(Shader& shader)
+	{
+		SpvReflectShaderModule spvModule;
+		auto reflectResult = spvReflectCreateShaderModule(shader.spvBinary.size() * 4, reinterpret_cast<void*>(shader.spvBinary.data()), &spvModule);
+		TN_CORE_ASSERT(reflectResult == SPV_REFLECT_RESULT_SUCCESS, "Could not reflect shader.");
+
+		shader.stage = GetShaderStage(spvModule);
+
+		if (spvModule.push_constant_block_count > 0 && spvModule.push_constant_blocks != nullptr)
+		{
+			shader.pushConstants = { .stageFlags = shader.stage,.offset = spvModule.push_constant_blocks->offset, .size = spvModule.push_constant_blocks->size };
+		}
+
+		uint32_t spvBindingCount = 0;
+
+		spvReflectEnumerateDescriptorBindings(&spvModule, &spvBindingCount, nullptr);
+
+		std::vector<SpvReflectDescriptorBinding*> spvBindings(spvBindingCount);
+		spvReflectEnumerateDescriptorBindings(&spvModule, &spvBindingCount, spvBindings.data());
+
+		shader.layoutBindings.reserve(spvBindingCount);
+		for (uint32_t layoutBindingIndex = 0; layoutBindingIndex < spvBindingCount; ++layoutBindingIndex)
+		{
+			VkDescriptorType descType{};
+			switch (spvBindings[layoutBindingIndex]->descriptor_type)
+			{
+			case SPV_REFLECT_DESCRIPTOR_TYPE_STORAGE_BUFFER:
+				descType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+				break;
+			case SPV_REFLECT_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
+				descType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				break;
+
+			case SPV_REFLECT_DESCRIPTOR_TYPE_STORAGE_IMAGE:
+				descType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+				break;
+			case SPV_REFLECT_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+				descType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+				break;
+			default:
+				break;
+			}
+			VkDescriptorSetLayoutBinding descriptorSetLayoutBinding{};
+			descriptorSetLayoutBinding.binding = spvBindings[layoutBindingIndex]->binding;
+			descriptorSetLayoutBinding.descriptorCount = 1;
+			descriptorSetLayoutBinding.descriptorType = descType;
+			descriptorSetLayoutBinding.stageFlags = shader.stage;
+			descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
+
+			shader.layoutBindings.push_back(descriptorSetLayoutBinding);
+		}
+		spvReflectDestroyShaderModule(&spvModule);
+	}
+
 	std::vector<char> ShaderLibrary::ReadBinary(const std::filesystem::path& binPath)
 	{
 		std::vector<char> charData;
 		FilesystemUtils::ReadBinary(binPath, charData);
 		return charData;
+	}
+	VkShaderStageFlags ShaderLibrary::GetShaderStage(SpvReflectShaderModule& spvModule)
+	{
+		switch (spvModule.shader_stage)
+		{
+		case SPV_REFLECT_SHADER_STAGE_COMPUTE_BIT:
+			return VK_SHADER_STAGE_COMPUTE_BIT;
+
+		case SPV_REFLECT_SHADER_STAGE_TASK_BIT_NV:
+			return VK_SHADER_STAGE_TASK_BIT_NV;
+
+		case SPV_REFLECT_SHADER_STAGE_MESH_BIT_NV:
+			return VK_SHADER_STAGE_MESH_BIT_NV;
+
+		case SPV_REFLECT_SHADER_STAGE_VERTEX_BIT:
+			return VK_SHADER_STAGE_VERTEX_BIT;
+
+		case SPV_REFLECT_SHADER_STAGE_FRAGMENT_BIT:
+			return VK_SHADER_STAGE_FRAGMENT_BIT;
+
+		default:
+			TN_CORE_ASSERT(false, "Unsupported SpvReflectShaderStageFlagBits!");
+			return VK_SHADER_STAGE_COMPUTE_BIT;
+		}
 	}
 }

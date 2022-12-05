@@ -28,8 +28,17 @@ namespace Titan
 		{
 			auto& transComp = m_InspectedItem.GetComponent<TransformComponent>();
 			ImGuiUtils::Vec3("Pos:", transComp.position);
-			ImGuiUtils::Quat("Rot:", transComp.quaternion);
+			glm::vec3 degRot = glm::degrees(transComp.rotation);
+			ImGuiUtils::Vec3("Rot:", degRot);
+			transComp.rotation = glm::radians(degRot);
 			ImGuiUtils::Vec3("Scale:", transComp.scale);
+		}
+
+		if(m_InspectedItem.HasComponent<LightComponent>())
+		{
+			auto& lightComp = m_InspectedItem.GetComponent<LightComponent>();
+			ImGuiUtils::Color3("Color:", lightComp.color);
+			ImGuiUtils::Float("Intensity:", lightComp.intensity);
 		}
 		ImGui::End();
 	}

@@ -30,6 +30,7 @@ externalLinks =
     "yaml-cpp",
     "Optick",
     "OpenFBX",
+    "SPIRV-Reflect",
     "Titan/vendor/dxil/lib/dxcompiler.lib",
 }
 
@@ -110,6 +111,7 @@ include "Titan/vendor/YAML/"
 include "Titan/vendor/Optick/"
 include "Titan/vendor/imgui/"
 include "Titan/vendor/OpenFBX"
+include "Titan/vendor/SPIRV-Reflect"
 group ""
 
 project "SandBox"

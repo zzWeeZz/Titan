@@ -16,6 +16,10 @@ namespace Titan
 	}
 	void FilesystemUtils::WriteBinary(const std::filesystem::path& filepath, std::vector<char>& inBinaryData)
 	{
+		if (!std::filesystem::is_directory(filepath) || !std::filesystem::exists(filepath))
+		{
+			std::filesystem::create_directories(filepath.parent_path());
+		}
 		std::ofstream file(filepath, std::ios::binary);
 		TN_CORE_ASSERT(!file.bad(), "Failed to create file: {0}", filepath.string());
 		file.write(inBinaryData.data(), inBinaryData.size() * sizeof(char));

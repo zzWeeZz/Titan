@@ -12,6 +12,7 @@
 #include "Titan/ImGui/TitanImGui.h"
 #include "Titan/Utils/TitanAllocator.h"
 #include "Titan/Utils/ThreadPool.h"
+#include "Titan/Utils/Chrono.h"
 
 static void ThreadCallback(std::string message, Titan::Severity severity)
 {
@@ -37,6 +38,7 @@ void Titan::Application::Run()
 {
 	while (m_Running)
 	{
+		Chrono::UpdateTimeData();
 		TitanImGui::Begin();
 		OPTICK_FRAME("MainThread");
 		for (const auto& layer : m_LayerStack)

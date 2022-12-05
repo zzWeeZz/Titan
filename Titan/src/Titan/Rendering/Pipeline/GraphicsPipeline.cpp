@@ -112,20 +112,39 @@ namespace Titan
 		colorBlending.blendConstants[1] = 0.0f; // Optional
 		colorBlending.blendConstants[2] = 0.0f; // Optional
 		colorBlending.blendConstants[3] = 0.0f; // Optional
+		
+		VkPipelineDepthStencilStateCreateInfo depthStencil{};
+		depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		depthStencil.depthTestEnable = VK_TRUE;
+		depthStencil.depthWriteEnable = VK_TRUE;
+		depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+		depthStencil.depthBoundsTestEnable = VK_FALSE;
+		depthStencil.minDepthBounds = 0.0f; // Optional
+		depthStencil.maxDepthBounds = 1.0f; // Optional
+		depthStencil.stencilTestEnable = VK_FALSE;
+		depthStencil.front = {}; // Optional
+		depthStencil.back = {}; // Optional
 
-		CreateDescriptorSetLayout();
+		auto& vShader = ShaderLibrary::Get(info.vsPath);
+		auto& fShader = ShaderLibrary::Get(info.psPath);
+		
+		std::vector<VkDescriptorSetLayoutBinding> bindings = vShader.layoutBindings;
+		bindings.insert(bindings.end(), fShader.layoutBindings.begin(), fShader.layoutBindings.end());
 
-		VkPushConstantRange pushContantRange{};
-		pushContantRange.offset = 0;
-		pushContantRange.size = sizeof(glm::mat4);
-		pushContantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		VkDescriptorSetLayoutCreateInfo layoutInfo{};
+		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+		layoutInfo.pBindings = bindings.data();
+
+		TN_VK_CHECK(vkCreateDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), &layoutInfo, nullptr, &m_DescriptorSetLayout));
+		TitanAllocator::QueueDeletion([&]() {vkDestroyDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), m_DescriptorSetLayout, nullptr); });
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 1; // Optional
 		pipelineLayoutInfo.pSetLayouts = &m_DescriptorSetLayout; // Optional
 		pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
-		pipelineLayoutInfo.pPushConstantRanges = &pushContantRange; // Optional
+		pipelineLayoutInfo.pPushConstantRanges = &vShader.pushConstants; // Optional
 
 		TN_VK_CHECK(vkCreatePipelineLayout(GraphicsContext::GetDevice().GetHandle(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout));
 		TitanAllocator::QueueDeletion([&]() { vkDestroyPipelineLayout(GraphicsContext::GetDevice().GetHandle(), m_PipelineLayout, nullptr); });
@@ -140,21 +159,30 @@ namespace Titan
 		pipelineInfo.pViewportState = &viewportState;
 		pipelineInfo.pRasterizationState = &rasterizer;
 		pipelineInfo.pMultisampleState = &multisampling;
-		pipelineInfo.pDepthStencilState = nullptr; // Optional
 		pipelineInfo.pColorBlendState = &colorBlending;
 		pipelineInfo.pDynamicState = &dynamicState;
+		pipelineInfo.pDepthStencilState = &depthStencil;
 
 		pipelineInfo.layout = m_PipelineLayout;
 		std::vector<VkFormat> formats(info.imageFormats.size());
+		VkFormat depthFormat = VK_FORMAT_UNDEFINED;
 		for (size_t i = 0; i < formats.size(); ++i)
 		{
-			formats[i] = FormatToVkFormat(info.imageFormats[i]);
+			if (!IsDepth(info.imageFormats[i]))
+			{
+				formats[i] = FormatToVkFormat(info.imageFormats[i]);
+			}
+			else
+			{
+				depthFormat = FormatToVkFormat(info.imageFormats[i]);
+			}
 		}
 		const VkPipelineRenderingCreateInfoKHR pipeline_rendering_create_info
 		{
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR,
-			.colorAttachmentCount = static_cast<uint32_t>(formats.size()),
+			.colorAttachmentCount = static_cast<uint32_t>(depthFormat == VK_FORMAT_UNDEFINED ? formats.size() : (formats.size() - 1)),
 			.pColorAttachmentFormats = formats.data(),
+			.depthAttachmentFormat = depthFormat
 		};
 
 		pipelineInfo.pNext = &pipeline_rendering_create_info;
@@ -188,37 +216,4 @@ namespace Titan
 		TN_VK_CHECK(vkCreateShaderModule(GraphicsContext::GetDevice().GetHandle(), &createInfo, nullptr, &shaderModule));
 		return shaderModule;
 	}
-
-	void GraphicsPipeline::CreateDescriptorSetLayout()
-	{
-		VkDescriptorSetLayoutBinding uboLayoutBinding{};
-		uboLayoutBinding.binding = 0;
-		uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		uboLayoutBinding.descriptorCount = 1;
-
-		uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-		VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-		samplerLayoutBinding.binding = 1;
-		samplerLayoutBinding.descriptorCount = 1;
-		samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		samplerLayoutBinding.pImmutableSamplers = nullptr;
-		samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-		VkDescriptorSetLayoutBinding lightBinding{};
-		lightBinding.binding = 2;
-		lightBinding.descriptorCount = 1;
-		lightBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		lightBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-		std::array<VkDescriptorSetLayoutBinding, 3> bindings = { uboLayoutBinding, samplerLayoutBinding, lightBinding };
-
-		VkDescriptorSetLayoutCreateInfo layoutInfo{};
-		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-		layoutInfo.pBindings = bindings.data();
-
-		TN_VK_CHECK(vkCreateDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), &layoutInfo, nullptr, &m_DescriptorSetLayout));
-		TitanAllocator::QueueDeletion([&]() {vkDestroyDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), m_DescriptorSetLayout, nullptr); });
-	}
-
 }

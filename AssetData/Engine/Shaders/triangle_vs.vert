@@ -20,6 +20,7 @@ layout (push_constant) uniform pushConstant
 layout (location = 0) out vec3 o_FragColor;
 layout (location = 1) out vec3 o_Normal;
 layout (location = 2) out vec2 o_TexCoord;
+layout (location = 3) out vec3 o_FragNormal;
 
 void main()
 {
@@ -27,5 +28,6 @@ void main()
     gl_Position = mvp * vec4(i_Position, 1.0);
     o_FragColor = vec3(i_Texcoord.x, i_Texcoord.y, 0);
     o_Normal = i_Normal;
+    o_FragNormal = mat3(mvp) * i_Normal;
     o_TexCoord = i_Texcoord;
 }

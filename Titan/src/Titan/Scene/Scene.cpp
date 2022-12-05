@@ -1,4 +1,7 @@
 #include "TNpch.h"
+
+#include <future>
+
 #include "Scene.h"
 #include "Entity.h"
 #include "Components.h"
@@ -19,18 +22,35 @@ namespace Titan
 
 	void Scene::OnEditorUpdate()
 	{
-		m_Registry.Execute<CameraComponent, TransformComponent>([&](auto& entity, CameraComponent& C, TransformComponent& tf)
+		TN_PROFILE_FUNCTION();
+		m_Registry.ExecuteParallel<TransformComponent>([&](auto& entity, TransformComponent& tf)
 			{
-				CameraSystem(C, tf);
+				CalculateMatrixTransformSystem(tf);
 			});
-		m_Registry.Execute<ModelComponent, TransformComponent>([&](auto& entity, ModelComponent& mdl, TransformComponent& tf)
+		auto cameraAsync = std::async(std::launch::async, [&]()
 			{
-				ModelSystem(mdl, tf);
+				m_Registry.Execute<CameraComponent, TransformComponent>([&](auto& entity, CameraComponent& C, TransformComponent& tf)
+					{
+						CameraSystem(C, tf);
+					});
 			});
-		m_Registry.Execute<LightComponent, TransformComponent>([&](auto& entity, LightComponent& mdl, TransformComponent& tf)
+		auto modelAsync = std::async(std::launch::async, [&]()
 			{
-				LightSystem(mdl, tf);
+				m_Registry.Execute<ModelComponent, TransformComponent>([&](auto& entity, ModelComponent& mdl, TransformComponent& tf)
+					{
+						ModelSystem(mdl, tf);
+					});
 			});
+		auto lightAsync = std::async(std::launch::async, [&]()
+			{
+				m_Registry.Execute<LightComponent, TransformComponent>([&](auto& entity, LightComponent& mdl, TransformComponent& tf)
+					{
+						LightSystem(mdl, tf);
+					});
+			});
+		cameraAsync.wait();
+		modelAsync.wait();
+		lightAsync.wait();
 	}
 
 	void Scene::OnEditorRender()

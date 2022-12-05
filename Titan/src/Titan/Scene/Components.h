@@ -18,8 +18,9 @@ COMPONENT(TransformComponent)
 {
 	REGISTER_COMPONENT("{7B78818B-FBCF-4359-B016-8C8DF1D7F642}"_guid);
 	glm::vec3 position = { 0,0,0 };
-	glm::quat quaternion = { 1,0,0,0 };
+	glm::vec3 rotation = { 0,0,0 };
 	glm::vec3 scale = { 1, 1, 1 };
+	glm::mat4 matrix;
 };
 
 COMPONENT(LightComponent)

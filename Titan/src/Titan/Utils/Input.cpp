@@ -31,7 +31,7 @@ namespace Titan
 		switch (inputMode)
 		{
 		case Titan::InputMode::Down:
-			return state == GLFW_REPEAT;
+			return state == GLFW_PRESS;
 			break;
 		case Titan::InputMode::Pressed:
 			return state == GLFW_PRESS;

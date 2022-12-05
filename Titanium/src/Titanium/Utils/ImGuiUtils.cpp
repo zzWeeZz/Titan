@@ -45,6 +45,48 @@ void Titan::ImGuiUtils::Vec3(const std::string& label, glm::vec3& vec)
 	ImGui::PopID();
 }
 
+void Titan::ImGuiUtils::Float(const std::string& label, float& value)
+{
+	ImGui::PushID(label.c_str());
+	ImGui::Columns(2);
+	ImGui::SetColumnWidth(0, 100.f);
+	ImGui::Text(label.c_str());
+	ImGui::NextColumn();
+	ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+	ImGui::SameLine();
+	ImGui::DragFloat("##Float", &value);
+	ImGui::PopItemWidth();
+
+	ImGui::PopStyleVar();
+	ImGui::Columns(1);
+	ImGui::PopID();
+}
+
+void Titan::ImGuiUtils::Color3(const std::string& label, glm::vec3& col)
+{
+	ImGui::PushID(label.c_str());
+	ImGui::Columns(2);
+	ImGui::SetColumnWidth(0, 100.f);
+	ImGui::Text(label.c_str());
+	ImGui::NextColumn();
+	ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+	ImGui::SameLine();
+	ImGui::ColorEdit3("##Color", &col.x);
+	ImGui::PopItemWidth();
+
+	ImGui::PopStyleVar();
+	ImGui::Columns(1);
+	ImGui::PopID();
+}
+
+void Titan::ImGuiUtils::Color4(const std::string& label, glm::vec4& col)
+{
+}
+
 void Titan::ImGuiUtils::Quat(const std::string& label, glm::quat& quat)
 {
 
@@ -94,7 +136,7 @@ void Titan::ImGuiUtils::String(const std::string& label, std::string& str)
 	ImGui::SetColumnWidth(0, 100.f);
 	ImGui::Text(label.c_str());
 	ImGui::NextColumn();
-	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+	ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
 	ImGui::SameLine();
@@ -117,7 +159,7 @@ void Titan::ImGuiUtils::String(const std::string& label, Snowflake::String& str)
 	ImGui::SetColumnWidth(0, 100.f);
 	ImGui::Text(label.c_str());
 	ImGui::NextColumn();
-	ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+	ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
 	ImGui::SameLine();
@@ -127,7 +169,6 @@ void Titan::ImGuiUtils::String(const std::string& label, Snowflake::String& str)
 		str = bufferText;
 	};
 	ImGui::PopItemWidth();
-
 	ImGui::PopStyleVar();
 	ImGui::Columns(1);
 	ImGui::PopID();

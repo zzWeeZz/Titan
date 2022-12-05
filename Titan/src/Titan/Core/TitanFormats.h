@@ -245,9 +245,9 @@ namespace Titan
 		ASTC_12x12_SRGB_BLOCK = 184,
 	};
 
-	inline bool IsDepth(ImageFormat& format)
+	inline bool IsDepth(const ImageFormat& format)
 	{
-		if (format == ImageFormat::D16_UN
+		if (   format == ImageFormat::D16_UN
 			|| format == ImageFormat::D16_UN_S8_UI
 			|| format == ImageFormat::D24_UN_S8_UI
 			|| format == ImageFormat::D32_SF

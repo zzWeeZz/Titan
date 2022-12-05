@@ -26,7 +26,6 @@ namespace Titan
 		static Ref<GraphicsPipeline> Create(const GraphicsPipelineInfo& info);
 	private:
 		VkShaderModule CreateShaderModule(std::vector<uint32_t> assembly);
-		void CreateDescriptorSetLayout();
 		VkDescriptorSetLayout m_DescriptorSetLayout;
 		VkPipelineLayout m_PipelineLayout;
 		VkPipeline m_Pipeline;

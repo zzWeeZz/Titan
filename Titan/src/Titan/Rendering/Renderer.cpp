@@ -9,11 +9,11 @@
 
 #include "Titan/ImGui/TitanImGui.h"
 
-#include <Titan/Assets/Texture/Texture.h>
+#include "Titan/Assets/Texture/Texture.h"
 #include "Titan/Assets/ResourceRegistry.h"
 
-#include <Titan/Rendering/Vertices.h>
-#include <Titan/Rendering/Framebuffer.h>
+#include "Titan/Rendering/Vertices.h"
+#include "Titan/Rendering/Framebuffer.h"
 #include "Titan/Rendering/GraphicsContext.h"
 
 #include <Titan/Rendering/Buffers/IndexBuffer.h>
@@ -73,19 +73,6 @@ namespace Titan
 
 	void Renderer::Initialize()
 	{
-		std::array<VkDescriptorPoolSize, 2> poolSize{};
-		poolSize[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSize[0].descriptorCount = g_FramesInFlight;
-		poolSize[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		poolSize[1].descriptorCount = g_FramesInFlight;
-
-		VkDescriptorPoolCreateInfo poolInfo{};
-		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSize.size());
-		poolInfo.pPoolSizes = poolSize.data();
-
-		poolInfo.maxSets = g_FramesInFlight;
-
 		ResourceRegistry::GetItem<Texture>(s_Cache->textureID)->Initialize("Assets/Texture/Titan.png");
 
 		GraphicsPipelineInfo info{};
@@ -93,7 +80,7 @@ namespace Titan
 		info.psPath = "Engine/Shaders/triangle_fs.frag";
 
 		info.topology = Topology::TriangleList;
-		info.imageFormats = { ImageFormat::R8G8B8A8_UN };
+		info.imageFormats = { ImageFormat::R8G8B8A8_UN, ImageFormat::D32_SF_S8_UI };
 		PipelineLibrary::Add("Mesh", info);
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
@@ -102,7 +89,7 @@ namespace Titan
 		FramebufferInfo fbInfo{};
 		fbInfo.width = Application::GetWindow().GetWidth();
 		fbInfo.height = Application::GetWindow().GetHeight();
-		fbInfo.imageFormats = { ImageFormat::R8G8B8A8_UN };
+		fbInfo.imageFormats = { ImageFormat::R8G8B8A8_UN, ImageFormat::D32_SF_S8_UI };
 		s_Cache->mainFB = Framebuffer::Create(fbInfo);
 
 		SamplerLibrary::Add("Clamp", Filter::Linear, Address::ClampToEdge, MipmapMode::Linear);
@@ -134,10 +121,7 @@ namespace Titan
 		vkResetCommandBuffer(commandBuffer, 0);
 
 
-		VkDescriptorBufferInfo lightBufferInfo{};
-		bufferInfo.buffer = s_Cache->lightBuffer->GetAllocation().buffer;
-		bufferInfo.offset = 0;
-		bufferInfo.range = sizeof(LightCmd);
+		
 
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -177,6 +161,9 @@ namespace Titan
 		}
 
 		VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
+		VkClearValue depthClear{};
+		depthClear.depthStencil.depth = 1.f;
+		depthClear.depthStencil.stencil = 0;
 
 		const VkRenderingAttachmentInfo colorAttachmentInfo
 		{
@@ -186,6 +173,15 @@ namespace Titan
 			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.clearValue = clearColor,
+		};
+		const VkRenderingAttachmentInfo depthAttachmentInfo
+		{
+			.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+			.imageView = s_Cache->mainFB->GetViews()[1],
+			.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+			.clearValue = depthClear,
 		};
 		VkRect2D rec{};
 		rec.extent.width = static_cast<uint32_t>(s_Cache->mainFB->GetInfo().width);
@@ -197,6 +193,7 @@ namespace Titan
 			.layerCount = 1,
 			.colorAttachmentCount = 1,
 			.pColorAttachments = &colorAttachmentInfo,
+			.pDepthAttachment = &depthAttachmentInfo,
 		};
 
 		{
@@ -211,9 +208,8 @@ namespace Titan
 
 			s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 			s_Cache->cameraData.view = s_Cache->currentCamera.view;
-
-			s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
 			s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
+			s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
 			TN_PROFILE_CONTEXT(commandBuffer);
 			TN_PROFILE_SCOPE("Draw scene");
 			for (auto& mdlCmd : s_Cache->meshCmds)
@@ -223,6 +219,11 @@ namespace Titan
 				imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 				imageInfo.imageView = texture->GetView();
 				imageInfo.sampler = texture->GetSampler();
+
+				VkDescriptorBufferInfo lightBufferInfo{};
+				lightBufferInfo.buffer = s_Cache->lightBuffer->GetAllocation().buffer;
+				lightBufferInfo.offset = 0;
+				lightBufferInfo.range = sizeof(LightCmd);
 				VkDescriptorSet globalSet;
 				DescriptorBuilder::Begin(&s_Cache->cache, &s_Cache->allocator)
 					.BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)

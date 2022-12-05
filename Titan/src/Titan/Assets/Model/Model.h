@@ -24,10 +24,7 @@ namespace Titan
 			MeshCmd cmd{};
 			cmd.package = submesh.GetVertexPackage();
 			cmd.textureId = mdl.textureHandle;
-			auto pos = glm::translate(glm::mat4(1.0f), tf.position);
-			auto rot = glm::toMat4(tf.quaternion);
-			auto scale = glm::scale(glm::mat4(1.0f), tf.scale);
-			cmd.transform = pos * rot * scale;
+			cmd.transform = tf.matrix;
 			Renderer::Submit(cmd);
 		}
 	}
