@@ -4,7 +4,8 @@
 layout (location = 0) in vec3 i_Position;
 layout (location = 1) in vec3 i_Color;
 layout (location = 2) in vec3 i_Normal;
-layout (location = 3) in vec2 i_Texcoord;
+layout (location = 3) in vec3 i_Tangent;
+layout (location = 4) in vec2 i_Texcoord;
 
 layout (binding = 0) uniform MvpBufferObject
 {
@@ -28,6 +29,11 @@ void main()
     gl_Position = mvp * vec4(i_Position, 1.0);
     o_FragColor = vec3(i_Texcoord.x, i_Texcoord.y, 0);
     o_Normal = i_Normal;
-    o_FragNormal = mat3(mvp) * i_Normal;
+
+    vec3 normal = mat3(u_Constant.mdlSpace) * i_Normal;
+    vec3 tangent = mat3(u_Constant.mdlSpace) * i_Tangent;
+    vec3 biTangent = mat3(u_Constant.mdlSpace) * cross(i_Normal, i_Tangent);
+    mat3 TBN = mat3(tangent, biTangent, normal);
+    o_FragNormal = TBN * i_Normal;
     o_TexCoord = i_Texcoord;
 }

@@ -15,6 +15,7 @@ struct Vertex
 	glm::vec3 Position = {};
 	glm::vec3 Color = {};
 	glm::vec3 Normal = {};
+	glm::vec3 Tangent = {};
 	glm::vec2 TexCoords = {};
 
 	static VertexInputDescription GetBindingDesc()
@@ -48,16 +49,23 @@ struct Vertex
 		normalAttribute.format = VK_FORMAT_R32G32B32_SFLOAT;
 		normalAttribute.offset = offsetof(Vertex, Normal);
 
+		VkVertexInputAttributeDescription tangentAttribute = {};
+		tangentAttribute.binding = 0;
+		tangentAttribute.location = 3;
+		tangentAttribute.format = VK_FORMAT_R32G32B32_SFLOAT;
+		tangentAttribute.offset = offsetof(Vertex, Tangent);
+
 		//Color will be stored at Location 3
 		VkVertexInputAttributeDescription texCoordAttribute = {};
 		texCoordAttribute.binding = 0;
-		texCoordAttribute.location = 3;
+		texCoordAttribute.location = 4;
 		texCoordAttribute.format = VK_FORMAT_R32G32_SFLOAT;
 		texCoordAttribute.offset = offsetof(Vertex, TexCoords);
 
 		inputDescription.Attributes.push_back(positionAttribute);
 		inputDescription.Attributes.push_back(colorAttribute);
 		inputDescription.Attributes.push_back(normalAttribute);
+		inputDescription.Attributes.push_back(tangentAttribute);
 		inputDescription.Attributes.push_back(texCoordAttribute);
 
 		return inputDescription;

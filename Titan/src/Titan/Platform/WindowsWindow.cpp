@@ -5,6 +5,7 @@
 #include "Titan/Core/Log.h"
 #include "Titan/Events/ApplicationEvent.h"
 #include <Titan/Events/InputEvent.h>
+#include "Titan/Utils/Input.h"
 
 namespace Titan
 {
@@ -41,6 +42,7 @@ namespace Titan
 			s_Initialized = true;
 		}
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		//glfwWindowHint(GLFW_DECORATED, false);
 		m_Window = glfwCreateWindow(m_WindowInfo.Width, m_WindowInfo.Height, m_WindowInfo.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, &m_WindowInfo);
@@ -71,6 +73,7 @@ namespace Titan
 		{
 				static double oldX = 0;
 				static double oldY = 0;
+				
 				WindowInfo* info = static_cast<WindowInfo*>(glfwGetWindowUserPointer(window));
 				MouseMoveEvent event(xpos, ypos, xpos - oldX, ypos - oldY);
 				info->EventCallback(event);

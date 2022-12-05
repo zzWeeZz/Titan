@@ -123,6 +123,7 @@ namespace Titan
 					Vertex& vertex = outVerties[index];
 					vertex.Position = positionBuffer ? *(glm::vec3*)&positionBuffer[index * 3] : glm::vec3();
 					vertex.Normal = glm::normalize(normalBuffer ? *(glm::vec3*)&normalBuffer[index * 3] : glm::vec3(1.f));
+					vertex.Tangent = glm::normalize(tangentBuffer ? *(glm::vec3*)&tangentBuffer[index * 3] : glm::vec3(1.f));
 					vertex.TexCoords = texCoordsBuffer ? *(glm::vec2*)&texCoordsBuffer[index * 2] : glm::vec2();
 				}
 				{
