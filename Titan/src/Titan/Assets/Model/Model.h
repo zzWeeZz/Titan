@@ -22,7 +22,7 @@ namespace Titan
 		for (auto& submesh : resource->GetSubMeshes())
 		{
 			MeshCmd cmd{};
-			cmd.package = submesh.GetVertexPackage();
+			cmd.submesh = &submesh;
 			cmd.textureId = mdl.textureHandle;
 			cmd.transform = tf.matrix;
 			Renderer::Submit(cmd);

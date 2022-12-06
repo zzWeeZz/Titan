@@ -9,6 +9,7 @@
 
 #include "Titan/ImGui/TitanImGui.h"
 
+#include "Titan/Assets/Model/Submesh.h"
 #include "Titan/Assets/Texture/Texture.h"
 #include "Titan/Assets/ResourceRegistry.h"
 
@@ -18,6 +19,7 @@
 
 #include <Titan/Rendering/Buffers/IndexBuffer.h>
 #include <Titan/Rendering/Buffers/VertexBuffer.h>
+#include <Titan/Rendering/Buffers/StorageBuffer.h>
 #include <Titan/Rendering/Buffers/UniformBuffer.h>
 #include "Titan/Rendering/Buffers/UniformBuffers.h"
 
@@ -203,52 +205,60 @@ namespace Titan
 
 			PipelineLibrary::BindPipline("MeshShaders", commandBuffer);
 			s_Cache->mainFB->Bind(commandBuffer);
-			auto func = (PFN_vkCmdDrawMeshTasksNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksNV");
-			if (func != nullptr) {
-				func(commandBuffer, 1, 0);
-			}
-			/*PipelineLibrary::BindPipline("Mesh", commandBuffer);
-			s_Cache->mainFB->Bind(commandBuffer);
-
+			
 
 
 			s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 			s_Cache->cameraData.view = s_Cache->currentCamera.view;
-			s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
-			s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
+			//s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
 			TN_PROFILE_CONTEXT(commandBuffer);
 			TN_PROFILE_SCOPE("Draw scene");
 			for (auto& mdlCmd : s_Cache->meshCmds)
 			{
-				auto texture = ResourceRegistry::GetItem<Texture>(mdlCmd.textureId);
-				VkDescriptorImageInfo imageInfo{};
-				imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-				imageInfo.imageView = texture->GetView();
-				imageInfo.sampler = texture->GetSampler();
+				//auto texture = ResourceRegistry::GetItem<Texture>(mdlCmd.textureId);
+				//VkDescriptorImageInfo imageInfo{};
+				//imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				//imageInfo.imageView = texture->GetView();
+				//imageInfo.sampler = texture->GetSampler();
 
-				VkDescriptorBufferInfo lightBufferInfo{};
-				lightBufferInfo.buffer = s_Cache->lightBuffer->GetAllocation().buffer;
-				lightBufferInfo.offset = 0;
-				lightBufferInfo.range = sizeof(LightCmd);
+				s_Cache->cameraData.mdlSpace = mdlCmd.transform;
+				s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
+
+				auto vertex = mdlCmd.submesh->GetVertexBuffer();
+				auto triangle = mdlCmd.submesh->GetTriangleBuffer();
+				auto meshlet = mdlCmd.submesh->GetMeshletBuffer();
+				VkDescriptorBufferInfo vbufferInfo{};
+				vbufferInfo.buffer = vertex->GetAllocatedBuffer().buffer;
+				vbufferInfo.offset = 0;
+				vbufferInfo.range = vertex->GetAllocatedBuffer().sizeOfBuffer;
+
+				VkDescriptorBufferInfo tbufferInfo{};
+				tbufferInfo.buffer = triangle->GetAllocatedBuffer().buffer;
+				tbufferInfo.offset = 0;
+				tbufferInfo.range = triangle->GetAllocatedBuffer().sizeOfBuffer;
+
+				VkDescriptorBufferInfo mbufferInfo{};
+				mbufferInfo.buffer = meshlet->GetAllocatedBuffer().buffer;
+				mbufferInfo.offset = 0;
+				mbufferInfo.range = meshlet->GetAllocatedBuffer().sizeOfBuffer;
+
 				VkDescriptorSet globalSet;
 				DescriptorBuilder::Begin(&s_Cache->cache, &s_Cache->allocator)
-					.BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
-					.BindImage(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-					.BindBuffer(2, &lightBufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT)
+					.BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+					.BindBuffer(1, &vbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+					.BindBuffer(2, &tbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+					.BindBuffer(3, &mbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.Build(globalSet);
-				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("Mesh")->GetLayout(), 0, 1, &globalSet, 0, nullptr);
+				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, 1, &globalSet, 0, nullptr);
+			
 
-				VkDeviceSize offset = 0;
-				auto& vertex = mdlCmd.package.vertexBuffer;
-				auto& index = mdlCmd.package.indexBuffer;
+				auto func = (PFN_vkCmdDrawMeshTasksNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksNV");
+				if (func != nullptr)
+				{
+					func(commandBuffer, static_cast<uint32_t>(mdlCmd.submesh->GetMeshlets().size()), 0);
+				}
 
-
-				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("Mesh")->GetLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &mdlCmd.transform);
-
-				vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertex->GetAllocation().buffer, &offset);
-				vkCmdBindIndexBuffer(commandBuffer, index->GetAllocatedBuffer().buffer, 0, VK_INDEX_TYPE_UINT32);
-				vkCmdDrawIndexed(commandBuffer, index->GetIndexCount(), 1, 0, 0, 0);
-			}*/
+			}
 
 			vkCmdEndRendering(commandBuffer);
 		}

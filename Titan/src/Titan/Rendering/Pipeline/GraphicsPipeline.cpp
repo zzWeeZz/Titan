@@ -42,20 +42,6 @@ namespace Titan
 		dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 		dynamicState.pDynamicStates = dynamicStates.data();
 
-		//auto vertexInfo = Vertex::GetBindingDesc();
-
-		//VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
-		//vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		//vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(vertexInfo.Bindings.size());
-		//vertexInputInfo.pVertexBindingDescriptions = vertexInfo.Bindings.data(); // Optional
-		//vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexInfo.Attributes.size());
-		//vertexInputInfo.pVertexAttributeDescriptions = vertexInfo.Attributes.data(); // Optional
-
-		/*VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
-		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-		inputAssembly.topology = FormatToVkFormat(info.topology);
-		inputAssembly.primitiveRestartEnable = VK_FALSE;*/
-
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
@@ -80,7 +66,7 @@ namespace Titan
 		rasterizer.rasterizerDiscardEnable = VK_FALSE;
 		rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 		rasterizer.lineWidth = 1.0f;
-		rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+		rasterizer.cullMode = VK_CULL_MODE_NONE;
 		rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
 		rasterizer.depthBiasEnable = VK_FALSE;
 		rasterizer.depthBiasConstantFactor = 0.0f; // Optional

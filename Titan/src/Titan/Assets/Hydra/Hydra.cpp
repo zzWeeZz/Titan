@@ -1,12 +1,15 @@
 #include "TNpch.h"
 #include "Hydra.h"
 
+#include <execution>
+
+#include "meshoptimizer/src/meshoptimizer.h"
+
+#include "Titan/Assets/Model/Submesh.h"
 
 #include "Titan/Assets/Importers/ModelImporters/FBXImporter.h"
 #include "Titan/Assets/Importers/ModelImporters/GLTFImporter.h"
 
-#include "Titan/Assets/Model/Submesh.h"
-#include <execution>
 
 namespace Titan
 {
@@ -31,23 +34,49 @@ namespace Titan
 			TN_CORE_ERROR("(Hydra::ImportModel) Extension: [{0}] is not supported model format!");
 			return;
 		}
-		GenerateMeshlets(submeshes[0]);
+		for (size_t i = 0; i < submeshes.size(); ++i)
+		{
+			GenerateMeshlets(submeshes[i]);
+		}
 	}
 	void Hydra::GenerateMeshlets(Submesh& submesh)
 	{
-		size_t indicesCount = 0;
-		size_t iterations = 1;
-		auto& meshlet = submesh.GetMeshlets().emplace_back();
-		size_t verticesCount = 0;
-		while (indicesCount < 378 * iterations)
-		{
-			meshlet.indices[indicesCount] = submesh.GetIndices()[indicesCount];
-			indicesCount++;
-			meshlet.indexCount = static_cast<uint32_t>(indicesCount);
-		}
-		
-		
+		TN_CORE_INFO("generating meshlets");
+		const size_t maxVertices = 64u;
+		const size_t maxTriangles = 124u;
+		const float coneWeight = 0.0f;
 
-		TN_CORE_TRACE("generate meshlet");
+		size_t maxMeshLets = meshopt_buildMeshletsBound(submesh.GetIndices().size(), maxVertices, maxTriangles);
+
+		std::vector<meshopt_Meshlet> meshlets(maxMeshLets);
+		std::vector<uint32_t> meshletVertices(maxMeshLets * maxVertices);
+		std::vector<uint8_t> meshletTriangle(maxMeshLets * maxTriangles * 3);
+
+		size_t meshletCount = meshopt_buildMeshlets(
+			meshlets.data(),
+			meshletVertices.data(), meshletTriangle.data(),
+			submesh.GetIndices().data(), submesh.GetIndices().size(),
+			&submesh.GetVertices()[0].Position.x, submesh.GetVertices().size(), sizeof(Vertex),
+			maxVertices, maxTriangles, coneWeight);
+
+		const meshopt_Meshlet& last = meshlets[meshletCount - 1];
+		meshletVertices.resize(last.vertex_offset + last.vertex_count);
+		meshletTriangle.resize(last.triangle_offset + ((last.triangle_count * 3 + 3) & ~3));
+		meshlets.resize(meshletCount);
+		submesh.GetMeshlets().resize(meshletCount);
+		for (size_t i = 0; i < meshletTriangle.size(); ++i)
+		{
+			submesh.GetIndices()[i] = static_cast<uint32_t>(meshletTriangle[i]);
+		}
+		TN_CORE_INFO("meshlets count -> {}", meshletCount);
+		for (size_t i = 0; i < meshletCount; ++i)
+		{
+			submesh.GetMeshlets()[i].vertexOffset = meshlets[i].vertex_offset;
+			submesh.GetMeshlets()[i].triangleOffset = meshlets[i].triangle_offset;
+			submesh.GetMeshlets()[i].vertexCount = meshlets[i].vertex_count;
+			submesh.GetMeshlets()[i].triangleCount = meshlets[i].triangle_count;
+		}
+		TN_CORE_INFO("meshlets generated");
+		submesh.CreateBuffers();
 	}
 }

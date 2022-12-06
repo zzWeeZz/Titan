@@ -13,3 +13,6 @@
 [submodule "Titan/vendor/volk"]
 	path = Titan/vendor/volk
 	url = https://github.com/zzWeeZz/volk.git
+[submodule "Titan/vendor/meshoptimizer"]
+	path = Titan/vendor/meshoptimizer
+	url = https://github.com/zzWeeZz/meshoptimizer.git

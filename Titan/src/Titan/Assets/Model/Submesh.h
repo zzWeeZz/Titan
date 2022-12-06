@@ -3,12 +3,13 @@
 #include <Titan/Rendering/Buffers/VertexPacket.h>
 namespace Titan
 {
+	class StorageBuffer;
 	struct Meshlet
 	{
-		uint32_t vertices[64];
-		uint32_t indices[378];
+		uint32_t vertexOffset;
+		uint32_t triangleOffset;
 		uint32_t vertexCount;
-		uint32_t indexCount;
+		uint32_t triangleCount;
 	};
 	class Submesh
 	{
@@ -16,16 +17,24 @@ namespace Titan
 	public:
 		Submesh(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
 		
+		void CreateBuffers();
+
 		inline VertexPackage& GetVertexPackage() { return m_VertexPackage; }
 		inline std::vector<Vertex>& GetVertices() { return m_Vertices; }
 		inline std::vector<uint32_t>& GetIndices() { return m_Indices; }
 		inline std::vector<Meshlet>& GetMeshlets() { return m_Meshlets; }
+		inline Ref<StorageBuffer> GetVertexBuffer() { return m_VertexBuffer; }
+		inline Ref<StorageBuffer> GetMeshletBuffer() { return m_MeshletBuffer; }
+		inline Ref<StorageBuffer> GetTriangleBuffer() { return m_TriangleBuffer; }
 		inline const TitanID& GetID() { return m_ID; }
 	private:
 		VertexPackage m_VertexPackage;
 		std::vector<Vertex> m_Vertices;
 		std::vector<uint32_t> m_Indices;
 		std::vector<Meshlet> m_Meshlets;
+		Ref<StorageBuffer> m_VertexBuffer;
+		Ref<StorageBuffer> m_TriangleBuffer;
+		Ref<StorageBuffer> m_MeshletBuffer;
 		TitanID m_ID; // TODO: this should be some form of structure.
 	};
 }

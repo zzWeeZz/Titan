@@ -175,6 +175,9 @@
     <ProjectReference Include="..\Titan\vendor\SPIRV-Reflect\SPIRV-Reflect.vcxproj">
       <Project>{CB5A3E0C-371B-BA42-0056-03C06CD5FE1E}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Titan\vendor\MeshOptimizer\MeshOptimizer.vcxproj">
+      <Project>{35B4FA56-A174-768D-6AAF-BF0AD62EBB69}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

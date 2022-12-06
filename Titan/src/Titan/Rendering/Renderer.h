@@ -6,6 +6,7 @@
 #include "Titan/Rendering/Framebuffer.h"
 namespace Titan
 {
+	class Submesh;
 	struct CameraCmd
 	{
 		glm::mat4 view;
@@ -14,7 +15,7 @@ namespace Titan
 
 	struct MeshCmd
 	{
-		VertexPackage package;
+		Submesh* submesh;
 		glm::mat4 transform;
 		TitanID textureId;
 	};
