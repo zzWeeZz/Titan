@@ -207,7 +207,6 @@ namespace Titan
 			if (func != nullptr) {
 				func(commandBuffer, 1, 0);
 			}
-			//vkCmdDrawMeshTasksNV(commandBuffer, 1, 0);
 			/*PipelineLibrary::BindPipline("Mesh", commandBuffer);
 			s_Cache->mainFB->Bind(commandBuffer);
 
