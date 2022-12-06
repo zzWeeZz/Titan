@@ -31,7 +31,7 @@ externalLinks =
     "Optick",
     "OpenFBX",
     "SPIRV-Reflect",
-    "Volk",
+    -- "Volk",
     "Titan/vendor/dxil/lib/dxcompiler.lib",
 }
 
@@ -113,7 +113,7 @@ include "Titan/vendor/Optick/"
 include "Titan/vendor/imgui/"
 include "Titan/vendor/OpenFBX"
 include "Titan/vendor/SPIRV-Reflect"
-include "Titan/vendor/Volk"
+-- include "Titan/vendor/Volk"
 group ""
 
 project "SandBox"
@@ -160,7 +160,7 @@ project "SandBox"
 		"/ignore:4099"
 	}
 
-    defines {"_CONSOLE"}
+    defines {"_CONSOLE", "GLM_FORCE_DEPTH_ZERO_TO_ONE"}
 
     filter "configurations:Debug"
 		runtime "Debug"

@@ -76,16 +76,13 @@ namespace Titan
 		ResourceRegistry::GetItem<Texture>(s_Cache->textureID)->Initialize("Assets/Texture/Titan.png");
 
 		GraphicsPipelineInfo info{};
-		info.vsPath = "Engine/Shaders/triangle_vs.vert";
-		info.psPath = "Engine/Shaders/triangle_fs.frag";
 
 		info.topology = Topology::TriangleList;
 		info.imageFormats = { ImageFormat::R8G8B8A8_UN, ImageFormat::D32_SF_S8_UI };
-		PipelineLibrary::Add("Mesh", info);
 
-		//info.vsPath = "Engine/Shaders/StaticMesh.mesh";
-		//info.psPath = "Engine/Shaders/StaticMesh.frag";
-		//PipelineLibrary::Add("MeshShaders", info);
+		info.msPath = "Engine/Shaders/StaticMesh_ms.mesh";
+		info.psPath = "Engine/Shaders/staticMesh_fs.frag";
+		PipelineLibrary::Add("MeshShaders", info);
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
 		s_Cache->lightBuffer = UniformBuffer::Create({ &s_Cache->lightData, sizeof(LightCmd) });
@@ -106,7 +103,6 @@ namespace Titan
 		auto& commandBuffer = GraphicsContext::GetDevice().GetCommandBuffer(currentFrame, 0);
 		auto& swapchain = GraphicsContext::GetSwapchain();
 		auto& device = GraphicsContext::GetDevice();
-		auto& handle = PipelineLibrary::Get("Mesh")->GetHandle();
 
 		VkDescriptorBufferInfo bufferInfo{};
 		bufferInfo.buffer = s_Cache->cameraBuffer->GetAllocation().buffer;
@@ -205,14 +201,14 @@ namespace Titan
 			TN_PROFILE_SCOPE("Forward pass");
 			vkCmdBeginRendering(commandBuffer, &render_info);
 
-			/*PipelineLibrary::BindPipline("Mesh", commandBuffer);
-			s_Cache->mainFB->Bind(commandBuffer);*/
-			/*auto func = (vkCmdDrawMeshTasksNV);vkGetInstanceProcAddr(GraphicsContext::GetInstance(), "vkCmdDrawMeshTasksNV");
+			PipelineLibrary::BindPipline("MeshShaders", commandBuffer);
+			s_Cache->mainFB->Bind(commandBuffer);
+			auto func = (PFN_vkCmdDrawMeshTasksNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksNV");
 			if (func != nullptr) {
 				func(commandBuffer, 1, 0);
-			}*/
+			}
 			//vkCmdDrawMeshTasksNV(commandBuffer, 1, 0);
-			PipelineLibrary::BindPipline("Mesh", commandBuffer);
+			/*PipelineLibrary::BindPipline("Mesh", commandBuffer);
 			s_Cache->mainFB->Bind(commandBuffer);
 
 
@@ -253,7 +249,7 @@ namespace Titan
 				vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertex->GetAllocation().buffer, &offset);
 				vkCmdBindIndexBuffer(commandBuffer, index->GetAllocatedBuffer().buffer, 0, VK_INDEX_TYPE_UINT32);
 				vkCmdDrawIndexed(commandBuffer, index->GetIndexCount(), 1, 0, 0, 0);
-			}
+			}*/
 
 			vkCmdEndRendering(commandBuffer);
 		}

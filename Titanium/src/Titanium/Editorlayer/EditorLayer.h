@@ -2,6 +2,7 @@
 #include "Titan/Layer.h"
 #include "Titanium/Panels/SceneHierarchyPanel.h"
 #include "Titanium/Panels/PropertiesPanel.h"
+#include "Titanium/Panels/RenderingStatsPanel.h"
 
 #include "Titan/Assets/Camera/Camera.h"
 #include "Titan/Scene/Components.h"
@@ -29,6 +30,7 @@ namespace Titan
 
 		Ref<PropertiesPanel> m_PropertiesPanel;
 		Ref<SceneHierarchyPanel> m_SceneHierarchyPanel;
+		Ref<RenderingStatsPanel> m_RenderingStatsPanel;
 	};
 }
 

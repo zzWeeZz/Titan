@@ -48,30 +48,23 @@ namespace Titan
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 		
-		const VkPhysicalDeviceMeshShaderPropertiesNV meshShaderPropsFeature
-		{
-		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_NV,
-
-		};
-
 
 		const VkPhysicalDeviceMeshShaderFeaturesNV meshShaderPropFeature
 		{
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV,
-		.pNext = (void*)&meshShaderPropsFeature,
 		.taskShader = VK_TRUE,
 		.meshShader = VK_TRUE,
 		
 		};
 		
-		const VkPhysicalDeviceDynamicRenderingFeatures dynamic_rendering_feature
+		const VkPhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeature
 		{
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,
 		.pNext = (void*)&meshShaderPropFeature,
 		.dynamicRendering = VK_TRUE,
 		};
 
-		createInfo.pNext = &dynamic_rendering_feature;
+		createInfo.pNext = &dynamicRenderingFeature;
 
 
 		TN_VK_CHECK(vkCreateDevice(physicalDevice.GetHandle(), &createInfo, nullptr, &m_Device));

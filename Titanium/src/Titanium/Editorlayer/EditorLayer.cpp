@@ -27,6 +27,7 @@ namespace Titan
 		m_ActiveScene = CreateRef<Scene>();
 		m_PanelHandler.Add<SceneHierarchyPanel>("SceneHierarchy", std::make_shared<SceneHierarchyPanel>(m_ActiveScene));
 		m_PanelHandler.Add<PropertiesPanel>("PropertiesPanel", std::make_shared<PropertiesPanel>());
+		m_PanelHandler.Add<RenderingStatsPanel>("RenderingPanel", std::make_shared<RenderingStatsPanel>());
 		{
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();

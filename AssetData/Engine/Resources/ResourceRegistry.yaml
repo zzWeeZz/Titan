@@ -1,10 +1,10 @@
 ResourceRegistry:
   - 0:
-      - 8fd0acbe-e978-4914-937b-99f66858ace7
+      - 2f696dbd-68d3-47a5-ba47-bd75d948f8ed
       - Assets/Models/rat.glb
   - 1:
-      - db8446ea-aa57-40ca-80cc-c803aa1c4051
+      - 15558105-23cf-429e-93fc-a33993bd5ff7
       - Assets/Texture/Titan.png
   - 2:
-      - 793296d7-9842-48c1-96cb-76da8aa3493f
+      - 0bb2f08b-01cd-4acb-8536-8598621c94c7
       - Assets/Texture/Titan.jpg

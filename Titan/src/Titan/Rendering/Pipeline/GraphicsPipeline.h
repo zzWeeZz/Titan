@@ -1,7 +1,7 @@
 #pragma once
-#include <d3d12.h>
 #include "Titan/Core/TitanMemory.h"
 #include "Titan/Core/TitanFormats.h"
+#include <filesystem>
 namespace Titan
 {
 	struct GraphicsPipelineInfo

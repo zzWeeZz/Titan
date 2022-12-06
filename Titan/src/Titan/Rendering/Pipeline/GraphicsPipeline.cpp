@@ -11,17 +11,16 @@ namespace Titan
 {
 	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info)
 	{
-		VkShaderModule vertShaderModule{};
-		vertShaderModule = CreateShaderModule(ShaderLibrary::Get(info.vsPath).spvBinary);
+		VkShaderModule meshShaderModule = CreateShaderModule(ShaderLibrary::Get(info.msPath).spvBinary);
 
 
 		auto fragShaderModule = CreateShaderModule(ShaderLibrary::Get(info.psPath).spvBinary);
 
-		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
-		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-		vertShaderStageInfo.module = vertShaderModule;
-		vertShaderStageInfo.pName = "main";
+		VkPipelineShaderStageCreateInfo meshShaderStageInfo{};
+		meshShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		meshShaderStageInfo.stage = VK_SHADER_STAGE_MESH_BIT_NV;
+		meshShaderStageInfo.module = meshShaderModule;
+		meshShaderStageInfo.pName = "main";
 
 
 		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
@@ -30,9 +29,10 @@ namespace Titan
 		fragShaderStageInfo.module = fragShaderModule;
 		fragShaderStageInfo.pName = "main";
 
-		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+		VkPipelineShaderStageCreateInfo shaderStages[] = { meshShaderStageInfo, fragShaderStageInfo };
 
-		std::vector<VkDynamicState> dynamicStates = {
+		std::vector<VkDynamicState> dynamicStates =
+		{
 			VK_DYNAMIC_STATE_VIEWPORT,
 			VK_DYNAMIC_STATE_SCISSOR
 		};
@@ -42,19 +42,19 @@ namespace Titan
 		dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 		dynamicState.pDynamicStates = dynamicStates.data();
 
-		auto vertexInfo = Vertex::GetBindingDesc();
+		//auto vertexInfo = Vertex::GetBindingDesc();
 
-		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
-		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(vertexInfo.Bindings.size());
-		vertexInputInfo.pVertexBindingDescriptions = vertexInfo.Bindings.data(); // Optional
-		vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexInfo.Attributes.size());
-		vertexInputInfo.pVertexAttributeDescriptions = vertexInfo.Attributes.data(); // Optional
+		//VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+		//vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+		//vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(vertexInfo.Bindings.size());
+		//vertexInputInfo.pVertexBindingDescriptions = vertexInfo.Bindings.data(); // Optional
+		//vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexInfo.Attributes.size());
+		//vertexInputInfo.pVertexAttributeDescriptions = vertexInfo.Attributes.data(); // Optional
 
-		VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+		/*VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
 		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		inputAssembly.topology = FormatToVkFormat(info.topology);
-		inputAssembly.primitiveRestartEnable = VK_FALSE;
+		inputAssembly.primitiveRestartEnable = VK_FALSE;*/
 
 		VkViewport viewport{};
 		viewport.x = 0.0f;
@@ -130,7 +130,7 @@ namespace Titan
 		depthStencil.back = {}; // Optional
 
 
-		auto& vShader = ShaderLibrary::Get(info.vsPath);
+		auto& vShader = ShaderLibrary::Get(info.msPath);
 		auto& fShader = ShaderLibrary::Get(info.psPath);
 
 		std::vector<VkDescriptorSetLayoutBinding> bindings = vShader.layoutBindings;
@@ -169,8 +169,8 @@ namespace Titan
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineInfo.stageCount = 2;
 		pipelineInfo.pStages = shaderStages;
-		pipelineInfo.pVertexInputState = &vertexInputInfo;
-		pipelineInfo.pInputAssemblyState = info.msPath.empty() ? &inputAssembly : nullptr;
+		pipelineInfo.pVertexInputState = nullptr;
+		pipelineInfo.pInputAssemblyState = nullptr;
 		pipelineInfo.pViewportState = &viewportState;
 		pipelineInfo.pRasterizationState = &rasterizer;
 		pipelineInfo.pMultisampleState = &multisampling;
@@ -192,21 +192,21 @@ namespace Titan
 				depthFormat = FormatToVkFormat(info.imageFormats[i]);
 			}
 		}
-		const VkPipelineRenderingCreateInfoKHR pipeline_rendering_create_info
+		const VkPipelineRenderingCreateInfoKHR pipelineRenderingCreateInfo
 		{
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR,
 			.colorAttachmentCount = static_cast<uint32_t>(depthFormat == VK_FORMAT_UNDEFINED ? formats.size() : (formats.size() - 1)),
 			.pColorAttachmentFormats = formats.data(),
-			.depthAttachmentFormat = depthFormat
+			.depthAttachmentFormat = depthFormat,
 		};
 
-		pipelineInfo.pNext = &pipeline_rendering_create_info;
+		pipelineInfo.pNext = &pipelineRenderingCreateInfo;
 		pipelineInfo.renderPass = nullptr;
 
 		TN_VK_CHECK(vkCreateGraphicsPipelines(GraphicsContext::GetDevice().GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
 		TitanAllocator::QueueDeletion([&]() {vkDestroyPipeline(GraphicsContext::GetDevice().GetHandle(), m_Pipeline, nullptr); });
 
-		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), vertShaderModule, nullptr);
+		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), meshShaderModule, nullptr);
 		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), fragShaderModule, nullptr);
 	}
 

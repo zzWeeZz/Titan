@@ -44,6 +44,13 @@ namespace Titan
         if (candidates.rbegin()->first > 0)
         {
             m_PhysicalDevice = candidates.rbegin()->second;
+			VkPhysicalDeviceProperties deviceProperties;
+			vkGetPhysicalDeviceProperties(m_PhysicalDevice, &deviceProperties);
+            m_GPUInfo.gpuName = deviceProperties.deviceName;
+            m_GPUInfo.apiVersionMajor = VK_VERSION_MAJOR(deviceProperties.apiVersion);
+            m_GPUInfo.apiVersionMinor = VK_VERSION_MINOR(deviceProperties.apiVersion);
+            m_GPUInfo.apiVersionPatch = VK_VERSION_PATCH(deviceProperties.apiVersion);
+            m_GPUInfo.driverVersion = deviceProperties.driverVersion;
         }
     }
     QueueFamilyIndices PhysicalDevice::FindQueueFamilies()

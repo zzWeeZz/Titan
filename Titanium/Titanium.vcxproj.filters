@@ -30,6 +30,7 @@
     <ClInclude Include="src\Titanium\Utils\ImGuiUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titanium\Panels\RenderingStatsPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Titanium\Editorlayer\EditorLayer.cpp">
@@ -47,5 +48,6 @@
     <ClCompile Include="src\Titanium\Utils\ImGuiUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titanium\Panels\RenderingStatsPanel.cpp" />
   </ItemGroup>
 </Project>
