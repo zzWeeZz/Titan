@@ -227,6 +227,7 @@ namespace Titan
 				auto vertex = mdlCmd.submesh->GetVertexBuffer();
 				auto triangle = mdlCmd.submesh->GetTriangleBuffer();
 				auto meshlet = mdlCmd.submesh->GetMeshletBuffer();
+				auto meshletVertex = mdlCmd.submesh->GetMeshletVertexBuffer();
 				VkDescriptorBufferInfo vbufferInfo{};
 				vbufferInfo.buffer = vertex->GetAllocatedBuffer().buffer;
 				vbufferInfo.offset = 0;
@@ -242,12 +243,18 @@ namespace Titan
 				mbufferInfo.offset = 0;
 				mbufferInfo.range = meshlet->GetAllocatedBuffer().sizeOfBuffer;
 
+				VkDescriptorBufferInfo vmbufferInfo{};
+				vmbufferInfo.buffer = meshletVertex->GetAllocatedBuffer().buffer;
+				vmbufferInfo.offset = 0;
+				vmbufferInfo.range = meshletVertex->GetAllocatedBuffer().sizeOfBuffer;
+
 				VkDescriptorSet globalSet;
 				DescriptorBuilder::Begin(&s_Cache->cache, &s_Cache->allocator)
 					.BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(1, &vbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(2, &tbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(3, &mbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+					.BindBuffer(4, &vmbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.Build(globalSet);
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, 1, &globalSet, 0, nullptr);
 			

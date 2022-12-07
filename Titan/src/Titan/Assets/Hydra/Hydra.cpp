@@ -64,9 +64,15 @@ namespace Titan
 		meshletTriangle.resize(last.triangle_offset + ((last.triangle_count * 3 + 3) & ~3));
 		meshlets.resize(meshletCount);
 		submesh.GetMeshlets().resize(meshletCount);
+		submesh.GetMeshletVertices().resize(meshletVertices.size());
+		submesh.GetIndices().resize(meshletTriangle.size());
 		for (size_t i = 0; i < meshletTriangle.size(); ++i)
 		{
 			submesh.GetIndices()[i] = static_cast<uint32_t>(meshletTriangle[i]);
+		}
+		for (size_t i = 0; i < meshletVertices.size(); ++i)
+		{
+			submesh.GetMeshletVertices()[i] = (meshletVertices[i]);
 		}
 		TN_CORE_INFO("meshlets count -> {}", meshletCount);
 		for (size_t i = 0; i < meshletCount; ++i)

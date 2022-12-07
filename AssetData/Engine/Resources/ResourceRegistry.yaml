@@ -1,10 +1,10 @@
 ResourceRegistry:
   - 0:
-      - a1ba8329-3841-418e-a449-b87c701936ff
-      - Assets/Models/Cube.gltf
-  - 1:
-      - 41ad5d22-5703-4786-90a0-eed7e464d756
+      - 63f3cffe-3c06-4706-8474-907f7e00ba8a
       - Assets/Texture/Titan.png
+  - 1:
+      - 003cbebf-10a0-4923-8887-b369f6798458
+      - Assets/Models/Quad.glb
   - 2:
-      - 6b62c7f0-3bc8-488e-9244-fbc52f5b9c71
+      - ffcf649d-7684-4b68-bcaf-dd936650c449
       - Assets/Texture/Titan.jpg

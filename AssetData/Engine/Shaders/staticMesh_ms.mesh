@@ -1,9 +1,11 @@
-#version 450
+#version 460
 
+#extension GL_EXT_shader_8bit_storage: require
+#extension GL_EXT_shader_16bit_storage: require
 #extension GL_NV_mesh_shader: require
 
 layout (local_size_x = 1) in;
-layout (triangles, max_vertices = 64, max_primitives = 126) out;
+layout (triangles, max_vertices = 64, max_primitives = 124) out;
 
 const uint g_TriangleLoops = (3 * 126 + 4 * 1 - 1) / (1 * 4);
 
@@ -52,6 +54,10 @@ layout (std430, binding = 3) buffer _meshlets
   Meshlet meshlets[];
 } u_MeshletBuffer;
 
+layout (std430, binding = 4) buffer _meshletVertices
+{
+  uint meshletVertices[];
+};
 
 #define MAX_COLORS 10
 vec3 meshletcolors[MAX_COLORS] =
@@ -79,17 +85,28 @@ void main()
 	{
 		uint vertexOffset = u_MeshletBuffer.meshlets[mi].vertexOffset;
 
-		vec3 vertexPosition = u_VertexBuffer.vertices[vertexOffset + i].Position;
+		uint vertexIndex = meshletVertices[vertexOffset + i];
+
+		vec3 vertexPosition = u_VertexBuffer.vertices[vertexIndex].Position;
 
 		mat4 mvp = u_MvpObject.proj * u_MvpObject.view * u_MvpObject.mdlSpace;
 		vec4 transformedPosition = mvp * vec4(vertexPosition, 1.f);
 
-		gl_MeshVerticesNV[i].gl_Position = transformedPosition;
-
-		v_out[i].color = vec4(meshletcolors[mi%MAX_COLORS], 1.0);
+		gl_MeshVerticesNV[vertexIndex].gl_Position = transformedPosition;
+		if(vertexIndex < 3)
+		{
+		v_out[vertexIndex].color = vec4(1, 1, 1, 1);
+		}
+		else
+		{
+		v_out[vertexIndex].color = vec4(1, 0, 0, 1);
+		}
+//		v_out[i].color = vec4(meshletcolors[mi%MAX_COLORS], 1.0);
 	}
 
 	uint indexCount = u_MeshletBuffer.meshlets[mi].triangleCount * 3;
+
+	gl_PrimitiveCountNV = u_MeshletBuffer.meshlets[mi].triangleCount;
 
 	for(uint i = 0; i < indexCount; ++i)
 	{

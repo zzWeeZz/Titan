@@ -32,6 +32,10 @@ namespace Titan
 		info.stride = sizeof(uint32_t);
 		m_TriangleBuffer = StorageBuffer::Create(info);
 
+		info.data = m_MeshletVertices.data();
+		info.size = m_MeshletVertices.size();
+		m_MeshletVertexBuffer = StorageBuffer::Create(info);
+
 		info.data = m_Meshlets.data();
 		info.size = m_Meshlets.size();
 		info.stride = sizeof(Meshlet);
