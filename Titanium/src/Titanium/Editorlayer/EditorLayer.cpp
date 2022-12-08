@@ -31,7 +31,7 @@ namespace Titan
 		{
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Quad.glb");
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/rat.glb");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.jpg");
 		}
 		{
@@ -39,6 +39,7 @@ namespace Titan
 			auto& light = entity.AddComponent<LightComponent>();
 		}
 		m_transformData.position.z = -5.f;
+		m_CameraFront = { 0,0,1 };
 	}
 
 	void EditorLayer::OnUpdate()

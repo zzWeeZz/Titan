@@ -26,6 +26,7 @@ namespace Titan
 		Shader shader{};
 #ifdef TN_CONFIG_DEBUG
 		options.SetOptimizationLevel(shaderc_optimization_level_zero);
+		options.SetGenerateDebugInfo();
 		binaryPath /= "OptiZero";
 #else
 		options.SetOptimizationLevel(shaderc_optimization_level_performance);

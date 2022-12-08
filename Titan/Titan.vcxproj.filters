@@ -219,6 +219,9 @@
     <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Buffers\StorageBuffer.h">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Buffers\UniformBuffer.h">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClInclude>
@@ -648,7 +651,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Buffers\StorageBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -712,6 +714,9 @@
       <Filter>src\Titan\Rendering\Backend</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Buffers\StorageBuffer.cpp">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Buffers\UniformBuffer.cpp">
@@ -810,6 +815,5 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\Buffers\StorageBuffer.cpp" />
   </ItemGroup>
 </Project>
