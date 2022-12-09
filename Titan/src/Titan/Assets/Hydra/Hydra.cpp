@@ -41,26 +41,26 @@ namespace Titan
 	}
 	void Hydra::GenerateMeshlets(Submesh& submesh)
 	{
-		TN_CORE_INFO("Remap vertices");
+		/*TN_CORE_INFO("Remap vertices");
 		std::vector<uint32_t> remapTable(submesh.GetIndices().size());
 
-		size_t vertexCount = meshopt_generateVertexRemap(remapTable.data(), submesh.GetIndices().data(), submesh.GetIndices().size(), submesh.GetVertices().data(), submesh.GetVertices().size(), sizeof(Vertex));
+		size_t vertexCount = meshopt_generateVertexRemap(remapTable.data(), submesh.GetIndices().data(), submesh.GetIndices().size(), submesh.GetRawVertices().data(), submesh.GetRawVertices().size(), sizeof(RawVertex));
 
-		submesh.GetVertices().resize(vertexCount);
+		submesh.GetRawVertices().resize(vertexCount);
 
 		std::vector<uint32_t> indices(submesh.GetIndices().size());
 
-		meshopt_remapVertexBuffer(submesh.GetVertices().data(), submesh.GetVertices().data(), indices.size(), sizeof(Vertex), remapTable.data());
+		meshopt_remapVertexBuffer(submesh.GetRawVertices().data(), submesh.GetRawVertices().data(), indices.size(), sizeof(RawVertex), remapTable.data());
 		meshopt_remapIndexBuffer(indices.data(), nullptr, indices.size(), remapTable.data());
 
-		meshopt_optimizeVertexCache(indices.data(), indices.data(), indices.size(), submesh.GetVertices().size());
-		meshopt_optimizeOverdraw(indices.data(), indices.data(), indices.size(), &submesh.GetVertices()[0].Position.x, submesh.GetVertices().size(), sizeof(Vertex), 1.01f);
-		meshopt_optimizeVertexFetch(submesh.GetVertices().data(), indices.data(), indices.size(), submesh.GetVertices().data(), submesh.GetVertices().size(), sizeof(Vertex));
+		meshopt_optimizeVertexCache(indices.data(), indices.data(), indices.size(), submesh.GetRawVertices().size());
+		meshopt_optimizeOverdraw(indices.data(), indices.data(), indices.size(), &submesh.GetRawVertices()[0].Position.x, submesh.GetRawVertices().size(), sizeof(RawVertex), 1.01f);
+		meshopt_optimizeVertexFetch(submesh.GetRawVertices().data(), indices.data(), indices.size(), submesh.GetRawVertices().data(), submesh.GetRawVertices().size(), sizeof(RawVertex));
 		submesh.GetIndices().resize(indices.size());
 		for (size_t i = 0; i < indices.size(); ++i)
 		{
 			submesh.GetIndices()[i] = indices[i];
-		}
+		}*/
 
 		TN_CORE_INFO("generating meshlets");
 		const size_t maxVertices = 64u;
@@ -77,7 +77,7 @@ namespace Titan
 			meshlets.data(),
 			meshletVertices.data(), meshletTriangle.data(),
 			submesh.GetIndices().data(), submesh.GetIndices().size(),
-			&submesh.GetVertices()[0].Position.x, submesh.GetVertices().size(), sizeof(Vertex),
+			&submesh.GetRawVertices()[0].Position.x, submesh.GetRawVertices().size(), sizeof(RawVertex),
 			maxVertices, maxTriangles, coneWeight);
 
 		const meshopt_Meshlet& last = meshlets[meshletCount - 1];

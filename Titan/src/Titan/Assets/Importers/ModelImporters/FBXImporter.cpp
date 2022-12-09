@@ -46,7 +46,7 @@ namespace Titan
 
 		for(size_t i = 0; i < meshCount; ++i)
 		{
-			std::vector<Vertex> vertices;
+			std::vector<RawVertex> vertices;
 			std::vector<uint32_t> indices;
 
 			const ofbx::Mesh& mesh = *scene->getMesh(static_cast<int>(i));

@@ -57,7 +57,7 @@ namespace Titan
 		const tinygltf::Scene& scene = model.scenes[model.defaultScene];
 		for (size_t i = 0; i < scene.nodes.size(); i++)
 		{
-			std::vector<Vertex> tempVertices;
+			std::vector<RawVertex> tempVertices;
 			std::vector<uint32_t> tempIndex;
 			const tinygltf::Node& node = model.nodes[scene.nodes[i]];
 			LoadNode(node, model, tempVertices, tempIndex);
@@ -66,7 +66,7 @@ namespace Titan
 			outMeshes.emplace_back(tempVertices, tempIndex);
 		}
 	}
-	void GLTFImporter::LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, std::vector<Vertex>& outVerties, std::vector<uint32_t>& outIndices)
+	void GLTFImporter::LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, std::vector<RawVertex>& outVerties, std::vector<uint32_t>& outIndices)
 	{
 		if (node.mesh > -1)
 		{
@@ -120,7 +120,7 @@ namespace Titan
 				outVerties.resize(vertexCount);
 				for (size_t index = 0; index < vertexCount; ++index)
 				{
-					Vertex& vertex = outVerties[index];
+					RawVertex& vertex = outVerties[index];
 					vertex.Position = positionBuffer ? *(glm::vec3*)&positionBuffer[index * 3] : glm::vec3();
 					vertex.Normal = glm::normalize(normalBuffer ? *(glm::vec3*)&normalBuffer[index * 3] : glm::vec3(1.f));
 					vertex.Tangent = glm::normalize(tangentBuffer ? *(glm::vec3*)&tangentBuffer[index * 3] : glm::vec3(1.f));

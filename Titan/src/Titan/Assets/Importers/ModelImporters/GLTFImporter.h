@@ -3,7 +3,7 @@
 #include "Titan/Rendering/Buffers/VertexPacket.h"
 
 
-struct Vertex;
+struct RawVertex;
 
 namespace tinygltf
 {
@@ -21,6 +21,6 @@ namespace Titan
 	public:
 		static void Import(const std::filesystem::path& filepath, std::vector<Submesh>& outVertex);
 	private:
-		static void LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, std::vector<Vertex>& outVerties, std::vector<uint32_t>& outIndices);
+		static void LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, std::vector<RawVertex>& outVerties, std::vector<uint32_t>& outIndices);
 	};
 }

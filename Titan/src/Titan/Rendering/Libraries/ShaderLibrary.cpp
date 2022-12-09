@@ -105,7 +105,7 @@ namespace Titan
 	void ShaderLibrary::DumpBinary(const std::filesystem::path& dest, Shader& shader)
 	{
 		std::vector<char> charVec = { shader.spvAssembly.cbegin(), shader.spvAssembly.cend() };
-		FilesystemUtils::WriteBinary(dest, charVec);
+		//FilesystemUtils::WriteBinary(dest, charVec);
 	}
 
 	void ShaderLibrary::Reflect(Shader& shader)

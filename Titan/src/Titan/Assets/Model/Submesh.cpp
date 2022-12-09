@@ -4,27 +4,31 @@
 #include "Titan/Rendering/Buffers/StorageBuffer.h"
 namespace Titan
 {
-	Submesh::Submesh(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
+	Submesh::Submesh(std::vector<RawVertex>& vertices, std::vector<uint32_t>& indices)
 	{
-		VertexBufferInfo vInfo{};
-		vInfo.vertexData = vertices.data();
-		vInfo.sizeOfArray = vertices.size();
-		vInfo.sizeOfVertex = sizeof(Vertex);
-		m_VertexPackage.vertexBuffer = VertexBuffer::Create(vInfo);
-		m_Vertices = vertices;
-		IndexBufferInfo iInfo{};
-		iInfo.indexData = indices.data();
-		iInfo.sizeOfArray = indices.size();
-		m_VertexPackage.indexBuffer = IndexBuffer::Create(iInfo);
+		m_RawVertices = vertices;
 		m_Indices = indices;
 		m_ID = CreateID();
 	}
 	void Submesh::CreateBuffers()
 	{
+		m_BufferVertices.resize(m_RawVertices.size());
+		for (size_t i = 0; i < m_RawVertices.size(); ++i)
+		{
+			auto& bufferVert = m_BufferVertices[i];
+			auto& rawVert = m_RawVertices[i];
+
+			bufferVert.Position = glm::vec4(rawVert.Position, 1.f);
+			bufferVert.Normal = glm::vec4(rawVert.Normal, 1.f);
+			bufferVert.Tangent = glm::vec4(rawVert.Tangent, 1.f);
+			bufferVert.Color = glm::vec4(rawVert.Color, 1.f);
+			bufferVert.TexCoords = rawVert.TexCoords;
+		}
+
 		StorageBufferInfo info{};
-		info.data = m_Vertices.data();
-		info.size = m_Vertices.size();
-		info.stride = sizeof(Vertex);
+		info.data = m_BufferVertices.data();
+		info.size = m_BufferVertices.size();
+		info.stride = sizeof(BufferVertex);
 		m_VertexBuffer = StorageBuffer::Create(info);
 
 		info.data = m_Indices.data();

@@ -15,12 +15,14 @@ namespace Titan
 	{
 
 	public:
-		Submesh(std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
+		Submesh(std::vector<RawVertex>& vertices, std::vector<uint32_t>& indices);
+		
+
 		
 		void CreateBuffers();
 
-		inline VertexPackage& GetVertexPackage() { return m_VertexPackage; }
-		inline std::vector<Vertex>& GetVertices() { return m_Vertices; }
+		inline std::vector<RawVertex>& GetRawVertices() { return m_RawVertices; }
+		inline std::vector<BufferVertex>& GetVertices() { return m_BufferVertices; }
 		inline std::vector<uint32_t>& GetIndices() { return m_Indices; }
 		inline std::vector<Meshlet>& GetMeshlets() { return m_Meshlets; }
 		inline std::vector<uint32_t>& GetMeshletVertices() { return m_MeshletVertices; }
@@ -30,8 +32,8 @@ namespace Titan
 		inline Ref<StorageBuffer> GetMeshletVertexBuffer() { return m_MeshletVertexBuffer; }
 		inline const TitanID& GetID() { return m_ID; }
 	private:
-		VertexPackage m_VertexPackage;
-		std::vector<Vertex> m_Vertices;
+		std::vector<RawVertex> m_RawVertices;
+		std::vector<BufferVertex> m_BufferVertices;
 		std::vector<uint32_t> m_Indices;
 		std::vector<Meshlet> m_Meshlets;
 		std::vector<uint32_t> m_MeshletVertices;

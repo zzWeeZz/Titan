@@ -31,7 +31,7 @@ namespace Titan
 		{
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/rat.glb");
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/hej.glb");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.jpg");
 		}
 		{

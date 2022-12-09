@@ -5,7 +5,7 @@
 #extension GL_NV_mesh_shader: require
 
 #define  MAX_VERTEX_COUNT 64
-#define  MAX_PRIMITIVE_COUNT 126
+#define  MAX_PRIMITIVE_COUNT 124
 
 #define GROUP_SIZE 1
 
@@ -16,6 +16,7 @@ layout (triangles, max_vertices = MAX_VERTEX_COUNT, max_primitives = MAX_PRIMITI
 layout (location = 0) out PerVertexData
 {
 	vec4 color;
+	vec2 texCoord;
 } v_out[];
 
 
@@ -28,11 +29,12 @@ layout (binding = 0) uniform MvpBufferObject
 
 struct Vertex
 {
-	vec3 Position;
-	vec3 Color;
-	vec3 Normal;
-	vec3 Tangent; 
+	vec4 Position;
+	vec4 Color;
+	vec4 Normal;
+	vec4 Tangent; 
 	vec2 TexCoords;
+	vec2 padding;
 };
 
 layout (std430, binding = 1) buffer _vertices
@@ -93,35 +95,37 @@ vec3 GetRandomColor(
 				float((hash >> 8) & 255),
 				float((hash >> 16) & 255)) / 255.0;
 }
-
 void main()
 {
 	const uint meshletIndex = gl_WorkGroupID.x;
 	const uint threadId = gl_LocalInvocationID.x;
 	Meshlet meshlet = u_MeshletBuffer.meshlets[meshletIndex];
 
-	const uint vertexCount = meshlet.vertexCount;
-	for(uint v = 0; v <vertexCount; ++v)
+	for(uint loop = 0; loop <g_VertexLoops; ++loop)
 	{
+		uint v = gl_LocalInvocationID.x + loop * GROUP_SIZE;
+
+		v = min(v, meshlet.vertexCount - 1);
+
 		const uint VertexIndex = u_MeshletVertexBuffer.meshletVertices[meshlet.vertexOffset + v];
 		Vertex vertex = u_VertexBuffer.vertices[VertexIndex];
 
 		const mat4 mvp = u_MvpObject.proj * u_MvpObject.view * u_MvpObject.mdlSpace;
-		gl_MeshVerticesNV[v].gl_Position = mvp * vec4(vertex.Position, 1.0f);
-		v_out[v].color = vec4(meshletcolors[v%MAX_COLORS],1.f);
+		gl_MeshVerticesNV[v].gl_Position = mvp * vertex.Position;
+		v_out[v].color = vec4(meshletcolors[meshletIndex%MAX_COLORS],1.f);
 	}
 
 
-	uint primreadBegin = meshlet.triangleOffset / 4;
-	uint primreadIndex = meshlet.triangleCount * 3 - 1;
-	for(uint loop = 0; loop < g_PrimReadLoops; ++loop)
+	uint primreadBegin = meshlet.triangleOffset;
+	uint primreadIndex = meshlet.triangleCount * 3;
+	uint primreadMax   = primreadIndex;
+	for(uint loop = 0; loop < primreadIndex; ++loop)
 	{
-		 uint p = threadId + loop * GROUP_SIZE;
-		
+		uint p = gl_LocalInvocationID.x + loop * GROUP_SIZE;
+		p = min(p, primreadMax);
+		 uint topology = u_TriangleBuffer.triangles[primreadBegin + loop];
 
-		 uint topology = u_TriangleBuffer.triangles[primreadBegin + p];
-
-		gl_PrimitiveIndicesNV[loop] =  topology;
+		gl_PrimitiveIndicesNV[p] = topology;
 	}
 
 	if(threadId == 0)
