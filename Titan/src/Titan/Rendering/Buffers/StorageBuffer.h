@@ -15,7 +15,7 @@ namespace Titan
 	{
 	public:
 		StorageBuffer(const StorageBufferInfo& info);
-		AllocatedBuffer& GetAllocatedBuffer() { return m_GpuBuffer; }
+		AllocatedBuffer& GetAllocation() { return m_GpuBuffer; }
 		static Ref<StorageBuffer> Create(const StorageBufferInfo& info);
 		~StorageBuffer();
 	private:

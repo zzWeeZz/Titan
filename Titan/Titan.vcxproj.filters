@@ -231,9 +231,6 @@
     <ClInclude Include="src\Titan\Rendering\Buffers\VertexBuffer.h">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Buffers\VertexPacket.h">
-      <Filter>src\Titan\Rendering\Buffers</Filter>
-    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Descriptors\DescriptorAllocator.h">
       <Filter>src\Titan\Rendering\Descriptors</Filter>
     </ClInclude>
@@ -298,9 +295,6 @@
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Utils\MouseCode.h">
-      <Filter>src\Titan\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Titan\Utils\Profiler.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Utils\ThreadPool.h">
@@ -651,6 +645,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Utils\Profiler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -815,5 +810,6 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Utils\Profiler.cpp" />
   </ItemGroup>
 </Project>

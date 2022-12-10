@@ -53,7 +53,7 @@ namespace Titan
 				return;
 			}
 		}
-		
+
 		const tinygltf::Scene& scene = model.scenes[model.defaultScene];
 		for (size_t i = 0; i < scene.nodes.size(); i++)
 		{
@@ -61,9 +61,12 @@ namespace Titan
 			std::vector<uint32_t> tempIndex;
 			const tinygltf::Node& node = model.nodes[scene.nodes[i]];
 			LoadNode(node, model, tempVertices, tempIndex);
-				
-			// constructs with (std::Vector<vertex>&, std::Vector<uint32_t>&).
-			outMeshes.emplace_back(tempVertices, tempIndex);
+
+			if (!(tempIndex.empty() || tempVertices.empty()))
+			{
+				// constructs with (std::Vector<vertex>&, std::Vector<uint32_t>&).
+				outMeshes.emplace_back(tempVertices, tempIndex);
+			}
 		}
 	}
 	void GLTFImporter::LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, std::vector<RawVertex>& outVerties, std::vector<uint32_t>& outIndices)

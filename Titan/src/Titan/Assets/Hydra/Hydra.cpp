@@ -3,7 +3,7 @@
 
 #include <execution>
 
-#include "meshoptimizer/src/meshoptimizer.h"
+#include <meshoptimizer/src/meshoptimizer.h>
 
 #include "Titan/Assets/Model/Submesh.h"
 
@@ -41,26 +41,14 @@ namespace Titan
 	}
 	void Hydra::GenerateMeshlets(Submesh& submesh)
 	{
-		/*TN_CORE_INFO("Remap vertices");
-		std::vector<uint32_t> remapTable(submesh.GetIndices().size());
-
-		size_t vertexCount = meshopt_generateVertexRemap(remapTable.data(), submesh.GetIndices().data(), submesh.GetIndices().size(), submesh.GetRawVertices().data(), submesh.GetRawVertices().size(), sizeof(RawVertex));
-
-		submesh.GetRawVertices().resize(vertexCount);
-
 		std::vector<uint32_t> indices(submesh.GetIndices().size());
 
-		meshopt_remapVertexBuffer(submesh.GetRawVertices().data(), submesh.GetRawVertices().data(), indices.size(), sizeof(RawVertex), remapTable.data());
-		meshopt_remapIndexBuffer(indices.data(), nullptr, indices.size(), remapTable.data());
+		meshopt_optimizeOverdraw(indices.data(), submesh.GetIndices().data(), submesh.GetIndices().size(), &submesh.GetRawVertices()[0].Position.x, submesh.GetRawVertices().size(), sizeof(RawVertex), 1.05f);
 
-		meshopt_optimizeVertexCache(indices.data(), indices.data(), indices.size(), submesh.GetRawVertices().size());
-		meshopt_optimizeOverdraw(indices.data(), indices.data(), indices.size(), &submesh.GetRawVertices()[0].Position.x, submesh.GetRawVertices().size(), sizeof(RawVertex), 1.01f);
-		meshopt_optimizeVertexFetch(submesh.GetRawVertices().data(), indices.data(), indices.size(), submesh.GetRawVertices().data(), submesh.GetRawVertices().size(), sizeof(RawVertex));
-		submesh.GetIndices().resize(indices.size());
 		for (size_t i = 0; i < indices.size(); ++i)
 		{
 			submesh.GetIndices()[i] = indices[i];
-		}*/
+		}
 
 		TN_CORE_INFO("generating meshlets");
 		const size_t maxVertices = 64u;
@@ -81,8 +69,8 @@ namespace Titan
 			maxVertices, maxTriangles, coneWeight);
 
 		const meshopt_Meshlet& last = meshlets[meshletCount - 1];
-		meshletVertices.resize(last.vertex_offset + last.vertex_count);
-		meshletTriangle.resize(last.triangle_offset + ((last.triangle_count * 3 + 3) & ~3));
+		meshletVertices.resize(static_cast<size_t>(last.vertex_offset + last.vertex_count));
+		meshletTriangle.resize(static_cast<size_t>(last.triangle_offset + ((last.triangle_count * 3 + 3) & ~3)));
 		meshlets.resize(meshletCount);
 		submesh.GetMeshlets().resize(meshletCount);
 		submesh.GetMeshletVertices().resize(meshletVertices.size());

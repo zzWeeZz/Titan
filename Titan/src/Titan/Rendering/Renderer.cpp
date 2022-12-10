@@ -83,7 +83,7 @@ namespace Titan
 		info.imageFormats = { ImageFormat::R8G8B8A8_UN, ImageFormat::D32_SF_S8_UI };
 
 		info.msPath = "Engine/Shaders/StaticMesh_ms.mesh";
-		info.psPath = "Engine/Shaders/staticMesh_fs.frag";
+		info.fsPath = "Engine/Shaders/staticMesh_fs.frag";
 		PipelineLibrary::Add("MeshShaders", info);
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
@@ -101,6 +101,9 @@ namespace Titan
 	void Renderer::Begin()
 	{
 		TN_PROFILE_FUNCTION();
+		Profiler::PofileDataSet("MeshletCount",size_t(0));
+		Profiler::PofileDataSet("TriangleCount",size_t(0));
+
 		auto& currentFrame = GraphicsContext::GetCurrentFrame();
 		auto& commandBuffer = GraphicsContext::GetDevice().GetCommandBuffer(currentFrame, 0);
 		auto& swapchain = GraphicsContext::GetSwapchain();
@@ -210,16 +213,16 @@ namespace Titan
 
 			s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 			s_Cache->cameraData.view = s_Cache->currentCamera.view;
-			//s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
+			s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
 			TN_PROFILE_CONTEXT(commandBuffer);
 			TN_PROFILE_SCOPE("Draw scene");
 			for (auto& mdlCmd : s_Cache->meshCmds)
 			{
-				//auto texture = ResourceRegistry::GetItem<Texture>(mdlCmd.textureId);
-				//VkDescriptorImageInfo imageInfo{};
-				//imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-				//imageInfo.imageView = texture->GetView();
-				//imageInfo.sampler = texture->GetSampler();
+				auto texture = ResourceRegistry::GetItem<Texture>(mdlCmd.textureId);
+				VkDescriptorImageInfo imageInfo{};
+				imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				imageInfo.imageView = texture->GetView();
+				imageInfo.sampler = texture->GetSampler();
 
 				s_Cache->cameraData.mdlSpace = mdlCmd.transform;
 				s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
@@ -228,25 +231,32 @@ namespace Titan
 				auto triangle = mdlCmd.submesh->GetTriangleBuffer();
 				auto meshlet = mdlCmd.submesh->GetMeshletBuffer();
 				auto meshletVertex = mdlCmd.submesh->GetMeshletVertexBuffer();
+				auto light = s_Cache->lightBuffer;
+
 				VkDescriptorBufferInfo vbufferInfo{};
-				vbufferInfo.buffer = vertex->GetAllocatedBuffer().buffer;
+				vbufferInfo.buffer = vertex->GetAllocation().buffer;
 				vbufferInfo.offset = 0;
-				vbufferInfo.range = vertex->GetAllocatedBuffer().sizeOfBuffer;
+				vbufferInfo.range = vertex->GetAllocation().sizeOfBuffer;
 
 				VkDescriptorBufferInfo tbufferInfo{};
-				tbufferInfo.buffer = triangle->GetAllocatedBuffer().buffer;
+				tbufferInfo.buffer = triangle->GetAllocation().buffer;
 				tbufferInfo.offset = 0;
-				tbufferInfo.range = triangle->GetAllocatedBuffer().sizeOfBuffer;
+				tbufferInfo.range = triangle->GetAllocation().sizeOfBuffer;
 
 				VkDescriptorBufferInfo mbufferInfo{};
-				mbufferInfo.buffer = meshlet->GetAllocatedBuffer().buffer;
+				mbufferInfo.buffer = meshlet->GetAllocation().buffer;
 				mbufferInfo.offset = 0;
-				mbufferInfo.range = meshlet->GetAllocatedBuffer().sizeOfBuffer;
+				mbufferInfo.range = meshlet->GetAllocation().sizeOfBuffer;
 
 				VkDescriptorBufferInfo vmbufferInfo{};
-				vmbufferInfo.buffer = meshletVertex->GetAllocatedBuffer().buffer;
+				vmbufferInfo.buffer = meshletVertex->GetAllocation().buffer;
 				vmbufferInfo.offset = 0;
-				vmbufferInfo.range = meshletVertex->GetAllocatedBuffer().sizeOfBuffer;
+				vmbufferInfo.range = meshletVertex->GetAllocation().sizeOfBuffer;
+
+				VkDescriptorBufferInfo lightBufferInfo{};
+				lightBufferInfo.buffer = light->GetAllocation().buffer;
+				lightBufferInfo.offset = 0;
+				lightBufferInfo.range = light->GetAllocation().sizeOfBuffer;
 
 				VkDescriptorSet globalSet;
 				DescriptorBuilder::Begin(&s_Cache->cache, &s_Cache->allocator)
@@ -256,12 +266,21 @@ namespace Titan
 					.BindBuffer(3, &mbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(4, &vmbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.Build(globalSet);
-				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, 1, &globalSet, 0, nullptr);
+				VkDescriptorSet imageSet;
+				DescriptorBuilder::Begin(&s_Cache->cache, &s_Cache->allocator)
+					.BindImage(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+					.BindBuffer(2, &lightBufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT)
+					.Build(imageSet);
+
+				std::array<VkDescriptorSet, 2> sets = { globalSet, imageSet };
+				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
 			
 
 				auto func = (PFN_vkCmdDrawMeshTasksNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksNV");
 				if (func != nullptr)
 				{
+					Profiler::PofileDataAdd("MeshletCount", mdlCmd.submesh->GetMeshlets().size());
+					Profiler::PofileDataAdd("TriangleCount", mdlCmd.submesh->GetIndices().size());
 					func(commandBuffer, static_cast<uint32_t>(mdlCmd.submesh->GetMeshlets().size()), 0);
 				}
 

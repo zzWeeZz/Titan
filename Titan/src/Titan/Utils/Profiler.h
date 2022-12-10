@@ -1,4 +1,7 @@
 #pragma once
+#include <map>
+#include <any>
+#include <string>
 #include "Optick/src/optick.h"
 
 #ifndef TN_CONFIG_DIST
@@ -14,3 +17,47 @@
 #define TN_PROFILE_THREAD(NAME)
 #define TN_PROFILE_CONTEXT(...)
 #endif
+
+namespace Titan
+{
+	class Profiler
+	{
+	public:
+		template<typename T>
+		static void PofileDataAdd(std::string_view key, const T& addValue);
+		template<typename T>
+		static void PofileDataSet(std::string_view key, const T& setValue);
+		template<typename T>
+		static const T PofileDataGet(std::string_view key);
+	private:
+		template<typename T>
+		static T* GetDataFromAny(std::string_view key);
+
+		static inline std::map<std::string_view, std::any> s_ProfilingData;
+	};
+	template<typename T>
+	inline void Profiler::PofileDataAdd(std::string_view key, const T& addValue)
+	{
+		*GetDataFromAny<T>(key) += addValue;
+	}
+	template<typename T>
+	inline void Profiler::PofileDataSet(std::string_view key, const T& setValue)
+	{
+		*GetDataFromAny<T>(key) = setValue;
+	}
+	template<typename T>
+	inline const T Profiler::PofileDataGet(std::string_view key)
+	{
+		return *GetDataFromAny<T>(key);
+	}
+	template<typename T>
+	inline T* Profiler::GetDataFromAny(std::string_view key)
+	{
+		if (!s_ProfilingData.contains(key))
+		{
+			s_ProfilingData[key] = std::make_any<T>();
+		}
+
+		return std::any_cast<T>(&s_ProfilingData[key]);
+	}
+}

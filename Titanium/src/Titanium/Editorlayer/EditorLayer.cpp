@@ -31,8 +31,10 @@ namespace Titan
 		{
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/hej.glb");
-			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.jpg");
+			entity.GetComponent<TransformComponent>().scale = { 1,1 ,1 };
+			entity.GetComponent<TransformComponent>().rotation.x = -90;
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/rat.glb");
+			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
 		{
 			auto entity = m_ActiveScene->CreateEntity();

@@ -1,7 +1,5 @@
 #pragma once
 #include <vector>
-#include "Titan/Rendering/Buffers/VertexPacket.h"
-
 
 struct RawVertex;
 

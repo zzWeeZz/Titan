@@ -1,9 +1,6 @@
 #pragma once
 #include "Titan/Assets/Resource.h"
 
-
-#include <Titan/Rendering/Buffers/VertexPacket.h>
-
 namespace Titan
 {
 	class Submesh;

@@ -105,7 +105,7 @@ namespace Titan
 	void ShaderLibrary::DumpBinary(const std::filesystem::path& dest, Shader& shader)
 	{
 		std::vector<char> charVec = { shader.spvAssembly.cbegin(), shader.spvAssembly.cend() };
-		//FilesystemUtils::WriteBinary(dest, charVec);
+		FilesystemUtils::WriteBinary(dest, charVec);
 	}
 
 	void ShaderLibrary::Reflect(Shader& shader)
@@ -128,7 +128,7 @@ namespace Titan
 		std::vector<SpvReflectDescriptorBinding*> spvBindings(spvBindingCount);
 		spvReflectEnumerateDescriptorBindings(&spvModule, &spvBindingCount, spvBindings.data());
 
-		shader.layoutBindings.reserve(spvBindingCount);
+		shader.layouts.reserve(spvBindingCount);
 		for (uint32_t layoutBindingIndex = 0; layoutBindingIndex < spvBindingCount; ++layoutBindingIndex)
 		{
 			VkDescriptorType descType{};
@@ -157,7 +157,7 @@ namespace Titan
 			descriptorSetLayoutBinding.stageFlags = shader.stage;
 			descriptorSetLayoutBinding.pImmutableSamplers = nullptr;
 
-			shader.layoutBindings.push_back(descriptorSetLayoutBinding);
+			shader.layouts[spvBindings[layoutBindingIndex]->set].push_back(descriptorSetLayoutBinding);
 		}
 		spvReflectDestroyShaderModule(&spvModule);
 	}

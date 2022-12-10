@@ -11,25 +11,17 @@ namespace Titan
 {
 	GraphicsPipeline::GraphicsPipeline(const GraphicsPipelineInfo& info)
 	{
-		VkShaderModule meshShaderModule = CreateShaderModule(ShaderLibrary::Get(info.msPath).spvBinary);
+		std::vector<VkShaderStageFlagBits> stages;
+
+		FindStages(info, stages);
+		TN_CORE_ASSERT(stages.empty() == false, "Could not create graphics pipeline!");
+
+		std::vector<Shader> shaders;
+		GetShaderObjects(stages, shaders, info);
 
 
-		auto fragShaderModule = CreateShaderModule(ShaderLibrary::Get(info.psPath).spvBinary);
-
-		VkPipelineShaderStageCreateInfo meshShaderStageInfo{};
-		meshShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		meshShaderStageInfo.stage = VK_SHADER_STAGE_MESH_BIT_NV;
-		meshShaderStageInfo.module = meshShaderModule;
-		meshShaderStageInfo.pName = "main";
-
-
-		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
-		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-		fragShaderStageInfo.module = fragShaderModule;
-		fragShaderStageInfo.pName = "main";
-
-		VkPipelineShaderStageCreateInfo shaderStages[] = { meshShaderStageInfo, fragShaderStageInfo };
+		std::vector<VkPipelineShaderStageCreateInfo> pipelineStageInfos;
+		CreatePipelineStages(stages, pipelineStageInfos, shaders, info);
 
 		std::vector<VkDynamicState> dynamicStates =
 		{
@@ -115,37 +107,22 @@ namespace Titan
 		depthStencil.front = {}; // Optional
 		depthStencil.back = {}; // Optional
 
+		std::vector<VkDescriptorSetLayout> descriptorlayouts;
 
-		auto& vShader = ShaderLibrary::Get(info.msPath);
-		auto& fShader = ShaderLibrary::Get(info.psPath);
-
-		std::vector<VkDescriptorSetLayoutBinding> bindings = vShader.layoutBindings;
-		bindings.insert(bindings.end(), fShader.layoutBindings.begin(), fShader.layoutBindings.end());
-		m_DescriptorSetLayout = nullptr;
-		if (!bindings.empty())
-		{
-
-			VkDescriptorSetLayoutCreateInfo layoutInfo{};
-			layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-			layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-			layoutInfo.pBindings = bindings.data();
-
-			TN_VK_CHECK(vkCreateDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), &layoutInfo, nullptr, &m_DescriptorSetLayout));
-			TitanAllocator::QueueDeletion([&]() {vkDestroyDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), m_DescriptorSetLayout, nullptr); });
-		}
+		CombineAndCreateDescriptorlayouts(shaders, descriptorlayouts);
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		if (m_DescriptorSetLayout)
+		if (!descriptorlayouts.empty())
 		{
-			pipelineLayoutInfo.setLayoutCount = 1; // Optional
-			pipelineLayoutInfo.pSetLayouts = &m_DescriptorSetLayout; // Optional
+			pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorlayouts.size()); // Optional
+			pipelineLayoutInfo.pSetLayouts = descriptorlayouts.data(); // Optional
 		}
-		if (vShader.pushConstants.size != 0)
-		{
-			pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
-			pipelineLayoutInfo.pPushConstantRanges = &vShader.pushConstants; // Optional
-		}
+		//if (vShader.pushConstants.size != 0)
+		//{
+		//	pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
+		//	pipelineLayoutInfo.pPushConstantRanges = &vShader.pushConstants; // Optional
+		//}
 
 		TN_VK_CHECK(vkCreatePipelineLayout(GraphicsContext::GetDevice().GetHandle(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout));
 		TitanAllocator::QueueDeletion([&]() { vkDestroyPipelineLayout(GraphicsContext::GetDevice().GetHandle(), m_PipelineLayout, nullptr); });
@@ -153,8 +130,8 @@ namespace Titan
 
 		VkGraphicsPipelineCreateInfo pipelineInfo{};
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipelineInfo.stageCount = 2;
-		pipelineInfo.pStages = shaderStages;
+		pipelineInfo.stageCount = static_cast<uint32_t>(pipelineStageInfos.size());
+		pipelineInfo.pStages = pipelineStageInfos.data();
 		pipelineInfo.pVertexInputState = nullptr;
 		pipelineInfo.pInputAssemblyState = nullptr;
 		pipelineInfo.pViewportState = &viewportState;
@@ -192,8 +169,92 @@ namespace Titan
 		TN_VK_CHECK(vkCreateGraphicsPipelines(GraphicsContext::GetDevice().GetHandle(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline));
 		TitanAllocator::QueueDeletion([&]() {vkDestroyPipeline(GraphicsContext::GetDevice().GetHandle(), m_Pipeline, nullptr); });
 
-		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), meshShaderModule, nullptr);
-		vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), fragShaderModule, nullptr);
+		for (auto& pipelineStage : pipelineStageInfos)
+		{
+			vkDestroyShaderModule(GraphicsContext::GetDevice().GetHandle(), pipelineStage.module, nullptr);
+		}
+	}
+
+	void GraphicsPipeline::CombineAndCreateDescriptorlayouts(std::vector<Titan::Shader>& shaders, std::vector<VkDescriptorSetLayout>& descriptorlayouts)
+	{
+		std::unordered_map<uint32_t, std::vector<VkDescriptorSetLayoutBinding>> bindingMap;
+		for (auto& shader : shaders)
+		{
+			auto& layout = shader.layouts;
+			for (auto& set : layout)
+			{
+				auto& setBindings = bindingMap[set.first];
+				setBindings.insert(setBindings.end(), set.second.begin(), set.second.end());
+			}
+		}
+
+
+		for (auto& binding : bindingMap)
+		{
+			auto& bindings = binding.second;
+			VkDescriptorSetLayoutCreateInfo layoutInfo{};
+			layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+			layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+			layoutInfo.pBindings = bindings.data();
+			auto& descriptorLayout = descriptorlayouts.emplace_back();
+			TN_VK_CHECK(vkCreateDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), &layoutInfo, nullptr, &descriptorLayout));
+			TitanAllocator::QueueDeletion([=]() {vkDestroyDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), descriptorLayout, nullptr); });
+		}
+	}
+
+	void GraphicsPipeline::GetShaderObjects(std::vector<VkShaderStageFlagBits>& stages, std::vector<Shader>& shaders, const Titan::GraphicsPipelineInfo& info)
+	{
+		for (auto& stage : stages)
+		{
+			switch (stage)
+			{
+			case VK_SHADER_STAGE_TASK_BIT_NV:
+				shaders.emplace_back(ShaderLibrary::Get(info.tsPath));
+				break;
+			case VK_SHADER_STAGE_MESH_BIT_NV:
+				shaders.emplace_back(ShaderLibrary::Get(info.msPath));
+				break;
+			case VK_SHADER_STAGE_FRAGMENT_BIT:
+				shaders.emplace_back(ShaderLibrary::Get(info.fsPath));
+				break;
+			default:
+				TN_CORE_ASSERT(false, "Shader stage is not supported");
+				break;
+			}
+		}
+	}
+
+	void GraphicsPipeline::CreatePipelineStages(std::vector<VkShaderStageFlagBits>& stages, std::vector<VkPipelineShaderStageCreateInfo>& pipelineStageInfos, std::vector<Shader>& shaders, const Titan::GraphicsPipelineInfo& info)
+	{
+		TN_CORE_ASSERT(stages.size() == shaders.size(), "Shader stages and shader objects are not the same size!");
+
+		for (size_t i = 0; i < stages.size(); ++i)
+		{
+			auto& stage = stages[i];
+			auto& shader = shaders[i];
+
+			VkPipelineShaderStageCreateInfo& shaderStageInfo = pipelineStageInfos.emplace_back();
+			shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			shaderStageInfo.stage = stage;
+			shaderStageInfo.pName = "main";
+			shaderStageInfo.module = CreateShaderModule(shader.spvBinary);
+		}
+	}
+
+	void GraphicsPipeline::FindStages(const Titan::GraphicsPipelineInfo& info, std::vector<VkShaderStageFlagBits>& stages)
+	{
+		if (!info.tsPath.empty())
+		{
+			stages.push_back(VK_SHADER_STAGE_TASK_BIT_NV);
+		}
+		if (!info.msPath.empty())
+		{
+			stages.push_back(VK_SHADER_STAGE_MESH_BIT_NV);
+		}
+		if (!info.fsPath.empty())
+		{
+			stages.push_back(VK_SHADER_STAGE_FRAGMENT_BIT);
+		}
 	}
 
 	void GraphicsPipeline::Bind(VkCommandBuffer& cmd)

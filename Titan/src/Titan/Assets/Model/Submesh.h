@@ -1,6 +1,5 @@
 #pragma once
 #include <Titan/Rendering/Vertices.h>
-#include <Titan/Rendering/Buffers/VertexPacket.h>
 namespace Titan
 {
 	class StorageBuffer;

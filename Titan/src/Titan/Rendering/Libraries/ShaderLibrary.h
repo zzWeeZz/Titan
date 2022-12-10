@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <string>
 #include <filesystem>
+
 #include <vulkan/vulkan_core.h>
 
 struct SpvReflectShaderModule;
@@ -27,7 +28,7 @@ namespace Titan
 		std::string spvAssembly;
 		ShaderType shaderType = ShaderType::Count;
 		VkShaderStageFlags stage = VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
-		std::vector<VkDescriptorSetLayoutBinding> layoutBindings{};
+		std::unordered_map<uint32_t, std::vector<VkDescriptorSetLayoutBinding>> layouts{};
 		VkPushConstantRange pushConstants{};
 	};
 
