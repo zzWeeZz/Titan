@@ -1,10 +1,13 @@
 ResourceRegistry:
   - 0:
-      - c1b79d34-44d4-498e-850a-a69f778c32ef
+      - f2723122-1169-4555-b546-ca35f7460c4b
       - Assets/Texture/Titan.png
   - 1:
-      - 8912da59-80f6-4b7c-8368-c8f8af3e2d40
+      - 78cada3f-df9d-417d-be28-27c2eaf703f9
       - Assets/Texture/Titan.png
   - 2:
-      - ac9739af-5564-4c25-8dd8-37588361505a
-      - Assets/Models/icoSphere.glb
+      - afaa738d-8a96-48ff-a906-da24bacbd177
+      - Assets/Models/meshletPreview.glb
+  - 3:
+      - e67a5efd-04f4-4d7f-87e5-dec71fd2820b
+      - Assets/Texture/Titan.png

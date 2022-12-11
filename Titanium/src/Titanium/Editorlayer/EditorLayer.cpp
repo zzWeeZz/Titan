@@ -34,7 +34,7 @@ namespace Titan
 			auto& mdl = entity.AddComponent<ModelComponent>();
 			entity.GetComponent<TransformComponent>().scale = { 1,1 ,1 };
 			entity.GetComponent<TransformComponent>().rotation.x = -90;
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/icoSphere.glb");
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/meshletPreview.glb");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
 		{
@@ -51,30 +51,30 @@ namespace Titan
 		//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		{
-			ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + 0));
-			ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, 50));
-			ImGui::SetNextWindowViewport(viewport->ID);
+			//ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + 0));
+			//ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, 50));
+			//ImGui::SetNextWindowViewport(viewport->ID);
 
-			ImGuiWindowFlags window_flags = 0
-				| ImGuiWindowFlags_NoDocking
-				| ImGuiWindowFlags_NoTitleBar
-				| ImGuiWindowFlags_NoResize
-				| ImGuiWindowFlags_NoMove
-				| ImGuiWindowFlags_NoScrollbar
-				| ImGuiWindowFlags_NoSavedSettings
-				;
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-			ImGui::Begin("TOOLBAR", NULL, window_flags);
-			ImGui::PopStyleVar();
+			//ImGuiWindowFlags window_flags = 0
+			//	| ImGuiWindowFlags_NoDocking
+			//	| ImGuiWindowFlags_NoTitleBar
+			//	| ImGuiWindowFlags_NoResize
+			//	| ImGuiWindowFlags_NoMove
+			//	| ImGuiWindowFlags_NoScrollbar
+			//	| ImGuiWindowFlags_NoSavedSettings
+			//	;
+			//ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+			//ImGui::Begin("TOOLBAR", NULL, window_flags);
+			//ImGui::PopStyleVar();
 
-			//ImGui::Image(ResourceRegistry::GetItem<Texture>(m_TextureId)->GetDescriptorSet(), ImVec2(37, 37));
+			////ImGui::Image(ResourceRegistry::GetItem<Texture>(m_TextureId)->GetDescriptorSet(), ImVec2(37, 37));
 
-			ImGui::End();
+			//ImGui::End();
 		}
 
 		{
-			ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x + 0, viewport->Pos.y + 25));
-			ImGui::SetNextWindowSize(ImVec2(viewport->Size.x - 0, viewport->Size.y - 25));
+			ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x + 0, viewport->Pos.y - 20));
+			ImGui::SetNextWindowSize(ImVec2(viewport->Size.x - 0, viewport->Size.y + 20));
 			ImGui::SetNextWindowViewport(viewport->ID);
 			ImGuiWindowFlags window_flags = 0
 				| ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
