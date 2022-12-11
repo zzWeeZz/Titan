@@ -13,7 +13,7 @@ namespace Titan
 		ImGui::Begin("Rendering stats");
 
 		ImGui::Text("GPU Information");
-		ImGui::BeginChild("##GPU Information", ImVec2(0, (ImGui::GetWindowSize().y / 2) - ImGui::GetItemRectSize().y * 2.6f));
+		ImGui::BeginChild("##GPU Information", ImVec2(0, ((ImGui::GetWindowSize().y / 2) - 2 * (ImGui::GetItemRectSize().y + ImGui::GetStyle().ItemSpacing.y)) - 0.500001937155f));
 		ImGui::Text("GPU: ");
 		ImGui::SameLine();
 		auto& gpuInfo = GraphicsContext::GetPhysicalDevice().GetGPUInfo();
@@ -24,7 +24,7 @@ namespace Titan
 		ImGui::EndChild();
 
 		ImGui::Text("Rendering Information");
-		ImGui::BeginChild("##Rendering Information", ImVec2(0, (ImGui::GetWindowSize().y / 2) - ImGui::GetItemRectSize().y * 2.6f));
+		ImGui::BeginChild("##Rendering Information");
 		ImGui::Text("Trinagles Drawn: ");
 		ImGui::SameLine();
 		ImGui::Text("%d", Profiler::PofileDataGet<size_t>("TriangleCount"));

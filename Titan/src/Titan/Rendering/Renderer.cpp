@@ -32,6 +32,13 @@
 
 namespace Titan
 {
+	struct Constant
+	{
+		uint32_t meshletCount;
+		uint32_t vertexCount;
+		uint32_t indexCount;
+		uint32_t padd;
+	};
 	struct Cache
 	{
 		CameraCmd currentCamera = {};
@@ -47,9 +54,9 @@ namespace Titan
 		TitanID textureID;
 		ModelData modelData = {};
 		Ref<UniformBuffer> lightBuffer;
-
-		DescriptorAllocator allocator;
-		DescriptorLayoutCache cache;
+		Constant constant;
+		PerFrameInFlight<DescriptorAllocator> allocators;
+		PerFrameInFlight<DescriptorLayoutCache> caches;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
 	static PerFrameInFlight<VkDescriptorSet> s_DescriptorSets;
@@ -82,8 +89,9 @@ namespace Titan
 		info.topology = Topology::TriangleList;
 		info.imageFormats = { ImageFormat::R8G8B8A8_UN, ImageFormat::D32_SF_S8_UI };
 
-		info.msPath = "Engine/Shaders/StaticMesh_ms.mesh";
-		info.fsPath = "Engine/Shaders/staticMesh_fs.frag";
+		info.tsPath = "Engine/Shaders/StaticMesh_ts.glsl";
+		info.msPath = "Engine/Shaders/StaticMesh_ms.glsl";
+		info.fsPath = "Engine/Shaders/staticMesh_fs.glsl";
 		PipelineLibrary::Add("MeshShaders", info);
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
@@ -116,6 +124,7 @@ namespace Titan
 
 		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		auto index = GraphicsContext::GetSwapchain().GetNextImage();
+		s_Cache->allocators[currentFrame].ResetPools();
 		if (index < 0)
 		{
 			ImGui::EndFrame();
@@ -231,7 +240,7 @@ namespace Titan
 				auto triangle = mdlCmd.submesh->GetTriangleBuffer();
 				auto meshlet = mdlCmd.submesh->GetMeshletBuffer();
 				auto meshletVertex = mdlCmd.submesh->GetMeshletVertexBuffer();
-				auto light = s_Cache->lightBuffer;
+				auto& light = s_Cache->lightBuffer;
 
 				VkDescriptorBufferInfo vbufferInfo{};
 				vbufferInfo.buffer = vertex->GetAllocation().buffer;
@@ -259,18 +268,24 @@ namespace Titan
 				lightBufferInfo.range = light->GetAllocation().sizeOfBuffer;
 
 				VkDescriptorSet globalSet;
-				DescriptorBuilder::Begin(&s_Cache->cache, &s_Cache->allocator)
+				DescriptorBuilder::Begin(&s_Cache->caches[currentFrame], &s_Cache->allocators[currentFrame])
 					.BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(1, &vbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(2, &tbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(3, &mbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(4, &vmbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+					.BindBuffer(5, &mbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_TASK_BIT_NV)
 					.Build(globalSet);
 				VkDescriptorSet imageSet;
-				DescriptorBuilder::Begin(&s_Cache->cache, &s_Cache->allocator)
+				DescriptorBuilder::Begin(&s_Cache->caches[currentFrame], &s_Cache->allocators[currentFrame])
 					.BindImage(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
 					.BindBuffer(2, &lightBufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT)
 					.Build(imageSet);
+
+
+				s_Cache->constant.meshletCount = static_cast<uint32_t>(mdlCmd.submesh->GetMeshlets().size());
+
+				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV, 0, sizeof(Constant), &s_Cache->constant);
 
 				std::array<VkDescriptorSet, 2> sets = { globalSet, imageSet };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
@@ -314,11 +329,10 @@ namespace Titan
 			submitInfo.pSignalSemaphores = signalSemaphores;
 
 			TN_VK_CHECK(vkQueueSubmit(device.GetGraphicsQueue(), 1, &submitInfo, swapchain.GetInFlight(currentFrame)));
+			vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		}
 		{
 			TN_PROFILE_SCOPE("swapchain present");
-			vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
-
 			VkPresentInfoKHR presentInfo{};
 			presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
@@ -335,15 +349,17 @@ namespace Titan
 
 		currentFrame = (currentFrame + 1) % g_FramesInFlight;
 		TitanImGui::FlushDescriptors();
-		s_Cache->allocator.ResetPools();
 		s_Cache->meshCmds.clear();
 	}
 
 
 	void Renderer::Shutdown()
 	{
-		s_Cache->allocator.Shutdown();
-		s_Cache->cache.Shutdown();
+		for (size_t i = 0; i < g_FramesInFlight; ++i)
+		{
+			s_Cache->allocators[i].Shutdown();
+			s_Cache->caches[i].Shutdown();
+		}
 		s_Cache->mainFB->CleanUp();
 	}
 

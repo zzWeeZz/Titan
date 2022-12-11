@@ -55,7 +55,6 @@ void Titan::ImGuiUtils::Float(const std::string& label, float& value)
 	ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-	ImGui::SameLine();
 	ImGui::DragFloat("##Float", &value);
 	ImGui::PopItemWidth();
 
@@ -74,7 +73,6 @@ void Titan::ImGuiUtils::Color3(const std::string& label, glm::vec3& col)
 	ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-	ImGui::SameLine();
 	ImGui::ColorEdit3("##Color", &col.x);
 	ImGui::PopItemWidth();
 
@@ -139,7 +137,6 @@ void Titan::ImGuiUtils::String(const std::string& label, std::string& str)
 	ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-	ImGui::SameLine();
 	std::string bufferText = str;
 	if (ImGui::InputText("##Text", &bufferText))
 	{
@@ -162,7 +159,6 @@ void Titan::ImGuiUtils::String(const std::string& label, Snowflake::String& str)
 	ImGui::PushMultiItemsWidths(1, ImGui::CalcItemWidth());
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
-	ImGui::SameLine();
 	std::string bufferText = str.c_str();
 	if (ImGui::InputText("##Text", &bufferText))
 	{

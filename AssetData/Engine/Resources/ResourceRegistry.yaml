@@ -1,10 +1,10 @@
 ResourceRegistry:
   - 0:
-      - 3f538314-4476-4269-b286-81e41c8b1399
+      - c1b79d34-44d4-498e-850a-a69f778c32ef
       - Assets/Texture/Titan.png
   - 1:
-      - 80384926-7ea4-425e-9d45-b9acbb3569d5
-      - Assets/Models/rat.glb
-  - 2:
-      - 9800248c-08b1-4799-8b9a-5a2e4f17f223
+      - 8912da59-80f6-4b7c-8368-c8f8af3e2d40
       - Assets/Texture/Titan.png
+  - 2:
+      - ac9739af-5564-4c25-8dd8-37588361505a
+      - Assets/Models/icoSphere.glb

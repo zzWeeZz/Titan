@@ -20,7 +20,7 @@ namespace Titan
 			TN_CORE_ERROR("(Hydra::ImportModel) Could not find file {0}.", filepath.string());
 			return;
 		}
-		const auto extension = filepath.extension();
+		const auto& extension = filepath.extension();
 		if (extension == ".fbx")
 		{
 			FBXImporter::Import(filepath, submeshes);
@@ -34,6 +34,7 @@ namespace Titan
 			TN_CORE_ERROR("(Hydra::ImportModel) Extension: [{0}] is not supported model format!");
 			return;
 		}
+
 		for (size_t i = 0; i < submeshes.size(); ++i)
 		{
 			GenerateMeshlets(submeshes[i]);

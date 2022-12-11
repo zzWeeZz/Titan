@@ -39,7 +39,7 @@ namespace Titan
 		createInfo.enabledLayerCount = 0;
 #endif
 
-		const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_NV_MESH_SHADER_EXTENSION_NAME};
+		const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_NV_MESH_SHADER_EXTENSION_NAME, "VK_KHR_maintenance4"};
 		bool extensionsSupported = CheckDeviceExtensionSupport(physicalDevice, deviceExtensions);
 		if (!(indices.HasValue() && extensionsSupported && GraphicsContext::SwapchainAdequate()))
 		{
@@ -48,10 +48,16 @@ namespace Titan
 		createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 		createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 		
+		const VkPhysicalDeviceMaintenance4Features maintenance4Feature
+		{
+		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES,
+		.maintenance4 = VK_TRUE
+		};
 
 		const VkPhysicalDeviceMeshShaderFeaturesNV meshShaderPropFeature
 		{
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV,
+		.pNext = (void*)&maintenance4Feature,
 		.taskShader = VK_TRUE,
 		.meshShader = VK_TRUE,
 		

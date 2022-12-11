@@ -32,28 +32,27 @@ namespace Titan
 		options.SetOptimizationLevel(shaderc_optimization_level_performance);
 		binaryPath /= "OptiPerformace";
 #endif // TN_CONFIG_DEBUG
-		
+
+
 		binaryPath /= path.stem();
 		binaryPath += "_sprv_assembly.tns";
 		// Get out what shadertype the shader is
-		auto extension = path.extension().string();
-		if (extension == ".vert")
-		{
-			shader.shaderType = ShaderType::Vertex;
-		}
-		else if (extension == ".frag")
+		auto filename = path.stem().string();
+		auto shaderValidater = filename.substr(filename.size() - 2, 2);
+
+		if (shaderValidater == "fs")
 		{
 			shader.shaderType = ShaderType::Fragment;
 		}
-		else if (extension == ".comp")
+		else if (shaderValidater == "cs")
 		{
 			shader.shaderType = ShaderType::Compute;
 		}
-		else if (extension == ".mesh")
+		else if (shaderValidater == "ms")
 		{
 			shader.shaderType = ShaderType::Mesh;
 		}
-		else if (extension == ".Task")
+		else if (shaderValidater == "ts")
 		{
 			shader.shaderType = ShaderType::Task;
 		}
@@ -65,11 +64,14 @@ namespace Titan
 		{
 			shader.spvAssembly = ReadBinary(binaryPath);
 			auto asmSprv = compiler.AssembleToSpv(shader.spvAssembly);
-			TN_CORE_ASSERT(asmSprv.GetCompilationStatus() == shaderc_compilation_status_success, asmSprv.GetErrorMessage().c_str());
-			shader.spvBinary = {asmSprv.cbegin(), asmSprv.cend()};
-			Reflect(shader);
-			return shader;
+			if (asmSprv.GetCompilationStatus() == shaderc_compilation_status_success)
+			{
+				shader.spvBinary = { asmSprv.cbegin(), asmSprv.cend() };
+				Reflect(shader);
+				return shader;
+			}
 		}
+		options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
 
 		// Get the whole file to string.
 		std::ifstream fin(path, std::ios::binary | std::ios::ate);
@@ -77,16 +79,16 @@ namespace Titan
 		shader.shaderFile.resize(fin.tellg());
 		fin.seekg(0, std::ios::beg);
 		fin.read(shader.shaderFile.data(), shader.shaderFile.size());
-		
 
-		
+
+
 
 		auto preprocess = compiler.PreprocessGlsl(shader.shaderFile, (shaderc_shader_kind)shader.shaderType, path.stem().string().c_str(), options);
 
 		TN_CORE_ASSERT(preprocess.GetCompilationStatus() == shaderc_compilation_status_success, preprocess.GetErrorMessage().c_str());
 
 		shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(preprocess.begin(), (shaderc_shader_kind)shader.shaderType, path.stem().string().c_str(), options);
-		
+
 		TN_CORE_ASSERT(result.GetCompilationStatus() == shaderc_compilation_status_success, result.GetErrorMessage().c_str());
 		shader.spvBinary = { result.cbegin(), result.cend() };
 

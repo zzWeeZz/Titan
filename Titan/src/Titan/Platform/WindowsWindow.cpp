@@ -42,7 +42,7 @@ namespace Titan
 			s_Initialized = true;
 		}
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		//glfwWindowHint(GLFW_DECORATED, false);
+		glfwWindowHint(GLFW_DECORATED, false);
 		m_Window = glfwCreateWindow(m_WindowInfo.Width, m_WindowInfo.Height, m_WindowInfo.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
 		glfwSetWindowUserPointer(m_Window, &m_WindowInfo);

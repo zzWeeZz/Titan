@@ -28,12 +28,13 @@ namespace Titan
 		m_PanelHandler.Add<SceneHierarchyPanel>("SceneHierarchy", std::make_shared<SceneHierarchyPanel>(m_ActiveScene));
 		m_PanelHandler.Add<PropertiesPanel>("PropertiesPanel", std::make_shared<PropertiesPanel>());
 		m_PanelHandler.Add<RenderingStatsPanel>("RenderingPanel", std::make_shared<RenderingStatsPanel>());
+		ResourceRegistry::GetItem<Texture>(m_TextureId)->Initialize("Assets/Texture/Titan.png");
 		{
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();
 			entity.GetComponent<TransformComponent>().scale = { 1,1 ,1 };
 			entity.GetComponent<TransformComponent>().rotation.x = -90;
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/rat.glb");
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/icoSphere.glb");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
 		{
@@ -46,27 +47,52 @@ namespace Titan
 
 	void EditorLayer::OnUpdate()
 	{
-		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-	/*	ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + 0));
-		ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, 50));
-		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::ShowDemoWindow();
+		//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		{
+			ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + 0));
+			ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, 50));
+			ImGui::SetNextWindowViewport(viewport->ID);
 
-		ImGuiWindowFlags window_flags = 0
-			| ImGuiWindowFlags_NoDocking
-			| ImGuiWindowFlags_NoTitleBar
-			| ImGuiWindowFlags_NoResize
-			| ImGuiWindowFlags_NoMove
-			| ImGuiWindowFlags_NoScrollbar
-			| ImGuiWindowFlags_NoSavedSettings
-			;
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-		ImGui::Begin("TOOLBAR", NULL, window_flags);
-		ImGui::PopStyleVar();
+			ImGuiWindowFlags window_flags = 0
+				| ImGuiWindowFlags_NoDocking
+				| ImGuiWindowFlags_NoTitleBar
+				| ImGuiWindowFlags_NoResize
+				| ImGuiWindowFlags_NoMove
+				| ImGuiWindowFlags_NoScrollbar
+				| ImGuiWindowFlags_NoSavedSettings
+				;
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+			ImGui::Begin("TOOLBAR", NULL, window_flags);
+			ImGui::PopStyleVar();
 
-		ImGui::Button("Toolbar goes here", ImVec2(0, 37));
+			//ImGui::Image(ResourceRegistry::GetItem<Texture>(m_TextureId)->GetDescriptorSet(), ImVec2(37, 37));
 
-		ImGui::End();*/
+			ImGui::End();
+		}
+
+		{
+			ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x + 0, viewport->Pos.y + 25));
+			ImGui::SetNextWindowSize(ImVec2(viewport->Size.x - 0, viewport->Size.y - 25));
+			ImGui::SetNextWindowViewport(viewport->ID);
+			ImGuiWindowFlags window_flags = 0
+				| ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
+				| ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
+				| ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
+				| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+			ImGui::Begin("Master DockSpace", NULL, window_flags);
+			ImGuiID dockMain = ImGui::GetID("MyDockspace");
+			// Save off menu bar height for later.
+
+			ImGui::DockSpace(dockMain);
+			ImGui::End();
+			ImGui::PopStyleVar(3);
+		}
 
 		m_PanelHandler.SendCallback();
 		m_PanelHandler.Get<SceneHierarchyPanel>("SceneHierarchy")->EntitySelectedCallback([this](Entity& entity)
@@ -154,7 +180,7 @@ namespace Titan
 			if (m_Pitch < -89.0f)
 				m_Pitch = -89.0f;
 
-			glm::vec3 direction;
+			glm::vec3 direction{};
 			direction.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
 			direction.y = sin(glm::radians(m_Pitch));
 			direction.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));

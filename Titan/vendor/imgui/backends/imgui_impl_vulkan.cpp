@@ -66,7 +66,6 @@
 
 #include "imgui_impl_vulkan.h"
 #include <stdio.h>
-
 // Visual Studio warnings
 #ifdef _MSC_VER
 #pragma warning (disable: 4127) // condition expression is constant

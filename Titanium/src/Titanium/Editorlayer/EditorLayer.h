@@ -27,7 +27,7 @@ namespace Titan
 		TransformComponent m_transformData;
 		Ref<Scene> m_ActiveScene;
 		PanelHandler m_PanelHandler;
-
+		TitanID m_TextureId;
 		Ref<PropertiesPanel> m_PropertiesPanel;
 		Ref<SceneHierarchyPanel> m_SceneHierarchyPanel;
 		Ref<RenderingStatsPanel> m_RenderingStatsPanel;

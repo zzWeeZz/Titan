@@ -111,6 +111,34 @@ namespace Titan
 
 		CombineAndCreateDescriptorlayouts(shaders, descriptorlayouts);
 
+		std::vector<VkPushConstantRange> pushConstants;
+
+		for (auto& shader : shaders)
+		{
+			if (pushConstants.empty())
+			{
+				pushConstants.push_back(shader.pushConstants);
+			}
+			else
+			{
+				for (auto& pc : pushConstants)
+				{
+					if (shader.pushConstants.size < 1)
+					{
+						continue;
+					}
+					if (shader.pushConstants.size == pc.size)
+					{
+						pc.stageFlags |= shader.pushConstants.stageFlags;
+					}
+					else
+					{
+						pushConstants.push_back(shader.pushConstants);
+					}
+				}
+			}
+		}
+
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		if (!descriptorlayouts.empty())
@@ -118,11 +146,11 @@ namespace Titan
 			pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorlayouts.size()); // Optional
 			pipelineLayoutInfo.pSetLayouts = descriptorlayouts.data(); // Optional
 		}
-		//if (vShader.pushConstants.size != 0)
-		//{
-		//	pipelineLayoutInfo.pushConstantRangeCount = 1; // Optional
-		//	pipelineLayoutInfo.pPushConstantRanges = &vShader.pushConstants; // Optional
-		//}
+		if (!pushConstants.empty())
+		{
+			pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstants.size()); // Optional
+			pipelineLayoutInfo.pPushConstantRanges = pushConstants.data(); // Optional
+		}
 
 		TN_VK_CHECK(vkCreatePipelineLayout(GraphicsContext::GetDevice().GetHandle(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout));
 		TitanAllocator::QueueDeletion([&]() { vkDestroyPipelineLayout(GraphicsContext::GetDevice().GetHandle(), m_PipelineLayout, nullptr); });
