@@ -35,7 +35,7 @@ void main()
 {
     Meshlet meshlet = meshlets[gl_GlobalInvocationID.x];
 
-    bool render = gl_GlobalInvocationID.x < 160;
+    bool render = gl_GlobalInvocationID.x < meshletCount;
     
     uvec4 vote  = subgroupBallot(render);
     uint  tasks = subgroupBallotBitCount(vote);
