@@ -1,13 +1,13 @@
 ResourceRegistry:
   - 0:
-      - f2723122-1169-4555-b546-ca35f7460c4b
+      - c11814e8-02a8-40b6-b41a-840304bee834
       - Assets/Texture/Titan.png
   - 1:
-      - 78cada3f-df9d-417d-be28-27c2eaf703f9
+      - 9f17838c-aa6a-458a-b6c3-3c1835989326
       - Assets/Texture/Titan.png
   - 2:
-      - afaa738d-8a96-48ff-a906-da24bacbd177
-      - Assets/Models/meshletPreview.glb
-  - 3:
-      - e67a5efd-04f4-4d7f-87e5-dec71fd2820b
+      - c9a884c0-28d3-4394-9885-8592158e30f8
       - Assets/Texture/Titan.png
+  - 3:
+      - c7817eec-7b1e-4294-8b85-e8e6aef87a67
+      - Assets/Models/meshletPreview.glb

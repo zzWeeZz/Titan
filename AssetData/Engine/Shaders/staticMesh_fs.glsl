@@ -22,6 +22,12 @@ layout (binding = 2, set = 1) uniform _lightData
 	vec4 color;
 } u_LightData;
 
+layout (push_constant) uniform constants
+{
+	uint DebugMeshlets;
+};
+
+
 void main()
 {
 	float lightStrength = max(dot(fragIn.normal, u_LightData.direction.xyz), 0.0);
@@ -29,7 +35,10 @@ void main()
 	vec3 lighting = lightStrength * (u_LightData.color.xyz * u_LightData.color.w);
 
 	vec4 color = texture(u_Albedo, fragIn.texCoord);
-//	color = fragIn.color;
+	if(DebugMeshlets > 0)
+	{
+		color = fragIn.color;
+	}
 	color.xyz = (vec3(0.3) + lighting) * color.xyz;
 
 	FragColor = pow(color, vec4(1.0 / 2.2));

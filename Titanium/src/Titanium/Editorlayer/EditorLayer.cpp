@@ -47,7 +47,6 @@ namespace Titan
 
 	void EditorLayer::OnUpdate()
 	{
-		ImGui::ShowDemoWindow();
 		//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		{

@@ -28,6 +28,8 @@ namespace Titan
 	class Renderer
 	{
 	public:
+		static void SetDebugLayer(const uint32_t& layer);
+
 		static void Submit(const CameraCmd& cameraCmd);
 		static void Submit(const MeshCmd& meshCmd);
 		static void Submit(const LightCmd& lightCmd);

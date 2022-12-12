@@ -60,7 +60,14 @@ namespace Titan
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
 	static PerFrameInFlight<VkDescriptorSet> s_DescriptorSets;
+	static uint32_t s_RenderDebugState;
 	static std::vector<PerFrameInFlight<VkDescriptorSet>> s_ExternalDescriptorSets;
+
+	void Renderer::SetDebugLayer(const uint32_t& layer)
+	{
+		s_RenderDebugState = layer;
+	}
+
 	void Renderer::Submit(const CameraCmd& cameraCmd)
 	{
 		s_Cache->currentCamera = cameraCmd;
@@ -286,6 +293,7 @@ namespace Titan
 				s_Cache->constant.meshletCount = static_cast<uint32_t>(mdlCmd.submesh->GetMeshlets().size());
 
 				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV, 0, sizeof(Constant), &s_Cache->constant);
+				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(uint32_t), &s_RenderDebugState);
 
 				std::array<VkDescriptorSet, 2> sets = { globalSet, imageSet };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);

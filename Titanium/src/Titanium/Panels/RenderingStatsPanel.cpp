@@ -4,6 +4,7 @@
 
 #include "Titan/Utils/Profiler.h"
 
+#include "Titan/Rendering/Renderer.h"
 #include "Titan/Rendering/GraphicsContext.h"
 
 namespace Titan
@@ -24,6 +25,10 @@ namespace Titan
 		ImGui::EndChild();
 
 		ImGui::Text("Rendering Information");
+		ImGui::SameLine();
+		static bool checkBox = false;
+		ImGui::Checkbox("Debug meshlets", &checkBox);
+		Renderer::SetDebugLayer(static_cast<uint32_t>(checkBox));
 		ImGui::BeginChild("##Rendering Information");
 		ImGui::Text("Trinagles Drawn: ");
 		ImGui::SameLine();
