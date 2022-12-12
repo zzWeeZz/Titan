@@ -11,6 +11,7 @@
 #include "Titan/Core/Core.h"
 #include <Titan/Rendering/Vertices.h>
 #include <Titan/Assets/Model/Submesh.h>
+#include <glm/glm/gtx/transform.hpp>
 namespace Titan
 {
 	void GLTFImporter::Import(const std::filesystem::path& filepath, std::vector<Submesh>& outMeshes)
@@ -57,20 +58,40 @@ namespace Titan
 		const tinygltf::Scene& scene = model.scenes[model.defaultScene];
 		for (size_t i = 0; i < scene.nodes.size(); i++)
 		{
-			std::vector<RawVertex> tempVertices;
-			std::vector<uint32_t> tempIndex;
 			const tinygltf::Node& node = model.nodes[scene.nodes[i]];
-			LoadNode(node, model, tempVertices, tempIndex);
+			LoadNode(node, model, nullptr, outMeshes);
 
-			if (!(tempIndex.empty() || tempVertices.empty()))
-			{
-				// constructs with (std::Vector<vertex>&, std::Vector<uint32_t>&).
-				outMeshes.emplace_back(tempVertices, tempIndex);
-			}
 		}
 	}
-	void GLTFImporter::LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, std::vector<RawVertex>& outVerties, std::vector<uint32_t>& outIndices)
+	void GLTFImporter::LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, Node* parent, std::vector<Submesh>& outMeshes)
 	{
+		Node currentNode{};
+
+		if (node.translation.size() == 3)
+		{
+			double dubScale[3] = { node.translation[0], node.translation[1], node.translation[2] };
+			currentNode.transform = glm::translate(glm::mat4(1.f), glm::vec3(static_cast<float>(dubScale[0]), static_cast<float>(dubScale[1]), static_cast<float>(dubScale[2])));
+		}
+
+		if (node.scale.size() == 3)
+		{
+			double dubScale[3] = { node.scale[0], node.scale[1], node.scale[2] };
+			currentNode.transform = currentNode.transform * glm::scale(glm::mat4(1.f), glm::vec3(static_cast<float>(dubScale[0]), static_cast<float>(dubScale[1]), static_cast<float>(dubScale[2])));
+		}
+
+		if (node.rotation.size() == 3)
+		{
+			double dubRotation[3] = { node.rotation[0], node.rotation[1], node.rotation[2] };
+			currentNode.transform = currentNode.transform * glm::rotate(glm::mat4(1.f), static_cast<float>(dubRotation[0]), glm::vec3(1.f, 0.f, 0.f));
+			currentNode.transform = currentNode.transform * glm::rotate(glm::mat4(1.f), static_cast<float>(dubRotation[1]), glm::vec3(0.f, 1.f, 0.f));
+			currentNode.transform = currentNode.transform * glm::rotate(glm::mat4(1.f), static_cast<float>(dubRotation[2]), glm::vec3(0.f, 0.f, 1.f));
+		}
+
+		for (size_t i = 0; i < node.children.size(); i++)
+		{
+			LoadNode(model.nodes[node.children[i]], model, &currentNode, outMeshes);
+		}
+
 		if (node.mesh > -1)
 		{
 			const tinygltf::Mesh mesh = model.meshes[node.mesh];
@@ -119,7 +140,8 @@ namespace Titan
 					const tinygltf::Buffer& buffer = model.buffers[bufferView.buffer];
 					tangentBuffer = reinterpret_cast<const float*>(&buffer.data[bufferView.byteOffset + accessor.byteOffset]);
 				}
-
+				std::vector<RawVertex> outVerties;
+				std::vector<uint32_t> outIndices;
 				outVerties.resize(vertexCount);
 				for (size_t index = 0; index < vertexCount; ++index)
 				{
@@ -181,6 +203,7 @@ namespace Titan
 						TN_CORE_ERROR("Index component not supported!");
 						return;
 					}
+					outMeshes.emplace_back(outVerties, outIndices);
 				}
 			}
 		}
