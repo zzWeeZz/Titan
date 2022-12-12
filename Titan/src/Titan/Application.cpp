@@ -41,6 +41,7 @@ void Titan::Application::Run()
 		Chrono::UpdateTimeData();
 		TitanImGui::Begin();
 		OPTICK_FRAME("MainThread");
+		Renderer::NewFrame();
 		for (const auto& layer : m_LayerStack)
 		{
 			layer->OnUpdate();

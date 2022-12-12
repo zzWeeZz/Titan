@@ -19,7 +19,8 @@ namespace Titan
 
     void Framebuffer::Resize(size_t width, size_t height)
     {
-		TitanImGui::FlushDescriptors();
+		auto& current = GraphicsContext::GetCurrentFrame();
+		TitanImGui::FlushDescriptors(current);
 		if (width == 0 || height == 0)
 		{
 			TN_CORE_ASSERT(false, "resize failed, width or height were 0!");

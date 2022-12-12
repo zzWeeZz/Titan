@@ -143,7 +143,8 @@ namespace Titan
 
 	void TitanImGui::HandleDescriptorSet(VkDescriptorSet& desc)
 	{
-		s_HandledDescriptors.push_back(desc);
+		auto& currentFrame = GraphicsContext::GetCurrentFrame();
+		s_HandledDescriptors[currentFrame].push_back(desc);
 	}
 
 	void TitanImGui::HandleImageBarrier(VkImageMemoryBarrier& memBarrier, VkImageMemoryBarrier& memReturnBarrier)
@@ -268,14 +269,14 @@ namespace Titan
 			ImGui::RenderPlatformWindowsDefault();
 		}
 	}
-	void TitanImGui::FlushDescriptors()
+	void TitanImGui::FlushDescriptors(const uint32_t& currentFrame)
 	{
 
-		for (auto& desc : s_HandledDescriptors)
+		for (auto& desc : s_HandledDescriptors[currentFrame])
 		{
 			ImGui_ImplVulkan_RemoveTexture(desc);
 		}
-		s_HandledDescriptors.clear();
+		s_HandledDescriptors[currentFrame].clear();
 		s_HandledImageReturnBarriers.clear();
 		s_HandledImageBarriers.clear();
 	}

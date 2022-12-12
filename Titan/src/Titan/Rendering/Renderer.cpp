@@ -113,6 +113,16 @@ namespace Titan
 		SamplerLibrary::Add("Clamp", Filter::Linear, Address::ClampToEdge, MipmapMode::Linear);
 	}
 
+	void Renderer::NewFrame()
+	{
+		auto& currentFrame = GraphicsContext::GetCurrentFrame();
+		auto& swapchain = GraphicsContext::GetSwapchain();
+		auto& device = GraphicsContext::GetDevice();
+		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
+		s_Cache->allocators[currentFrame].ResetPools();
+		TitanImGui::FlushDescriptors(currentFrame);
+	}
+
 	void Renderer::Begin()
 	{
 		TN_PROFILE_FUNCTION();
@@ -129,9 +139,8 @@ namespace Titan
 		bufferInfo.offset = 0;
 		bufferInfo.range = sizeof(CameraData);
 
-		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		auto index = GraphicsContext::GetSwapchain().GetNextImage();
-		s_Cache->allocators[currentFrame].ResetPools();
+
 		if (index < 0)
 		{
 			ImGui::EndFrame();
@@ -291,9 +300,8 @@ namespace Titan
 
 
 				s_Cache->constant.meshletCount = static_cast<uint32_t>(mdlCmd.submesh->GetMeshlets().size());
-
-				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV, 0, sizeof(Constant), &s_Cache->constant);
-				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(uint32_t), &s_RenderDebugState);
+				s_Cache->constant.padd = s_RenderDebugState;
+				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
 
 				std::array<VkDescriptorSet, 2> sets = { globalSet, imageSet };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
@@ -337,7 +345,6 @@ namespace Titan
 			submitInfo.pSignalSemaphores = signalSemaphores;
 
 			TN_VK_CHECK(vkQueueSubmit(device.GetGraphicsQueue(), 1, &submitInfo, swapchain.GetInFlight(currentFrame)));
-			vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		}
 		{
 			TN_PROFILE_SCOPE("swapchain present");
@@ -356,7 +363,6 @@ namespace Titan
 		}
 
 		currentFrame = (currentFrame + 1) % g_FramesInFlight;
-		TitanImGui::FlushDescriptors();
 		s_Cache->meshCmds.clear();
 	}
 

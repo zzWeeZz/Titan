@@ -24,9 +24,11 @@ layout (binding = 2, set = 1) uniform _lightData
 
 layout (push_constant) uniform constants
 {
-	uint DebugMeshlets;
+    uint meshletCount;
+    uint vertexCount;
+    uint indexCount;
+    uint padd;
 };
-
 
 void main()
 {
@@ -35,9 +37,11 @@ void main()
 	vec3 lighting = lightStrength * (u_LightData.color.xyz * u_LightData.color.w);
 
 	vec4 color = texture(u_Albedo, fragIn.texCoord);
-	if(DebugMeshlets > 0)
+	if(padd > 0)
 	{
 		color = fragIn.color;
+		FragColor = pow(color, vec4(1.0 / 2.2));
+		return;
 	}
 	color.xyz = (vec3(0.3) + lighting) * color.xyz;
 
