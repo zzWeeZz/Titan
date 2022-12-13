@@ -35,7 +35,7 @@ namespace Titan
 		m_SwapchainFrameBuffers.resize(m_SwapchainViews.size());
 		CreateFrameBuffer();
 	}
-	int32_t Swapchain::GetNextImage()
+	const int32_t Swapchain::GetNextImage()
 	{
 		uint32_t imageIndex;
 		auto result = vkAcquireNextImageKHR(GraphicsContext::GetDevice().GetHandle(), m_Swapchain, UINT64_MAX, GetImageAvailableSemaphore(GraphicsContext::GetCurrentFrame()), VK_NULL_HANDLE, &imageIndex);
@@ -50,7 +50,7 @@ namespace Titan
 		m_CurrentImage = imageIndex;
 		return imageIndex;
 	}
-	uint32_t Swapchain::GetCurrentImageIndex()
+	const uint32_t Swapchain::GetCurrentImageIndex()
 	{
 		return m_CurrentImage;
 	}
@@ -189,6 +189,7 @@ namespace Titan
 		VkFenceCreateInfo fenceInfo{};
 		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+		// Creates semaphore and fence per frame-in-flight.
 		for (size_t i = 0; i < g_FramesInFlight; ++i)
 		{
 			TN_VK_CHECK(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphores[i]));

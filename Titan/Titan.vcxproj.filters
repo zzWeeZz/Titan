@@ -648,6 +648,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Utils\MemoryVector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -815,5 +816,6 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Utils\MemoryVector.cpp" />
   </ItemGroup>
 </Project>

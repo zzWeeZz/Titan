@@ -68,6 +68,7 @@ namespace Titan
 
 		createInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 #endif
+
 #ifdef TN_CONFIG_DEBUG
 		if (info.debuging)
 		{
@@ -79,6 +80,7 @@ namespace Titan
 
 
 		const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
+
 #ifdef TN_CONFIG_DEBUG
 
 		if (info.debuging && !CheckValidationLayerSupport(validationLayers))
@@ -120,6 +122,7 @@ namespace Titan
 		{
 			TN_CORE_INFO(extension.extensionName);
 		}
+
 #ifdef TN_CONFIG_DEBUG
 		if (info.debuging)
 		{

@@ -53,6 +53,6 @@ void main()
     uint idxOffset = subgroupBallotExclusiveBitCount(vote);
     if (render)
     {
-      OUT.subIDs[idxOffset] = uint(gl_LocalInvocationID.x);
+        OUT.subIDs[idxOffset] = uint(gl_LocalInvocationID.x);
     }
 }

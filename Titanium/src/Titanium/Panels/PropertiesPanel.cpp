@@ -27,9 +27,9 @@ namespace Titan
 
 		{
 			auto& transComp = m_InspectedItem.GetComponent<TransformComponent>();
-			ImGuiUtils::Vec3("Pos:", transComp.position);
+			ImGuiUtils::Vec3("Position:", transComp.position);
 			glm::vec3 degRot = glm::degrees(transComp.rotation);
-			ImGuiUtils::Vec3("Rot:", degRot);
+			ImGuiUtils::Vec3("Rotation:", degRot);
 			transComp.rotation = glm::radians(degRot);
 			ImGuiUtils::Vec3("Scale:", transComp.scale);
 		}

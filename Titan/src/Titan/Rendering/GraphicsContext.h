@@ -25,21 +25,27 @@ namespace Titan
 	{
 		friend class Swapchain;
 	public:
-		static uint32_t& GetCurrentFrame() { return s_CurrentFrame; }
+
 		static void Initialize(const GraphicsContextInfo& info);
-		static const GraphicsContextInfo& GetInfo() { return s_Info; }
+
 		static Device& GetDevice() { return s_Device; }
-		static PhysicalDevice& GetPhysicalDevice() { return s_PhysicalDevice; }
+		static VkInstance& GetInstance() { return s_Instance; }
 		static Swapchain& GetSwapchain() { return s_Swapchain; }
 		static VkSurfaceKHR& GetSurface() { return s_Surface; }
-		static VkInstance& GetInstance() { return s_Instance; }
+		static uint32_t& GetCurrentFrame() { return s_CurrentFrame; }
+		static PhysicalDevice& GetPhysicalDevice() { return s_PhysicalDevice; }
+		static const GraphicsContextInfo& GetInfo() { return s_Info; }
+
 		static bool SwapchainAdequate();
+		
 		static void Shutdown();
 	private:
+		// Loops through validation layers and checks with the instance Layers if it supports given validation layer.
 		static bool CheckValidationLayerSupport(std::vector<const char*> validationLayer);
 		static void CreateSurface();
 		static void SetupDebugMessenger();
 		static void DestroyDebugMessenger();
+		// Fetches from the physical device what format, image count, and present mode the swapchain should have.
 		static void QuerySwapchainSupport(SwapChainSupportDetails& swapchainSupportDetails);
 		static void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 

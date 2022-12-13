@@ -50,7 +50,10 @@ namespace Titan
             m_GPUInfo.apiVersionMajor = VK_VERSION_MAJOR(deviceProperties.apiVersion);
             m_GPUInfo.apiVersionMinor = VK_VERSION_MINOR(deviceProperties.apiVersion);
             m_GPUInfo.apiVersionPatch = VK_VERSION_PATCH(deviceProperties.apiVersion);
-            m_GPUInfo.driverVersion = deviceProperties.driverVersion;
+
+			m_GPUInfo.gpuDriverVersionMajor = VK_VERSION_MAJOR(deviceProperties.driverVersion);
+			m_GPUInfo.gpuDriverVersionMinor = VK_VERSION_MINOR(deviceProperties.driverVersion);
+			m_GPUInfo.gpuDriverVersionPatch = VK_VERSION_PATCH(deviceProperties.driverVersion);
         }
     }
     QueueFamilyIndices PhysicalDevice::FindQueueFamilies()

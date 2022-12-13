@@ -20,7 +20,9 @@ namespace Titan
 		uint32_t apiVersionMajor;
 		uint32_t apiVersionMinor;
 		uint32_t apiVersionPatch;
-		uint32_t driverVersion;
+		uint32_t gpuDriverVersionMajor;
+		uint32_t gpuDriverVersionMinor;
+		uint32_t gpuDriverVersionPatch;
 	};
 
 	class PhysicalDevice

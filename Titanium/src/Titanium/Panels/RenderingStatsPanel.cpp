@@ -2,6 +2,7 @@
 
 #include <ImGui/imgui.h>
 
+#define TN_PROFILE_NO_OPTICK
 #include "Titan/Utils/Profiler.h"
 
 #include "Titan/Rendering/Renderer.h"
@@ -19,9 +20,15 @@ namespace Titan
 		ImGui::SameLine();
 		auto& gpuInfo = GraphicsContext::GetPhysicalDevice().GetGPUInfo();
 		ImGui::Text(gpuInfo.gpuName.c_str());
+		ImGui::Text("GPU driver version: ");
+		ImGui::SameLine();
+		ImGui::Text("%d.%d.%d", gpuInfo.gpuDriverVersionMajor, gpuInfo.gpuDriverVersionMinor, gpuInfo.gpuDriverVersionPatch);
 		ImGui::Text("Vulkan version: ");
 		ImGui::SameLine();
 		ImGui::Text("%d.%d.%d", gpuInfo.apiVersionMajor, gpuInfo.apiVersionMinor, gpuInfo.apiVersionPatch);
+		ImGui::Text("VRAM Allocated: ");
+		ImGui::SameLine();
+		ImGui::Text("%d", Profiler::PofileDataGet<uint64_t>("BytesAllocated"));
 		ImGui::EndChild();
 
 		ImGui::Text("Rendering Information");

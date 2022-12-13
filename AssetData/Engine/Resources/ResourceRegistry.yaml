@@ -1,13 +1,19 @@
 ResourceRegistry:
   - 0:
-      - b0dafbb3-e6c3-4071-afa5-eb989fcbb20b
+      - e16978b7-6995-42e6-b627-50828f879891
       - Assets/Texture/Titan.png
   - 1:
-      - a7ab846f-2196-427d-9913-9125890e835e
+      - 42eb74ba-693b-45e5-877c-9bd0b582ca95
       - Assets/Texture/Titan.png
   - 2:
-      - c544d609-6cb2-47b1-9e5b-d24f55b99aff
-      - Assets/Models/meshletPreview.glb
-  - 3:
-      - f258ee72-2694-4711-933d-0bfe0669043d
+      - 6cc94446-5c1d-42e7-a115-0c0a8a62a94b
       - Assets/Texture/Titan.png
+  - 3:
+      - 04a9b4b0-1a45-4f7a-80bf-d6bf16d5a14e
+      - Assets/Models/player.glb
+  - 4:
+      - 32b72533-5ac7-4c22-8a76-27cf0da648cb
+      - Assets/Texture/Titan.png
+  - 5:
+      - 79b25679-2bea-4878-8ad2-fa3e18dadaa9
+      - Assets/Models/Tori.glb

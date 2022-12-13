@@ -1,6 +1,8 @@
 #include "TNpch.h"
 #include "TitanAllocator.h"
 #include "Titan/Rendering/GraphicsContext.h"
+
+#include "Titan/Utils/Profiler.h"
 namespace Titan
 {
 	void TitanAllocator::Initialize()
@@ -21,6 +23,8 @@ namespace Titan
 		TN_VK_CHECK(vmaCreateBuffer(s_Allocator, bufferInfo, allocationInfo, &allocation.buffer, &allocation.allocation, nullptr));
 		s_AllocateDestructorOrder.push_back(allocation.id);
 		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_CORE_INFO("TitanAllocator: id {0} Deallocating buffer: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation); };
+
+		Profiler::PofileDataAdd("BytesAllocated", allocation.sizeOfBuffer);
 		s_ID++;
 	}
 
@@ -34,12 +38,16 @@ namespace Titan
 		s_AllocateDestructorOrder.push_back(allocation.id);
 		TN_CORE_INFO("TitanAllocator: id {0} Allocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
 		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_CORE_INFO("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation); };
+
+		Profiler::PofileDataAdd("BytesAllocated", allocation.sizeOfBuffer);
+
 		s_ID++;
 	}
 
 	void TitanAllocator::DeAllocate(AllocatedBuffer& allocation)
 	{
 		TN_CORE_INFO("TitanAllocator: id {0} Deallocating buffer: {1} bytes", allocation.id, allocation.sizeOfBuffer);
+		Profiler::PofileDataAdd("BytesAllocated", -allocation.sizeOfBuffer);
 		vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation);
 		s_DestroyFunctions.erase(allocation.id);
 		auto it = std::find(s_AllocateDestructorOrder.begin(), s_AllocateDestructorOrder.end(), allocation.id);
@@ -52,6 +60,7 @@ namespace Titan
 	void TitanAllocator::DeAllocate(AllocatedImage& allocation)
 	{
 		TN_CORE_INFO("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
+		Profiler::PofileDataAdd("BytesAllocated", -allocation.sizeOfBuffer);
 		vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation);
 		s_DestroyFunctions.erase(allocation.id);
 		auto it = std::find(s_AllocateDestructorOrder.begin(), s_AllocateDestructorOrder.end(), allocation.id);

@@ -9,6 +9,8 @@
 
 #include "Titan/ImGui/TitanImGui.h"
 
+#include "Titan/Utils/MemoryVector.h"
+
 #include "Titan/Assets/Model/Submesh.h"
 #include "Titan/Assets/Texture/Texture.h"
 #include "Titan/Assets/ResourceRegistry.h"
@@ -43,7 +45,7 @@ namespace Titan
 	{
 		CameraCmd currentCamera = {};
 		LightCmd lightData = {};
-		std::vector<MeshCmd> meshCmds;
+		MemoryVector<MeshCmd> meshCmds;
 
 		Ref<Framebuffer> mainFB;
 		Ref<VertexBuffer> vbtest;
@@ -74,7 +76,10 @@ namespace Titan
 	}
 	void Renderer::Submit(const MeshCmd& meshCmd)
 	{
-		s_Cache->meshCmds.push_back(meshCmd);
+		auto& cmd = s_Cache->meshCmds.Emplace();
+		cmd.submesh = meshCmd.submesh;
+		cmd.textureId = meshCmd.textureId;
+		cmd.transform = meshCmd.transform;
 	}
 
 	void Renderer::Submit(const LightCmd& lightCmd)
@@ -241,8 +246,9 @@ namespace Titan
 			s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
 			TN_PROFILE_CONTEXT(commandBuffer);
 			TN_PROFILE_SCOPE("Draw scene");
-			for (auto& mdlCmd : s_Cache->meshCmds)
+			for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
 			{
+				auto& mdlCmd = s_Cache->meshCmds[i];
 				auto texture = ResourceRegistry::GetItem<Texture>(mdlCmd.textureId);
 				VkDescriptorImageInfo imageInfo{};
 				imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -363,7 +369,7 @@ namespace Titan
 		}
 
 		currentFrame = (currentFrame + 1) % g_FramesInFlight;
-		s_Cache->meshCmds.clear();
+		s_Cache->meshCmds.Reset();
 	}
 
 

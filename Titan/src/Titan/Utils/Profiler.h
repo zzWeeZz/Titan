@@ -2,6 +2,8 @@
 #include <map>
 #include <any>
 #include <string>
+
+#ifndef TN_PROFILE_NO_OPTICK
 #include "Optick/src/optick.h"
 
 #ifndef TN_CONFIG_DIST
@@ -18,6 +20,7 @@
 #define TN_PROFILE_CONTEXT(...)
 #endif
 
+#endif
 namespace Titan
 {
 	class Profiler
