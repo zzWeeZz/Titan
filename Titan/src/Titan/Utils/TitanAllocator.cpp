@@ -47,7 +47,7 @@ namespace Titan
 	void TitanAllocator::DeAllocate(AllocatedBuffer& allocation)
 	{
 		TN_CORE_INFO("TitanAllocator: id {0} Deallocating buffer: {1} bytes", allocation.id, allocation.sizeOfBuffer);
-		Profiler::PofileDataAdd("BytesAllocated", -allocation.sizeOfBuffer);
+		Profiler::PofileDataSub("BytesAllocated", allocation.sizeOfBuffer);
 		vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation);
 		s_DestroyFunctions.erase(allocation.id);
 		auto it = std::find(s_AllocateDestructorOrder.begin(), s_AllocateDestructorOrder.end(), allocation.id);
@@ -60,7 +60,7 @@ namespace Titan
 	void TitanAllocator::DeAllocate(AllocatedImage& allocation)
 	{
 		TN_CORE_INFO("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
-		Profiler::PofileDataAdd("BytesAllocated", -allocation.sizeOfBuffer);
+		Profiler::PofileDataSub("BytesAllocated", allocation.sizeOfBuffer);
 		vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation);
 		s_DestroyFunctions.erase(allocation.id);
 		auto it = std::find(s_AllocateDestructorOrder.begin(), s_AllocateDestructorOrder.end(), allocation.id);

@@ -8,7 +8,7 @@ namespace Titan
 	public:
 		static float Timestep();
 		static float TotalTime();
-
+		static float TimeStamp();
 		static void UpdateTimeData();
 
 	private:

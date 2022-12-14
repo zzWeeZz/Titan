@@ -22,13 +22,11 @@ namespace Titan
 	inline MemoryVector<T>::MemoryVector()
 	{
 		m_VirtualSize = 0;
-		m_Container.resize(8);
 	}
 	template<typename T>
 	inline MemoryVector<T>::MemoryVector(const size_t& preSize)
 	{
 		m_VirtualSize = 0;
-		m_Container.resize(8);
 	}
 	template<typename T>
 	inline T& MemoryVector<T>::Emplace()
@@ -48,7 +46,12 @@ namespace Titan
 	template<typename T>
 	inline T& MemoryVector<T>::operator[](const size_t& index)
 	{
+#ifdef TN_CONFIG_DEBUG
+		TN_CORE_ASSERT(index <= m_Container.size() - 1, "Cant access MemoryVector index due to being out of range");
 		return m_Container[index];
+#else
+		return m_Container[index];
+#endif
 	}
 
 }

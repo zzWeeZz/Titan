@@ -49,6 +49,8 @@ void Titan::Application::Run()
 		s_Window->OnUpdate();
 		Renderer::Begin();
 	}
+	GraphicsContext::WaitOnAllFences();
+
 	ResourceRegistry::Dump();
 	
 	GraphicsContext::GetSwapchain().CleanUp();
@@ -67,7 +69,7 @@ void Titan::Application::OnEvent(Event& e)
 	}
 	if (e.GetEventType() == EventType::WindowResize)
 	{
-		auto resize = *reinterpret_cast<WindowResizeEvent*>(&e);
+		auto& resize = *reinterpret_cast<WindowResizeEvent*>(&e);
 		GraphicsContext::GetSwapchain().Resize(resize.GetWidth(), resize.GetHeight());
 	}
 	for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)

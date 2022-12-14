@@ -21,9 +21,10 @@
 
 #include <Titan/Rendering/Buffers/IndexBuffer.h>
 #include <Titan/Rendering/Buffers/VertexBuffer.h>
+#include <Titan/Rendering/Buffers/GenericBuffer.h>
 #include <Titan/Rendering/Buffers/StorageBuffer.h>
 #include <Titan/Rendering/Buffers/UniformBuffer.h>
-#include "Titan/Rendering/Buffers/UniformBuffers.h"
+#include <Titan/Rendering/Buffers/UniformBuffers.h>
 
 #include "Titan/Rendering/Libraries/SamplerLibrary.h"
 #include "Titan/Rendering/Libraries/PipelineLibrary.h"
@@ -31,6 +32,8 @@
 #include "Titan/Rendering/Descriptors/DescriptorBuilder.h"
 #include "Titan/Rendering/Descriptors/DescriptorAllocator.h"
 #include "Titan/Rendering/Descriptors/DescriptorLayoutCache.h"
+
+#define MAX_INDIRECT_COMMANDS 10000
 
 namespace Titan
 {
@@ -59,6 +62,8 @@ namespace Titan
 		Constant constant;
 		PerFrameInFlight<DescriptorAllocator> allocators;
 		PerFrameInFlight<DescriptorLayoutCache> caches;
+
+		Ref<GenericBuffer> indirectCmdBuffer;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
 	static PerFrameInFlight<VkDescriptorSet> s_DescriptorSets;
@@ -115,6 +120,16 @@ namespace Titan
 		fbInfo.imageFormats = { ImageFormat::R8G8B8A8_UN, ImageFormat::D32_SF_S8_UI };
 		s_Cache->mainFB = Framebuffer::Create(fbInfo);
 
+		GenericBufferInfo indirectBufferInfo{};
+		indirectBufferInfo.data = nullptr;
+		indirectBufferInfo.size = MAX_INDIRECT_COMMANDS;
+		indirectBufferInfo.stride = sizeof(VkDrawMeshTasksIndirectCommandNV);
+		indirectBufferInfo.perFrameInFlight = true;
+		indirectBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
+		indirectBufferInfo.allocUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+
+		s_Cache->indirectCmdBuffer = GenericBuffer::Create(indirectBufferInfo);
+
 		SamplerLibrary::Add("Clamp", Filter::Linear, Address::ClampToEdge, MipmapMode::Linear);
 	}
 
@@ -155,8 +170,16 @@ namespace Titan
 		uint32_t imageIndex = index;
 		vkResetCommandBuffer(commandBuffer, 0);
 
-
-		
+		void* mappedMemory = nullptr;
+		TitanAllocator::MapMemory(s_Cache->indirectCmdBuffer->GetAllocation(), mappedMemory);
+		VkDrawMeshTasksIndirectCommandNV* drawCommands = (VkDrawMeshTasksIndirectCommandNV*)mappedMemory;
+		// Collect indrect buffer cmds
+		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
+		{
+			drawCommands[i].taskCount = static_cast<uint32_t>(s_Cache->meshCmds[i].submesh->GetMeshlets().size());
+			drawCommands[i].firstTask = 0;
+		}
+		TitanAllocator::UnMapMemory(s_Cache->indirectCmdBuffer->GetAllocation());
 
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -239,12 +262,13 @@ namespace Titan
 			PipelineLibrary::BindPipline("MeshShaders", commandBuffer);
 			s_Cache->mainFB->Bind(commandBuffer);
 			
-
-
 			s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 			s_Cache->cameraData.view = s_Cache->currentCamera.view;
 			s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
-			TN_PROFILE_CONTEXT(commandBuffer);
+
+		
+
+
 			TN_PROFILE_SCOPE("Draw scene");
 			for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
 			{
@@ -313,14 +337,13 @@ namespace Titan
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
 			
 
-				auto func = (PFN_vkCmdDrawMeshTasksNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksNV");
+				auto func = (PFN_vkCmdDrawMeshTasksIndirectNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksIndirectNV");
 				if (func != nullptr)
 				{
 					Profiler::PofileDataAdd("MeshletCount", mdlCmd.submesh->GetMeshlets().size());
 					Profiler::PofileDataAdd("TriangleCount", mdlCmd.submesh->GetIndices().size());
-					func(commandBuffer, static_cast<uint32_t>(mdlCmd.submesh->GetMeshlets().size()), 0);
+					func(commandBuffer, s_Cache->indirectCmdBuffer->GetAllocation().buffer, i * sizeof(VkDrawMeshTasksIndirectCommandNV), 1, sizeof(VkDrawMeshTasksIndirectCommandNV));
 				}
-
 			}
 
 			vkCmdEndRendering(commandBuffer);
@@ -349,7 +372,7 @@ namespace Titan
 
 			submitInfo.signalSemaphoreCount = 1;
 			submitInfo.pSignalSemaphores = signalSemaphores;
-
+			TN_PROFILE_GPU_EVENT("GPU: Queue submit");
 			TN_VK_CHECK(vkQueueSubmit(device.GetGraphicsQueue(), 1, &submitInfo, swapchain.GetInFlight(currentFrame)));
 		}
 		{

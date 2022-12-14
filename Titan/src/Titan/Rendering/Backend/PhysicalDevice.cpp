@@ -81,6 +81,10 @@ namespace Titan
                     indices.presentFamily = i;
                 }
             }
+			if (queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT)
+			{
+				indices.transferFamily = i;
+			}
 			if (indices.HasValue())
 				break;
             i++;

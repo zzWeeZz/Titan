@@ -24,15 +24,15 @@ namespace Titan
 		memcpy_s(mappedData, bufferSize, info.data, bufferSize);
 		TitanAllocator::UnMapMemory(cpuBuffer);
 
-		VkBufferCreateInfo vertexBufferInfo{};
-		vertexBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		vertexBufferInfo.pNext = nullptr;
+		VkBufferCreateInfo storageBufferInfo{};
+		storageBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		storageBufferInfo.pNext = nullptr;
 
-		vertexBufferInfo.size = bufferSize;
-		vertexBufferInfo.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+		storageBufferInfo.size = bufferSize;
+		storageBufferInfo.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 		allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-		TitanAllocator::Allocate(m_GpuBuffer, &vertexBufferInfo, &allocInfo);
+		TitanAllocator::Allocate(m_GpuBuffer, &storageBufferInfo, &allocInfo);
 
 		GraphicsContext::GetDevice().ImmediateSubmit([=](VkCommandBuffer cmd)
 			{

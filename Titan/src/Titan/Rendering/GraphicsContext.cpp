@@ -62,7 +62,7 @@ namespace Titan
 		{
 			extensions.push_back(glfwExtensions[i]);
 		}
-		
+
 #ifdef TN_PLATFORM_MACOS
 		extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
 
@@ -134,8 +134,10 @@ namespace Titan
 		s_PhysicalDevice.Create(s_Instance);
 		s_Device.Create(s_PhysicalDevice, validationLayers);
 		s_Swapchain.Create(s_PhysicalDevice, s_Device);
+#ifdef TN_CONFIG_DEBUG
 		auto value = s_PhysicalDevice.FindQueueFamilies().graphicsFamily.value();
 		//OPTICK_GPU_INIT_VULKAN(&s_Device.GetHandle(), &s_PhysicalDevice.GetHandle(), &s_Device.GetGraphicsQueue(), &value, 1, nullptr);
+#endif
 	}
 
 	void GraphicsContext::Shutdown()
@@ -179,14 +181,14 @@ namespace Titan
 			}
 		}
 
-		return true; 
+		return true;
 	}
 
 	void GraphicsContext::CreateSurface()
-	{ 
+	{
 		auto& glfwWindow = *static_cast<GLFWwindow*>(Application::GetWindow().GetNativeWindow());
 		glfwCreateWindowSurface(s_Instance, &glfwWindow, nullptr, &s_Surface);
-	} 
+	}
 
 	void GraphicsContext::SetupDebugMessenger()
 	{
@@ -234,6 +236,16 @@ namespace Titan
 		QuerySwapchainSupport(details);
 
 		return !details.formats.empty() && !details.presentModes.empty();
+	}
+
+	void GraphicsContext::WaitOnAllFences()
+	{
+		std::vector<VkFence> fences;
+		for (size_t frameIndex = 0; frameIndex < g_FramesInFlight; ++frameIndex)
+		{
+			fences.push_back(s_Swapchain.GetInFlight(frameIndex));
+		}
+		vkWaitForFences(s_Device.GetHandle(), static_cast<uint32_t>(fences.size()), fences.data(), VK_TRUE, UINT64_MAX);
 	}
 
 	void GraphicsContext::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)

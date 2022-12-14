@@ -294,6 +294,9 @@
     <ClInclude Include="src\Titan\Utils\KeyCode.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Utils\MemoryVector.h">
+      <Filter>src\Titan\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Utils\MouseCode.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
@@ -648,7 +651,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Utils\MemoryVector.h" />
+    <ClInclude Include="src\Titan\Rendering\Buffers\GenericBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -771,6 +774,9 @@
     <ClCompile Include="src\Titan\Utils\Input.cpp">
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\Titan\Utils\MemoryVector.cpp">
+      <Filter>src\Titan\Utils</Filter>
+    </ClCompile>
     <ClCompile Include="src\Titan\Utils\Profiler.cpp">
       <Filter>src\Titan\Utils</Filter>
     </ClCompile>
@@ -816,6 +822,6 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Utils\MemoryVector.cpp" />
+    <ClCompile Include="src\Titan\Rendering\Buffers\GenericBuffer.cpp" />
   </ItemGroup>
 </Project>

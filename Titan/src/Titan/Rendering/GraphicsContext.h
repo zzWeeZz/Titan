@@ -37,7 +37,7 @@ namespace Titan
 		static const GraphicsContextInfo& GetInfo() { return s_Info; }
 
 		static bool SwapchainAdequate();
-		
+		static void WaitOnAllFences();
 		static void Shutdown();
 	private:
 		// Loops through validation layers and checks with the instance Layers if it supports given validation layer.

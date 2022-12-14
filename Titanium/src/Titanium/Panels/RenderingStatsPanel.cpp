@@ -28,7 +28,9 @@ namespace Titan
 		ImGui::Text("%d.%d.%d", gpuInfo.apiVersionMajor, gpuInfo.apiVersionMinor, gpuInfo.apiVersionPatch);
 		ImGui::Text("VRAM Allocated: ");
 		ImGui::SameLine();
-		ImGui::Text("%d", Profiler::PofileDataGet<uint64_t>("BytesAllocated"));
+		auto allocated = Profiler::PofileDataGet<uint64_t>("BytesAllocated");
+		allocated /= 1000000;
+		ImGui::Text("%d mb", allocated);
 		ImGui::EndChild();
 
 		ImGui::Text("Rendering Information");
