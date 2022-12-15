@@ -154,6 +154,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Titan\Rendering\BindRegistry.h" />
     <ClInclude Include="src\Titan\Rendering\Buffers\GenericBuffer.h" />
     <ClInclude Include="src\TNpch.h" />
     <ClInclude Include="src\Titan.h" />
@@ -333,6 +334,7 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Titan\Rendering\BindRegistry.cpp" />
     <ClCompile Include="src\Titan\Rendering\Buffers\GenericBuffer.cpp" />
     <ClCompile Include="src\TNpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

@@ -30,7 +30,7 @@ namespace Titan
 	}
 	inline std::string GetStringOfID(TitanID id)
 	{
-		char* str;
+		char* str = nullptr;
 		auto re = UuidToStringA(&id, (RPC_CSTR*)&str);
 		
 		std::string returnValue(str);

@@ -29,7 +29,7 @@ namespace Titan
 		inline Ref<StorageBuffer> GetMeshletBuffer() { return m_MeshletBuffer; }
 		inline Ref<StorageBuffer> GetTriangleBuffer() { return m_TriangleBuffer; }
 		inline Ref<StorageBuffer> GetMeshletVertexBuffer() { return m_MeshletVertexBuffer; }
-		inline const TitanID& GetID() { return m_ID; }
+		inline const size_t& GetHash() { return m_ID; }
 	private:
 		std::vector<RawVertex> m_RawVertices;
 		std::vector<BufferVertex> m_BufferVertices;
@@ -40,6 +40,6 @@ namespace Titan
 		Ref<StorageBuffer> m_TriangleBuffer;
 		Ref<StorageBuffer> m_MeshletBuffer;
 		Ref<StorageBuffer> m_MeshletVertexBuffer;
-		TitanID m_ID; // TODO: this should be some form of structure.
+		size_t m_ID; // TODO: this should be some form of structure.
 	};
 }

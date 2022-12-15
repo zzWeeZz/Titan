@@ -125,14 +125,14 @@ namespace Optick
 			};
 		}
 
-		VkQueryPoolCreateInfo queryPoolCreateInfo;
+		VkQueryPoolCreateInfo queryPoolCreateInfo{};
 		queryPoolCreateInfo.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
 		queryPoolCreateInfo.pNext = 0;
 		queryPoolCreateInfo.flags = 0;
 		queryPoolCreateInfo.queryType = VK_QUERY_TYPE_TIMESTAMP;
 		queryPoolCreateInfo.queryCount = MAX_QUERIES_COUNT + 1;
 
-		VkCommandPoolCreateInfo commandPoolCreateInfo;
+		VkCommandPoolCreateInfo commandPoolCreateInfo{};
 		commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		commandPoolCreateInfo.pNext = 0;
 		commandPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;

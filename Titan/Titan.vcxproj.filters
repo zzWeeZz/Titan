@@ -652,6 +652,7 @@
       <Filter>vendor\vma</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Buffers\GenericBuffer.h" />
+    <ClInclude Include="src\Titan\Rendering\BindRegistry.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -823,5 +824,6 @@
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Buffers\GenericBuffer.cpp" />
+    <ClCompile Include="src\Titan\Rendering\BindRegistry.cpp" />
   </ItemGroup>
 </Project>

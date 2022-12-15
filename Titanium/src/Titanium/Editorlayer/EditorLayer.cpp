@@ -33,8 +33,8 @@ namespace Titan
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();
 			entity.GetComponent<TransformComponent>().scale = { 1,1 ,1 };
-			entity.GetComponent<TransformComponent>().rotation.x = -90;
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/player.glb");
+			entity.GetComponent<TransformComponent>().rotation.x = glm::pi<float>();
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Sponza/sponza2022.glb");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
 		{

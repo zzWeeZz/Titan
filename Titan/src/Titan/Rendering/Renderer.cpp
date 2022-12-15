@@ -17,6 +17,7 @@
 
 #include "Titan/Rendering/Vertices.h"
 #include "Titan/Rendering/Framebuffer.h"
+#include "Titan/Rendering/BindRegistry.h"
 #include "Titan/Rendering/GraphicsContext.h"
 
 #include <Titan/Rendering/Buffers/IndexBuffer.h>
@@ -62,7 +63,7 @@ namespace Titan
 		Constant constant;
 		PerFrameInFlight<DescriptorAllocator> allocators;
 		PerFrameInFlight<DescriptorLayoutCache> caches;
-
+		BindRegistry textureBindSet;
 		Ref<GenericBuffer> indirectCmdBuffer;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
@@ -265,9 +266,7 @@ namespace Titan
 			s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 			s_Cache->cameraData.view = s_Cache->currentCamera.view;
 			s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
-
 		
-
 
 			TN_PROFILE_SCOPE("Draw scene");
 			for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
@@ -337,15 +336,15 @@ namespace Titan
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
 			
 
-				auto func = (PFN_vkCmdDrawMeshTasksIndirectNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksIndirectNV");
+				PFN_vkCmdDrawMeshTasksIndirectNV func = (PFN_vkCmdDrawMeshTasksIndirectNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksIndirectNV");
 				if (func != nullptr)
 				{
 					Profiler::PofileDataAdd("MeshletCount", mdlCmd.submesh->GetMeshlets().size());
 					Profiler::PofileDataAdd("TriangleCount", mdlCmd.submesh->GetIndices().size());
+					TN_PROFILE_GPU_EVENT("Draw");
 					func(commandBuffer, s_Cache->indirectCmdBuffer->GetAllocation().buffer, i * sizeof(VkDrawMeshTasksIndirectCommandNV), 1, sizeof(VkDrawMeshTasksIndirectCommandNV));
 				}
 			}
-
 			vkCmdEndRendering(commandBuffer);
 		}
 

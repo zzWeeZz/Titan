@@ -8,7 +8,9 @@ namespace Titan
 	{
 		m_RawVertices = vertices;
 		m_Indices = indices;
-		m_ID = CreateID();
+		m_ID = 0;
+		m_ID += vertices.size();
+		m_ID += indices.size();
 	}
 	void Submesh::CreateBuffers()
 	{
@@ -24,7 +26,6 @@ namespace Titan
 			bufferVert.Color = glm::vec4(rawVert.Color, 1.f);
 			bufferVert.TexCoords = rawVert.TexCoords;
 		}
-
 		StorageBufferInfo info{};
 		info.data = m_BufferVertices.data();
 		info.size = m_BufferVertices.size();
@@ -44,5 +45,7 @@ namespace Titan
 		info.size = m_Meshlets.size();
 		info.stride = sizeof(Meshlet);
 		m_MeshletBuffer = StorageBuffer::Create(info);
+
+		m_ID += m_Meshlets.size();
 	}
 }
