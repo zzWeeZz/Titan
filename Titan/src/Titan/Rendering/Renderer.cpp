@@ -35,6 +35,7 @@
 #include "Titan/Rendering/Descriptors/DescriptorLayoutCache.h"
 
 #define MAX_INDIRECT_COMMANDS 10000
+#define MAX_MESHLETS 100000
 
 namespace Titan
 {
@@ -65,11 +66,10 @@ namespace Titan
 		PerFrameInFlight<DescriptorLayoutCache> caches;
 		BindRegistry textureBindSet;
 		Ref<GenericBuffer> indirectCmdBuffer;
+		Ref<GenericBuffer> meshletBuffer;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
-	static PerFrameInFlight<VkDescriptorSet> s_DescriptorSets;
 	static uint32_t s_RenderDebugState;
-	static std::vector<PerFrameInFlight<VkDescriptorSet>> s_ExternalDescriptorSets;
 
 	void Renderer::SetDebugLayer(const uint32_t& layer)
 	{
@@ -130,10 +130,22 @@ namespace Titan
 		indirectBufferInfo.allocUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 
 		s_Cache->indirectCmdBuffer = GenericBuffer::Create(indirectBufferInfo);
+	
+		CreateMeshletBuffer();
 
 		SamplerLibrary::Add("Clamp", Filter::Linear, Address::ClampToEdge, MipmapMode::Linear);
 	}
+	void Renderer::CreateMeshletBuffer()
+	{
+		GenericBufferInfo meshletBufferInfo{};
+		meshletBufferInfo.data = nullptr;
+		meshletBufferInfo.size = MAX_MESHLETS;
+		meshletBufferInfo.stride = sizeof(Meshlet);
+		meshletBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+		meshletBufferInfo.allocUsage = VMA_MEMORY_USAGE_GPU_ONLY;
 
+		s_Cache->meshletBuffer = GenericBuffer::Create(meshletBufferInfo);
+	}
 	void Renderer::NewFrame()
 	{
 		auto& currentFrame = GraphicsContext::GetCurrentFrame();

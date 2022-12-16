@@ -216,6 +216,12 @@
     <ClInclude Include="src\Titan\Rendering\Backend\Swapchain.h">
       <Filter>src\Titan\Rendering\Backend</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\BindRegistry.h">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Rendering\Buffers\GenericBuffer.h">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Rendering\Buffers\IndexBuffer.h">
       <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClInclude>
@@ -651,8 +657,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Rendering\Buffers\GenericBuffer.h" />
-    <ClInclude Include="src\Titan\Rendering\BindRegistry.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -714,6 +718,12 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Backend\Swapchain.cpp">
       <Filter>src\Titan\Rendering\Backend</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\BindRegistry.cpp">
+      <Filter>src\Titan\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Rendering\Buffers\GenericBuffer.cpp">
+      <Filter>src\Titan\Rendering\Buffers</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Rendering\Buffers\IndexBuffer.cpp">
       <Filter>src\Titan\Rendering\Buffers</Filter>
@@ -823,7 +833,5 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Rendering\Buffers\GenericBuffer.cpp" />
-    <ClCompile Include="src\Titan\Rendering\BindRegistry.cpp" />
   </ItemGroup>
 </Project>
