@@ -123,7 +123,7 @@ namespace Titan
 			{
 				for (auto& pc : pushConstants)
 				{
-					if (shader.pushConstants.size < 1)
+					if (shader.pushConstants.size == 0)
 					{
 						continue;
 					}

@@ -24,13 +24,29 @@ namespace Titan
 			{
 				bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 				TitanAllocator::Allocate(m_AllocatedBuffers[i], &bufferInfo, &allocInfo);
+				if (info.data)
+				{
+					void* mappedData = nullptr;
+					TitanAllocator::MapMemory(m_AllocatedBuffers[i], mappedData);
+					memcpy_s(mappedData, bufferSize, info.data, bufferSize);
+					TitanAllocator::UnMapMemory(m_AllocatedBuffers[i]);
+				}
 			}
 		}
 		else
 		{
 			TitanAllocator::Allocate(m_AllocatedBuffers[0], &bufferInfo, &allocInfo);
+			if (info.data)
+			{
+				void* mappedData = nullptr;
+				TitanAllocator::MapMemory(m_AllocatedBuffers[0], mappedData);
+				memcpy_s(mappedData, bufferSize, info.data, bufferSize);
+				TitanAllocator::UnMapMemory(m_AllocatedBuffers[0]);
+			}
 		}
 	}
+
+
 	AllocatedBuffer& GenericBuffer::GetAllocation()
 	{
 		if (m_UseFramesInFlight)
@@ -42,6 +58,8 @@ namespace Titan
 			return m_AllocatedBuffers[0];
 		}
 	}
+
+
 	Ref<GenericBuffer> GenericBuffer::Create(const GenericBufferInfo& info)
 	{
 		return CreateRef<GenericBuffer>(info);

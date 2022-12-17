@@ -65,6 +65,10 @@ namespace Titan
 		PerFrameInFlight<DescriptorAllocator> allocators;
 		PerFrameInFlight<DescriptorLayoutCache> caches;
 		BindRegistry textureBindSet;
+		BindRegistry meshletBindSet;
+		BindRegistry vertexBindSet;
+		BindRegistry triangleBindSet;
+		BindRegistry vertexIndexBindSet;
 		Ref<GenericBuffer> indirectCmdBuffer;
 		Ref<GenericBuffer> meshletBuffer;
 	};
@@ -135,6 +139,7 @@ namespace Titan
 
 		SamplerLibrary::Add("Clamp", Filter::Linear, Address::ClampToEdge, MipmapMode::Linear);
 	}
+	
 	void Renderer::CreateMeshletBuffer()
 	{
 		GenericBufferInfo meshletBufferInfo{};
@@ -231,6 +236,20 @@ namespace Titan
 			);
 		}
 
+		CombineMeshlets(commandBuffer);
+
+		VkDescriptorSet BindlessSet;
+		{
+			VkDescriptorBufferInfo bindlessInfo{};
+			bindlessInfo.buffer = s_Cache->meshletBuffer->GetAllocation().buffer;
+			bindlessInfo.offset = 0;
+			bindlessInfo.range = s_Cache->meshletBuffer->GetAllocation().sizeOfBuffer;
+			DescriptorBuilder::Begin(&s_Cache->caches[currentFrame], &s_Cache->allocators[currentFrame])
+				.BindBuffer(0, &bindlessInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_TASK_BIT_NV)
+				.BindBuffer(1, &bindlessInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+				.Build(BindlessSet);
+		}
+
 		VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
 		VkClearValue depthClear{};
 		depthClear.depthStencil.depth = 1.f;
@@ -309,11 +328,6 @@ namespace Titan
 				tbufferInfo.offset = 0;
 				tbufferInfo.range = triangle->GetAllocation().sizeOfBuffer;
 
-				VkDescriptorBufferInfo mbufferInfo{};
-				mbufferInfo.buffer = meshlet->GetAllocation().buffer;
-				mbufferInfo.offset = 0;
-				mbufferInfo.range = meshlet->GetAllocation().sizeOfBuffer;
-
 				VkDescriptorBufferInfo vmbufferInfo{};
 				vmbufferInfo.buffer = meshletVertex->GetAllocation().buffer;
 				vmbufferInfo.offset = 0;
@@ -329,9 +343,7 @@ namespace Titan
 					.BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(1, &vbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(2, &tbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
-					.BindBuffer(3, &mbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(4, &vmbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
-					.BindBuffer(5, &mbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_TASK_BIT_NV)
 					.Build(globalSet);
 				VkDescriptorSet imageSet;
 				DescriptorBuilder::Begin(&s_Cache->caches[currentFrame], &s_Cache->allocators[currentFrame])
@@ -342,9 +354,11 @@ namespace Titan
 
 				s_Cache->constant.meshletCount = static_cast<uint32_t>(mdlCmd.submesh->GetMeshlets().size());
 				s_Cache->constant.padd = s_RenderDebugState;
+				s_Cache->constant.indexCount = s_Cache->meshletBindSet.Fetch(mdlCmd.submesh->GetID());
+
 				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
 
-				std::array<VkDescriptorSet, 2> sets = { globalSet, imageSet };
+				std::array<VkDescriptorSet, 3> sets = { globalSet, imageSet, BindlessSet };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
 			
 
@@ -406,6 +420,30 @@ namespace Titan
 		s_Cache->meshCmds.Reset();
 	}
 
+	void Renderer::CombineMeshlets(VkCommandBuffer& cmd)
+	{
+		auto srcMeshletBuffer = s_Cache->meshletBuffer->GetAllocation().buffer;
+		VkBufferCopy copy{};
+		VkDeviceSize srcOffset = 0;
+		VkBuffer dstBuffer{};
+		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
+		{
+			auto& mdlCmd = s_Cache->meshCmds[i];
+			auto sizeAndStride = mdlCmd.submesh->GetMeshletBuffer()->GetAllocation().sizeOfBuffer;
+			dstBuffer = mdlCmd.submesh->GetMeshletBuffer()->GetAllocation().buffer;
+
+			copy.dstOffset = 0;
+			copy.srcOffset = srcOffset;
+			copy.size = sizeAndStride;
+			vkCmdCopyBuffer(cmd, srcMeshletBuffer, dstBuffer, 1, &copy);
+			const bool isZero = srcOffset == 0;
+			const uint32_t sizeOfMeshlet = static_cast <uint32_t>(sizeof(Meshlet));
+			auto offset = !isZero ? static_cast<uint32_t>(srcOffset) / sizeOfMeshlet : static_cast<uint32_t>(srcOffset);
+			s_Cache->meshletBindSet.Register(mdlCmd.submesh->GetID(), offset);
+			srcOffset += sizeAndStride;
+		}
+		TN_CORE_INFO("dlfa");
+	}
 
 	void Renderer::Shutdown()
 	{

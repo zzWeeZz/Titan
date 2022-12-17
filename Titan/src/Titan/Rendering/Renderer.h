@@ -39,6 +39,7 @@ namespace Titan
 		static void Begin();
 		static void Shutdown();
 	private:
+		static void CombineMeshlets(VkCommandBuffer& cmd);
 		static void CreateMeshletBuffer();
 	};
 }

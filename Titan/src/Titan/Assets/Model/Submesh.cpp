@@ -2,15 +2,17 @@
 #include "Submesh.h"
 
 #include "Titan/Rendering/Buffers/StorageBuffer.h"
+#include "Titan/Rendering/Buffers/GenericBuffer.h"
 namespace Titan
 {
 	Submesh::Submesh(std::vector<RawVertex>& vertices, std::vector<uint32_t>& indices)
 	{
 		m_RawVertices = vertices;
 		m_Indices = indices;
-		m_ID = 0;
-		m_ID += vertices.size();
-		m_ID += indices.size();
+		m_Hash = 0;
+		m_Hash += vertices.size();
+		m_Hash += indices.size();
+		m_ID = CreateID();
 	}
 	void Submesh::CreateBuffers()
 	{
@@ -41,11 +43,22 @@ namespace Titan
 		info.size = m_MeshletVertices.size();
 		m_MeshletVertexBuffer = StorageBuffer::Create(info);
 
-		info.data = m_Meshlets.data();
-		info.size = m_Meshlets.size();
-		info.stride = sizeof(Meshlet);
-		m_MeshletBuffer = StorageBuffer::Create(info);
 
-		m_ID += m_Meshlets.size();
+		GenericBufferInfo indirectBufferInfo{};
+		indirectBufferInfo.data = m_Meshlets.data();
+		indirectBufferInfo.size = m_Meshlets.size();
+		indirectBufferInfo.stride = sizeof(Meshlet);
+		indirectBufferInfo.perFrameInFlight = false;
+		indirectBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		indirectBufferInfo.allocUsage = VMA_MEMORY_USAGE_CPU_ONLY;
+
+		m_MeshletBuffer = GenericBuffer::Create(indirectBufferInfo);
+
+		//info.data = m_Meshlets.data();
+		//info.size = m_Meshlets.size();
+		//info.stride = sizeof(Meshlet);
+		//m_MeshletBuffer = StorageBuffer::Create(info);
+
+		m_Hash += m_Meshlets.size();
 	}
 }

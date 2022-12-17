@@ -3,6 +3,7 @@
 namespace Titan
 {
 	class StorageBuffer;
+	class GenericBuffer;
 	struct Meshlet
 	{
 		uint32_t vertexOffset;
@@ -26,10 +27,11 @@ namespace Titan
 		inline std::vector<Meshlet>& GetMeshlets() { return m_Meshlets; }
 		inline std::vector<uint32_t>& GetMeshletVertices() { return m_MeshletVertices; }
 		inline Ref<StorageBuffer> GetVertexBuffer() { return m_VertexBuffer; }
-		inline Ref<StorageBuffer> GetMeshletBuffer() { return m_MeshletBuffer; }
+		inline Ref<GenericBuffer> GetMeshletBuffer() { return m_MeshletBuffer; }
 		inline Ref<StorageBuffer> GetTriangleBuffer() { return m_TriangleBuffer; }
 		inline Ref<StorageBuffer> GetMeshletVertexBuffer() { return m_MeshletVertexBuffer; }
-		inline const size_t& GetHash() { return m_ID; }
+		inline const size_t& GetHash() { return m_Hash; }
+		inline const TitanID& GetID() { return m_ID; }
 	private:
 		std::vector<RawVertex> m_RawVertices;
 		std::vector<BufferVertex> m_BufferVertices;
@@ -38,8 +40,9 @@ namespace Titan
 		std::vector<uint32_t> m_MeshletVertices;
 		Ref<StorageBuffer> m_VertexBuffer;
 		Ref<StorageBuffer> m_TriangleBuffer;
-		Ref<StorageBuffer> m_MeshletBuffer;
+		Ref<GenericBuffer> m_MeshletBuffer;
 		Ref<StorageBuffer> m_MeshletVertexBuffer;
-		size_t m_ID; // TODO: this should be some form of structure.
+		size_t m_Hash; // TODO: this should be some form of structure.
+		TitanID m_ID;
 	};
 }

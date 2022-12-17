@@ -64,7 +64,7 @@ struct Meshlet
   uint triangleCount;
 };
  
-layout (std430, binding = 3, set = 0) buffer _meshlets
+layout (std430, binding = 1, set = 2) buffer _meshlets
 {
   Meshlet meshlets[];
 } u_MeshletBuffer;

@@ -3,6 +3,13 @@
 #include "Titan/Rendering/GraphicsContext.h"
 
 #include "Titan/Utils/Profiler.h"
+
+#if TN_ALLOCATOR_TRACE
+#define TN_ALLOC_PRINT(...) TN_CORE_INFO(__VA_ARGS__)
+#else
+#define TN_ALLOC_PRINT(...)
+#endif
+
 namespace Titan
 {
 	void TitanAllocator::Initialize()
@@ -18,11 +25,11 @@ namespace Titan
 	void TitanAllocator::Allocate(AllocatedBuffer& allocation, VkBufferCreateInfo* bufferInfo, VmaAllocationCreateInfo* allocationInfo)
 	{
 		allocation.id = s_ID;
-		TN_CORE_INFO("TitanAllocator: id {0} Allocating buffer: {1} bytes", allocation.id, bufferInfo->size);
+		TN_ALLOC_PRINT("TitanAllocator: id {0} Allocating buffer: {1} bytes", allocation.id, bufferInfo->size);
 		allocation.sizeOfBuffer = bufferInfo->size;
 		TN_VK_CHECK(vmaCreateBuffer(s_Allocator, bufferInfo, allocationInfo, &allocation.buffer, &allocation.allocation, nullptr));
 		s_AllocateDestructorOrder.push_back(allocation.id);
-		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_CORE_INFO("TitanAllocator: id {0} Deallocating buffer: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation); };
+		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_ALLOC_PRINT("TitanAllocator: id {0} Deallocating buffer: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation); };
 
 		Profiler::PofileDataAdd("BytesAllocated", allocation.sizeOfBuffer);
 		s_ID++;
@@ -36,8 +43,8 @@ namespace Titan
 		vmaGetAllocationInfo(s_Allocator, allocation.allocation, &allocInfo);
 		allocation.sizeOfBuffer = allocInfo.size;
 		s_AllocateDestructorOrder.push_back(allocation.id);
-		TN_CORE_INFO("TitanAllocator: id {0} Allocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
-		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_CORE_INFO("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation); };
+		TN_ALLOC_PRINT("TitanAllocator: id {0} Allocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
+		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_ALLOC_PRINT("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation); };
 
 		Profiler::PofileDataAdd("BytesAllocated", allocation.sizeOfBuffer);
 
@@ -46,7 +53,7 @@ namespace Titan
 
 	void TitanAllocator::DeAllocate(AllocatedBuffer& allocation)
 	{
-		TN_CORE_INFO("TitanAllocator: id {0} Deallocating buffer: {1} bytes", allocation.id, allocation.sizeOfBuffer);
+		TN_ALLOC_PRINT("TitanAllocator: id {0} Deallocating buffer: {1} bytes", allocation.id, allocation.sizeOfBuffer);
 		Profiler::PofileDataSub("BytesAllocated", allocation.sizeOfBuffer);
 		vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation);
 		s_DestroyFunctions.erase(allocation.id);
@@ -59,7 +66,7 @@ namespace Titan
 
 	void TitanAllocator::DeAllocate(AllocatedImage& allocation)
 	{
-		TN_CORE_INFO("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
+		TN_ALLOC_PRINT("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
 		Profiler::PofileDataSub("BytesAllocated", allocation.sizeOfBuffer);
 		vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation);
 		s_DestroyFunctions.erase(allocation.id);
@@ -101,4 +108,15 @@ namespace Titan
 	{
 		vmaDestroyAllocator(s_Allocator);
 	}
+
+#if TN_ALLOCATOR_TRACK_RAM
+	void TitanAllocator::TrackRamAlloc(const size_t& size)
+	{
+		Profiler::PofileDataAdd("RamAlloc", size);
+	}
+	void TitanAllocator::TrackRamDealloc(const size_t& size)
+	{
+		Profiler::PofileDataSub("RamAlloc", size);
+	}
+#endif
 }
