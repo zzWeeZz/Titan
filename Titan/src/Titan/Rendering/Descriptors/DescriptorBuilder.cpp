@@ -39,11 +39,11 @@ namespace Titan
 		m_Writes.push_back(newWrite);
 		return *this;
 	}
-	DescriptorBuilder& DescriptorBuilder::BindImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, VkDescriptorType type, VkShaderStageFlags stageFlags)
+	DescriptorBuilder& DescriptorBuilder::BindImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, VkDescriptorType type, VkShaderStageFlags stageFlags, size_t descriptorCount)
 	{
 		VkDescriptorSetLayoutBinding newBinding{};
 
-		newBinding.descriptorCount = 1;
+		newBinding.descriptorCount = static_cast<uint32_t>(descriptorCount);
 		newBinding.descriptorType = type;
 		newBinding.pImmutableSamplers = nullptr;
 		newBinding.stageFlags = stageFlags;

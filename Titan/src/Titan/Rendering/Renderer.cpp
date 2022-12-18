@@ -38,6 +38,7 @@
 #define MAX_MESHLETS 100000
 #define MAX_VERTICES 10000000
 #define MAX_TRIANGLES 10000000
+#define MAX_TEXTURES 1000
 
 namespace Titan
 {
@@ -239,16 +240,7 @@ namespace Titan
 		uint32_t imageIndex = index;
 		vkResetCommandBuffer(commandBuffer, 0);
 
-		void* mappedMemory = nullptr;
-		TitanAllocator::MapMemory(s_Cache->indirectCmdBuffer->GetAllocation(), mappedMemory);
-		VkDrawMeshTasksIndirectCommandNV* drawCommands = (VkDrawMeshTasksIndirectCommandNV*)mappedMemory;
-		// Collect indrect buffer cmds
-		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
-		{
-			drawCommands[i].taskCount = static_cast<uint32_t>(s_Cache->meshCmds[i].submesh->GetMeshlets().size());
-			drawCommands[i].firstTask = 0;
-		}
-		TitanAllocator::UnMapMemory(s_Cache->indirectCmdBuffer->GetAllocation());
+		
 
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -322,8 +314,19 @@ namespace Titan
 					.BindBuffer(4, &bindlessVertexIndexInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.Build(s_Cache->bindlessSets[currentFrame]);
 			}
+
+
+			void* mappedMemory = nullptr;
+			TitanAllocator::MapMemory(s_Cache->indirectCmdBuffer->GetAllocation(), mappedMemory);
+			VkDrawMeshTasksIndirectCommandNV* drawCommands = (VkDrawMeshTasksIndirectCommandNV*)mappedMemory;
+			// Collect indrect buffer cmds
+			for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
+			{
+				drawCommands[i].taskCount = static_cast<uint32_t>(s_Cache->meshCmds[i].submesh->GetMeshlets().size());
+				drawCommands[i].firstTask = 0;
+			}
+			TitanAllocator::UnMapMemory(s_Cache->indirectCmdBuffer->GetAllocation());
 		}
-		
 		
 
 		VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
@@ -403,7 +406,6 @@ namespace Titan
 					.BindBuffer(6, &lightBufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT)
 					.Build(globalSet);
 				
-
 
 				s_Cache->constant.meshletCount = static_cast<uint32_t>(mdlCmd.submesh->GetMeshlets().size());
 				s_Cache->constant.meshletOffset = s_Cache->meshletBindSet.Fetch(mdlCmd.submesh->GetID());

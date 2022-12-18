@@ -9,7 +9,7 @@ namespace Titan
 	}
 	bool DescriptorAllocator::Allocate(VkDescriptorSet* set, VkDescriptorSetLayout layout)
 	{
-		auto device = GraphicsContext::GetDevice();
+		auto& device = GraphicsContext::GetDevice();
 		
 		if (m_CurrentPool == VK_NULL_HANDLE)
 		{
@@ -60,7 +60,7 @@ namespace Titan
 	}
 	void DescriptorAllocator::ResetPools()
 	{
-		auto device = GraphicsContext::GetDevice();
+		auto& device = GraphicsContext::GetDevice();
 		for (auto pool : m_UsedPools)
 		{
 			vkResetDescriptorPool(device.GetHandle(), pool, 0);
@@ -73,7 +73,7 @@ namespace Titan
 	}
 	void DescriptorAllocator::Shutdown()
 	{
-		auto device = GraphicsContext::GetDevice();
+		auto& device = GraphicsContext::GetDevice();
 		for (auto pool : m_FreePools)
 		{
 			vkDestroyDescriptorPool(device.GetHandle(), pool, nullptr);
@@ -101,7 +101,7 @@ namespace Titan
 	{
 		std::vector<VkDescriptorPoolSize> sizes;
 		sizes.reserve(m_DescriptorSizes.sizes.size());
-		for (auto sz : m_DescriptorSizes.sizes)
+		for (auto& sz : m_DescriptorSizes.sizes)
 		{
 			sizes.emplace_back(sz.first, static_cast<uint32_t>(sz.second * static_cast<float>(count)));
 		}
@@ -114,7 +114,7 @@ namespace Titan
 		poolInfo.pPoolSizes = sizes.data();
 
 		VkDescriptorPool descPool;
-		auto device = GraphicsContext::GetDevice();
+		auto& device = GraphicsContext::GetDevice();
 		vkCreateDescriptorPool(device.GetHandle(), &poolInfo, nullptr, &descPool);
 
 		return descPool;

@@ -32,6 +32,7 @@ layout (push_constant) uniform constants
 	uint triangleOffset;
 	uint vertexIndexOffset;
 	uint renderDebugState;
+	uint textureId;
 };
 
 void main()

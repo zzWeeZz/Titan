@@ -7,14 +7,14 @@ namespace Titan
 {
 	void DescriptorLayoutCache::Shutdown()
 	{
-		for (auto pair : m_LayoutCache)
+		for (auto& pair : m_LayoutCache)
 		{
 			vkDestroyDescriptorSetLayout(GraphicsContext::GetDevice().GetHandle(), pair.second, nullptr);
 		}
 	}
 	VkDescriptorSetLayout DescriptorLayoutCache::CreateDescriptorLayout(VkDescriptorSetLayoutCreateInfo* info)
 	{
-		auto device = GraphicsContext::GetDevice();
+		auto& device = GraphicsContext::GetDevice();
 		DescriptorLayoutInfo layoutInfo;
 		layoutInfo.bindings.reserve(info->bindingCount);
 		bool isSorted = true;
