@@ -36,6 +36,8 @@
 
 #define MAX_INDIRECT_COMMANDS 10000
 #define MAX_MESHLETS 100000
+#define MAX_VERTICES 10000000
+#define MAX_TRIANGLES 10000000
 
 namespace Titan
 {
@@ -44,7 +46,11 @@ namespace Titan
 		uint32_t meshletCount;
 		uint32_t vertexCount;
 		uint32_t indexCount;
-		uint32_t padd;
+		uint32_t meshletOffset;
+		uint32_t vertexOffset;
+		uint32_t triangleOffset;
+		uint32_t vertexIndexOffset;
+		uint32_t renderDebugState;
 	};
 	struct Cache
 	{
@@ -63,7 +69,10 @@ namespace Titan
 		Ref<UniformBuffer> lightBuffer;
 		Constant constant;
 		PerFrameInFlight<DescriptorAllocator> allocators;
+		PerFrameInFlight<DescriptorAllocator> bindlessAllocators;
 		PerFrameInFlight<DescriptorLayoutCache> caches;
+		PerFrameInFlight<DescriptorLayoutCache> bindlessCaches;
+		PerFrameInFlight<VkDescriptorSet> bindlessSets;
 		BindRegistry textureBindSet;
 		BindRegistry meshletBindSet;
 		BindRegistry vertexBindSet;
@@ -71,6 +80,9 @@ namespace Titan
 		BindRegistry vertexIndexBindSet;
 		Ref<GenericBuffer> indirectCmdBuffer;
 		Ref<GenericBuffer> meshletBuffer;
+		Ref<GenericBuffer> vertexBuffer;
+		Ref<GenericBuffer> triangleBuffer;
+		Ref<GenericBuffer> vertexIndexBuffer;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
 	static uint32_t s_RenderDebugState;
@@ -136,7 +148,9 @@ namespace Titan
 		s_Cache->indirectCmdBuffer = GenericBuffer::Create(indirectBufferInfo);
 	
 		CreateMeshletBuffer();
-
+		CreateVertexBuffer();
+		CreateTriangleBuffer();
+		CreateVertexIndexBuffer();
 		SamplerLibrary::Add("Clamp", Filter::Linear, Address::ClampToEdge, MipmapMode::Linear);
 	}
 	
@@ -148,8 +162,45 @@ namespace Titan
 		meshletBufferInfo.stride = sizeof(Meshlet);
 		meshletBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 		meshletBufferInfo.allocUsage = VMA_MEMORY_USAGE_GPU_ONLY;
+		meshletBufferInfo.perFrameInFlight = false;
 
 		s_Cache->meshletBuffer = GenericBuffer::Create(meshletBufferInfo);
+	}
+	void Renderer::CreateVertexBuffer()
+	{
+		GenericBufferInfo vertexBufferInfo{};
+		vertexBufferInfo.data = nullptr;
+		vertexBufferInfo.size = MAX_VERTICES;
+		vertexBufferInfo.stride = sizeof(BufferVertex);
+		vertexBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+		vertexBufferInfo.allocUsage = VMA_MEMORY_USAGE_GPU_ONLY;
+		vertexBufferInfo.perFrameInFlight = false;
+
+		s_Cache->vertexBuffer = GenericBuffer::Create(vertexBufferInfo);
+	}
+	void Renderer::CreateTriangleBuffer()
+	{
+		GenericBufferInfo triangleBufferInfo{};
+		triangleBufferInfo.data = nullptr;
+		triangleBufferInfo.size = MAX_TRIANGLES;
+		triangleBufferInfo.stride = sizeof(uint32_t);
+		triangleBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+		triangleBufferInfo.allocUsage = VMA_MEMORY_USAGE_GPU_ONLY;
+		triangleBufferInfo.perFrameInFlight = false;
+
+		s_Cache->triangleBuffer = GenericBuffer::Create(triangleBufferInfo);
+	}
+	void Renderer::CreateVertexIndexBuffer()
+	{
+		GenericBufferInfo triangleBufferInfo{};
+		triangleBufferInfo.data = nullptr;
+		triangleBufferInfo.size = MAX_TRIANGLES;
+		triangleBufferInfo.stride = sizeof(uint32_t);
+		triangleBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+		triangleBufferInfo.allocUsage = VMA_MEMORY_USAGE_GPU_ONLY;
+		triangleBufferInfo.perFrameInFlight = false;
+
+		s_Cache->vertexIndexBuffer = GenericBuffer::Create(triangleBufferInfo);
 	}
 	void Renderer::NewFrame()
 	{
@@ -235,20 +286,45 @@ namespace Titan
 				&image_memory_barrier // pImageMemoryBarriers
 			);
 		}
-
-		CombineMeshlets(commandBuffer);
-
-		VkDescriptorSet BindlessSet;
+		if (!s_Cache->bindlessSets[currentFrame] || ValidateBindlessBuffers())
 		{
-			VkDescriptorBufferInfo bindlessInfo{};
-			bindlessInfo.buffer = s_Cache->meshletBuffer->GetAllocation().buffer;
-			bindlessInfo.offset = 0;
-			bindlessInfo.range = s_Cache->meshletBuffer->GetAllocation().sizeOfBuffer;
-			DescriptorBuilder::Begin(&s_Cache->caches[currentFrame], &s_Cache->allocators[currentFrame])
-				.BindBuffer(0, &bindlessInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_TASK_BIT_NV)
-				.BindBuffer(1, &bindlessInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
-				.Build(BindlessSet);
+			CombineMeshlets(commandBuffer);
+			CombineVertexBuffers(commandBuffer);
+			CombineTriangleBuffers(commandBuffer);
+			CombineVertexIndexBuffers(commandBuffer);
+			s_Cache->bindlessAllocators[currentFrame].ResetPools();
+			{
+				VkDescriptorBufferInfo bindlessInfo{};
+				bindlessInfo.buffer = s_Cache->meshletBuffer->GetAllocation().buffer;
+				bindlessInfo.offset = 0;
+				bindlessInfo.range = s_Cache->meshletBuffer->GetAllocation().sizeOfBuffer;
+
+				VkDescriptorBufferInfo bindlessVertexInfo{};
+				bindlessVertexInfo.buffer = s_Cache->vertexBuffer->GetAllocation().buffer;
+				bindlessVertexInfo.offset = 0;
+				bindlessVertexInfo.range = s_Cache->vertexBuffer->GetAllocation().sizeOfBuffer;
+
+				VkDescriptorBufferInfo bindlessTriangleInfo{};
+				bindlessTriangleInfo.buffer = s_Cache->triangleBuffer->GetAllocation().buffer;
+				bindlessTriangleInfo.offset = 0;
+				bindlessTriangleInfo.range = s_Cache->triangleBuffer->GetAllocation().sizeOfBuffer;
+
+				VkDescriptorBufferInfo bindlessVertexIndexInfo{};
+				bindlessVertexIndexInfo.buffer = s_Cache->vertexIndexBuffer->GetAllocation().buffer;
+				bindlessVertexIndexInfo.offset = 0;
+				bindlessVertexIndexInfo.range = s_Cache->vertexIndexBuffer->GetAllocation().sizeOfBuffer;
+
+				DescriptorBuilder::Begin(&s_Cache->bindlessCaches[currentFrame], &s_Cache->bindlessAllocators[currentFrame])
+					.BindBuffer(0, &bindlessInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_TASK_BIT_NV)
+					.BindBuffer(1, &bindlessInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+					.BindBuffer(2, &bindlessVertexInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+					.BindBuffer(3, &bindlessTriangleInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+					.BindBuffer(4, &bindlessVertexIndexInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+					.Build(s_Cache->bindlessSets[currentFrame]);
+			}
 		}
+		
+		
 
 		VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
 		VkClearValue depthClear{};
@@ -298,6 +374,7 @@ namespace Titan
 			s_Cache->cameraData.view = s_Cache->currentCamera.view;
 			s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
 		
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 1, 1, &s_Cache->bindlessSets[currentFrame], 0, nullptr);
 
 			TN_PROFILE_SCOPE("Draw scene");
 			for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
@@ -312,26 +389,7 @@ namespace Titan
 				s_Cache->cameraData.mdlSpace = mdlCmd.transform;
 				s_Cache->cameraBuffer->SetData(&s_Cache->cameraData, sizeof(CameraData));
 
-				auto vertex = mdlCmd.submesh->GetVertexBuffer();
-				auto triangle = mdlCmd.submesh->GetTriangleBuffer();
-				auto meshlet = mdlCmd.submesh->GetMeshletBuffer();
-				auto meshletVertex = mdlCmd.submesh->GetMeshletVertexBuffer();
 				auto& light = s_Cache->lightBuffer;
-
-				VkDescriptorBufferInfo vbufferInfo{};
-				vbufferInfo.buffer = vertex->GetAllocation().buffer;
-				vbufferInfo.offset = 0;
-				vbufferInfo.range = vertex->GetAllocation().sizeOfBuffer;
-
-				VkDescriptorBufferInfo tbufferInfo{};
-				tbufferInfo.buffer = triangle->GetAllocation().buffer;
-				tbufferInfo.offset = 0;
-				tbufferInfo.range = triangle->GetAllocation().sizeOfBuffer;
-
-				VkDescriptorBufferInfo vmbufferInfo{};
-				vmbufferInfo.buffer = meshletVertex->GetAllocation().buffer;
-				vmbufferInfo.offset = 0;
-				vmbufferInfo.range = meshletVertex->GetAllocation().sizeOfBuffer;
 
 				VkDescriptorBufferInfo lightBufferInfo{};
 				lightBufferInfo.buffer = light->GetAllocation().buffer;
@@ -341,25 +399,22 @@ namespace Titan
 				VkDescriptorSet globalSet;
 				DescriptorBuilder::Begin(&s_Cache->caches[currentFrame], &s_Cache->allocators[currentFrame])
 					.BindBuffer(0, &bufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
-					.BindBuffer(1, &vbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
-					.BindBuffer(2, &tbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
-					.BindBuffer(4, &vmbufferInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
+					.BindImage(5, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+					.BindBuffer(6, &lightBufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT)
 					.Build(globalSet);
-				VkDescriptorSet imageSet;
-				DescriptorBuilder::Begin(&s_Cache->caches[currentFrame], &s_Cache->allocators[currentFrame])
-					.BindImage(1, &imageInfo, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-					.BindBuffer(2, &lightBufferInfo, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT)
-					.Build(imageSet);
+				
 
 
 				s_Cache->constant.meshletCount = static_cast<uint32_t>(mdlCmd.submesh->GetMeshlets().size());
-				s_Cache->constant.padd = s_RenderDebugState;
-				s_Cache->constant.indexCount = s_Cache->meshletBindSet.Fetch(mdlCmd.submesh->GetID());
+				s_Cache->constant.meshletOffset = s_Cache->meshletBindSet.Fetch(mdlCmd.submesh->GetID());
+				s_Cache->constant.vertexOffset = s_Cache->vertexBindSet.Fetch(mdlCmd.submesh->GetID());
+				s_Cache->constant.triangleOffset = s_Cache->triangleBindSet.Fetch(mdlCmd.submesh->GetID());
+				s_Cache->constant.vertexIndexOffset = s_Cache->vertexIndexBindSet.Fetch(mdlCmd.submesh->GetID());
+				s_Cache->constant.renderDebugState = s_RenderDebugState;
 
-				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
+				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV | VK_SHADER_STAGE_MESH_BIT_NV | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
 
-				std::array<VkDescriptorSet, 3> sets = { globalSet, imageSet, BindlessSet };
-				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
+				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, 1, &globalSet, 0, nullptr);
 			
 
 				PFN_vkCmdDrawMeshTasksIndirectNV func = (PFN_vkCmdDrawMeshTasksIndirectNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksIndirectNV");
@@ -367,7 +422,6 @@ namespace Titan
 				{
 					Profiler::PofileDataAdd("MeshletCount", mdlCmd.submesh->GetMeshlets().size());
 					Profiler::PofileDataAdd("TriangleCount", mdlCmd.submesh->GetIndices().size());
-					TN_PROFILE_GPU_EVENT("Draw");
 					func(commandBuffer, s_Cache->indirectCmdBuffer->GetAllocation().buffer, i * sizeof(VkDrawMeshTasksIndirectCommandNV), 1, sizeof(VkDrawMeshTasksIndirectCommandNV));
 				}
 			}
@@ -420,35 +474,141 @@ namespace Titan
 		s_Cache->meshCmds.Reset();
 	}
 
+	bool Renderer::ValidateBindlessBuffers()
+	{
+		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
+		{
+			auto& mdlCmd = s_Cache->meshCmds[i];
+			uint32_t index = 0;
+			if (!s_Cache->vertexBindSet.Exists(mdlCmd.submesh->GetID(), index))
+			{
+				return true;
+			}
+			if (!s_Cache->meshletBindSet.Exists(mdlCmd.submesh->GetID(), index))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool Renderer::ValidateBindlessTextures()
+	{
+		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
+		{
+			auto& mdlCmd = s_Cache->meshCmds[i];
+			uint32_t index = 0;
+			if (!s_Cache->triangleBindSet.Exists(mdlCmd.submesh->GetID(), index))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void Renderer::CombineMeshlets(VkCommandBuffer& cmd)
 	{
-		auto srcMeshletBuffer = s_Cache->meshletBuffer->GetAllocation().buffer;
+		auto dstMeshletBuffer = s_Cache->meshletBuffer->GetAllocation().buffer;
 		VkBufferCopy copy{};
-		VkDeviceSize srcOffset = 0;
-		VkBuffer dstBuffer{};
+		VkDeviceSize dstOffset = 0;
+		VkBuffer srcBuffer{};
 		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
 		{
 			auto& mdlCmd = s_Cache->meshCmds[i];
 			auto sizeAndStride = mdlCmd.submesh->GetMeshletBuffer()->GetAllocation().sizeOfBuffer;
-			dstBuffer = mdlCmd.submesh->GetMeshletBuffer()->GetAllocation().buffer;
+			srcBuffer = mdlCmd.submesh->GetMeshletBuffer()->GetAllocation().buffer;
 
-			copy.dstOffset = 0;
-			copy.srcOffset = srcOffset;
+			copy.dstOffset = dstOffset;
+			copy.srcOffset = 0;
 			copy.size = sizeAndStride;
-			vkCmdCopyBuffer(cmd, srcMeshletBuffer, dstBuffer, 1, &copy);
-			const bool isZero = srcOffset == 0;
+			vkCmdCopyBuffer(cmd, srcBuffer, dstMeshletBuffer, 1, &copy);
+			const bool isZero = dstOffset == 0;
 			const uint32_t sizeOfMeshlet = static_cast <uint32_t>(sizeof(Meshlet));
-			auto offset = !isZero ? static_cast<uint32_t>(srcOffset) / sizeOfMeshlet : static_cast<uint32_t>(srcOffset);
+			auto offset = !isZero ? static_cast<uint32_t>(dstOffset) / sizeOfMeshlet : static_cast<uint32_t>(dstOffset);
 			s_Cache->meshletBindSet.Register(mdlCmd.submesh->GetID(), offset);
-			srcOffset += sizeAndStride;
+			dstOffset += sizeAndStride;
 		}
-		TN_CORE_INFO("dlfa");
+	}
+
+	void Renderer::CombineVertexBuffers(VkCommandBuffer& cmd)
+	{
+		auto dstVertexBuffer = s_Cache->vertexBuffer->GetAllocation().buffer;
+		VkBufferCopy copy{};
+		VkDeviceSize dstOffset = 0;
+		VkBuffer srcBuffer{};
+		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
+		{
+			auto& mdlCmd = s_Cache->meshCmds[i];
+			auto sizeAndStride = mdlCmd.submesh->GetVertexBuffer()->GetAllocation().sizeOfBuffer;
+			srcBuffer = mdlCmd.submesh->GetVertexBuffer()->GetAllocation().buffer;
+
+			copy.dstOffset = dstOffset;
+			copy.srcOffset = 0;
+			copy.size = sizeAndStride;
+			vkCmdCopyBuffer(cmd, srcBuffer, dstVertexBuffer, 1, &copy);
+			const bool isZero = dstOffset == 0;
+			const uint32_t sizeOfVertex = static_cast <uint32_t>(sizeof(BufferVertex));
+			auto offset = !isZero ? static_cast<uint32_t>(dstOffset) / sizeOfVertex : static_cast<uint32_t>(dstOffset);
+			s_Cache->vertexBindSet.Register(mdlCmd.submesh->GetID(), offset);
+			dstOffset += sizeAndStride;
+		}
+	}
+
+	void Renderer::CombineTriangleBuffers(VkCommandBuffer& cmd)
+	{
+		auto dstVertexBuffer = s_Cache->triangleBuffer->GetAllocation().buffer;
+		VkBufferCopy copy{};
+		VkDeviceSize dstOffset = 0;
+		VkBuffer srcBuffer{};
+		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
+		{
+			auto& mdlCmd = s_Cache->meshCmds[i];
+			auto sizeAndStride = mdlCmd.submesh->GetTriangleBuffer()->GetAllocation().sizeOfBuffer;
+			srcBuffer = mdlCmd.submesh->GetTriangleBuffer()->GetAllocation().buffer;
+
+			copy.dstOffset = dstOffset;
+			copy.srcOffset = 0;
+			copy.size = sizeAndStride;
+			vkCmdCopyBuffer(cmd, srcBuffer, dstVertexBuffer, 1, &copy);
+			const bool isZero = dstOffset == 0;
+			const uint32_t sizeOfTriangle = static_cast <uint32_t>(sizeof(uint32_t));
+			auto offset = !isZero ? static_cast<uint32_t>(dstOffset) / sizeOfTriangle : static_cast<uint32_t>(dstOffset);
+			s_Cache->triangleBindSet.Register(mdlCmd.submesh->GetID(), offset);
+			dstOffset += sizeAndStride;
+		}
+	}
+
+	void Renderer::CombineVertexIndexBuffers(VkCommandBuffer& cmd)
+	{
+		auto dstVertexBuffer = s_Cache->vertexIndexBuffer->GetAllocation().buffer;
+		VkBufferCopy copy{};
+		VkDeviceSize dstOffset = 0;
+		VkBuffer srcBuffer{};
+		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
+		{
+			auto& mdlCmd = s_Cache->meshCmds[i];
+			auto sizeAndStride = mdlCmd.submesh->GetMeshletVertexBuffer()->GetAllocation().sizeOfBuffer;
+			srcBuffer = mdlCmd.submesh->GetMeshletVertexBuffer()->GetAllocation().buffer;
+
+			copy.dstOffset = dstOffset;
+			copy.srcOffset = 0;
+			copy.size = sizeAndStride;
+			vkCmdCopyBuffer(cmd, srcBuffer, dstVertexBuffer, 1, &copy);
+			const bool isZero = dstOffset == 0;
+			const uint32_t sizeOfTriangle = static_cast <uint32_t>(sizeof(uint32_t));
+			auto offset = !isZero ? static_cast<uint32_t>(dstOffset) / sizeOfTriangle : static_cast<uint32_t>(dstOffset);
+			s_Cache->vertexIndexBindSet.Register(mdlCmd.submesh->GetID(), offset);
+			dstOffset += sizeAndStride;
+		}
 	}
 
 	void Renderer::Shutdown()
 	{
 		for (size_t i = 0; i < g_FramesInFlight; ++i)
 		{
+			s_Cache->bindlessAllocators[i].ResetPools();
+			s_Cache->bindlessAllocators[i].Shutdown();
+			s_Cache->bindlessCaches[i].Shutdown();
 			s_Cache->allocators[i].Shutdown();
 			s_Cache->caches[i].Shutdown();
 		}

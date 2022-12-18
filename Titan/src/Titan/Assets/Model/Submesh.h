@@ -26,10 +26,10 @@ namespace Titan
 		inline std::vector<uint32_t>& GetIndices() { return m_Indices; }
 		inline std::vector<Meshlet>& GetMeshlets() { return m_Meshlets; }
 		inline std::vector<uint32_t>& GetMeshletVertices() { return m_MeshletVertices; }
-		inline Ref<StorageBuffer> GetVertexBuffer() { return m_VertexBuffer; }
+		inline Ref<GenericBuffer> GetVertexBuffer() { return m_VertexBuffer; }
 		inline Ref<GenericBuffer> GetMeshletBuffer() { return m_MeshletBuffer; }
-		inline Ref<StorageBuffer> GetTriangleBuffer() { return m_TriangleBuffer; }
-		inline Ref<StorageBuffer> GetMeshletVertexBuffer() { return m_MeshletVertexBuffer; }
+		inline Ref<GenericBuffer> GetTriangleBuffer() { return m_TriangleBuffer; }
+		inline Ref<GenericBuffer> GetMeshletVertexBuffer() { return m_MeshletVertexBuffer; }
 		inline const size_t& GetHash() { return m_Hash; }
 		inline const TitanID& GetID() { return m_ID; }
 	private:
@@ -38,10 +38,10 @@ namespace Titan
 		std::vector<uint32_t> m_Indices;
 		std::vector<Meshlet> m_Meshlets;
 		std::vector<uint32_t> m_MeshletVertices;
-		Ref<StorageBuffer> m_VertexBuffer;
-		Ref<StorageBuffer> m_TriangleBuffer;
+		Ref<GenericBuffer> m_VertexBuffer;
+		Ref<GenericBuffer> m_TriangleBuffer;
 		Ref<GenericBuffer> m_MeshletBuffer;
-		Ref<StorageBuffer> m_MeshletVertexBuffer;
+		Ref<GenericBuffer> m_MeshletVertexBuffer;
 		size_t m_Hash; // TODO: this should be some form of structure.
 		TitanID m_ID;
 	};

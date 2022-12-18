@@ -1,4 +1,4 @@
-#version 460
+#version 450
 #extension GL_NV_mesh_shader: require
 #extension GL_KHR_shader_subgroup_ballot : require
 #define GROUP_SIZE 32
@@ -12,7 +12,7 @@ struct Meshlet
   uint triangleCount;
 };
 
-layout (std430, binding = 0, set = 2) buffer globalMeshlets
+layout (std430, binding = 0, set = 1) readonly buffer globalMeshlets
 {
   Meshlet meshlets[];
 };
@@ -26,14 +26,18 @@ taskNV out Task
 layout (push_constant) uniform constants
 {
     uint meshletCount;
-    uint vertexCount;
-    uint indexCount;
-    uint padd;
+		uint vertexCount;
+		uint indexCount;
+		uint meshletOffset;
+		uint vertexOffset;
+		uint triangleOffset;
+		uint vertexIndexOffset;
+		uint renderDebugState;
 };
 
 void main()
 {
-    Meshlet meshlet = meshlets[gl_GlobalInvocationID.x + indexCount];
+    Meshlet meshlet = meshlets[gl_GlobalInvocationID.x + meshletOffset];
 
     bool render = gl_GlobalInvocationID.x < meshletCount;
     
@@ -47,7 +51,7 @@ void main()
         gl_TaskCountNV = tasks;
 
     // where the meshletIDs started from for this task workgroup
-        OUT.baseID = gl_WorkGroupID.x * GROUP_SIZE + indexCount;
+        OUT.baseID = gl_WorkGroupID.x * GROUP_SIZE + meshletOffset;
     }
 
     uint idxOffset = subgroupBallotExclusiveBitCount(vote);

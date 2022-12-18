@@ -28,31 +28,39 @@ namespace Titan
 			bufferVert.Color = glm::vec4(rawVert.Color, 1.f);
 			bufferVert.TexCoords = rawVert.TexCoords;
 		}
-		StorageBufferInfo info{};
-		info.data = m_BufferVertices.data();
-		info.size = m_BufferVertices.size();
-		info.stride = sizeof(BufferVertex);
-		m_VertexBuffer = StorageBuffer::Create(info);
 
-		info.data = m_Indices.data();
-		info.size = m_Indices.size();
-		info.stride = sizeof(uint32_t);
-		m_TriangleBuffer = StorageBuffer::Create(info);
+		GenericBufferInfo vertexBufferInfo{};
+		vertexBufferInfo.data = m_BufferVertices.data();
+		vertexBufferInfo.size = m_BufferVertices.size();
+		vertexBufferInfo.stride = sizeof(BufferVertex);
+		vertexBufferInfo.perFrameInFlight = false;
+		vertexBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		vertexBufferInfo.allocUsage = VMA_MEMORY_USAGE_CPU_ONLY;
 
-		info.data = m_MeshletVertices.data();
-		info.size = m_MeshletVertices.size();
-		m_MeshletVertexBuffer = StorageBuffer::Create(info);
+		m_VertexBuffer = GenericBuffer::Create(vertexBufferInfo);
 
 
-		GenericBufferInfo indirectBufferInfo{};
-		indirectBufferInfo.data = m_Meshlets.data();
-		indirectBufferInfo.size = m_Meshlets.size();
-		indirectBufferInfo.stride = sizeof(Meshlet);
-		indirectBufferInfo.perFrameInFlight = false;
-		indirectBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-		indirectBufferInfo.allocUsage = VMA_MEMORY_USAGE_CPU_ONLY;
+		vertexBufferInfo.data = m_Indices.data();
+		vertexBufferInfo.size = m_Indices.size();
+		vertexBufferInfo.stride = sizeof(uint32_t);
+		m_TriangleBuffer = GenericBuffer::Create(vertexBufferInfo);
+		
 
-		m_MeshletBuffer = GenericBuffer::Create(indirectBufferInfo);
+		vertexBufferInfo.data = m_MeshletVertices.data();
+		vertexBufferInfo.size = m_MeshletVertices.size();
+
+		m_MeshletVertexBuffer = GenericBuffer::Create(vertexBufferInfo);
+
+
+		GenericBufferInfo meshletBufferInfo{};
+		meshletBufferInfo.data = m_Meshlets.data();
+		meshletBufferInfo.size = m_Meshlets.size();
+		meshletBufferInfo.stride = sizeof(Meshlet);
+		meshletBufferInfo.perFrameInFlight = false;
+		meshletBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		meshletBufferInfo.allocUsage = VMA_MEMORY_USAGE_CPU_ONLY;
+
+		m_MeshletBuffer = GenericBuffer::Create(meshletBufferInfo);
 
 		//info.data = m_Meshlets.data();
 		//info.size = m_Meshlets.size();

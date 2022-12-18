@@ -39,7 +39,15 @@ namespace Titan
 		static void Begin();
 		static void Shutdown();
 	private:
+		static bool ValidateBindlessBuffers();
+		static bool ValidateBindlessTextures();
 		static void CombineMeshlets(VkCommandBuffer& cmd);
+		static void CombineVertexBuffers(VkCommandBuffer& cmd);
+		static void CombineTriangleBuffers(VkCommandBuffer& cmd);
+		static void CombineVertexIndexBuffers(VkCommandBuffer& cmd);
 		static void CreateMeshletBuffer();
+		static void CreateVertexBuffer();
+		static void CreateTriangleBuffer();
+		static void CreateVertexIndexBuffer();
 	};
 }

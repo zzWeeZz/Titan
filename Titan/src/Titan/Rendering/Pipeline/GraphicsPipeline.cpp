@@ -151,7 +151,7 @@ namespace Titan
 			pipelineLayoutInfo.pushConstantRangeCount = static_cast<uint32_t>(pushConstants.size()); // Optional
 			pipelineLayoutInfo.pPushConstantRanges = pushConstants.data(); // Optional
 		}
-
+		m_PipelineLayout = nullptr;
 		TN_VK_CHECK(vkCreatePipelineLayout(GraphicsContext::GetDevice().GetHandle(), &pipelineLayoutInfo, nullptr, &m_PipelineLayout));
 		TitanAllocator::QueueDeletion([&]() { vkDestroyPipelineLayout(GraphicsContext::GetDevice().GetHandle(), m_PipelineLayout, nullptr); });
 
@@ -215,9 +215,21 @@ namespace Titan
 				setBindings.insert(setBindings.end(), set.second.begin(), set.second.end());
 			}
 		}
-
+		std::vector<std::pair<uint32_t, std::vector<VkDescriptorSetLayoutBinding>>> sortedBindMap;
 
 		for (auto& binding : bindingMap)
+		{
+			auto& sortBinding = sortedBindMap.emplace_back();
+			sortBinding.first = binding.first;
+			sortBinding.second = binding.second;
+		}
+
+		std::sort(sortedBindMap.begin(), sortedBindMap.end(), [](std::pair<uint32_t, std::vector<VkDescriptorSetLayoutBinding>>& first, std::pair<uint32_t, std::vector<VkDescriptorSetLayoutBinding>>& second) -> bool
+			{
+				return first.first < second.first;
+			});
+
+		for (auto& binding : sortedBindMap)
 		{
 			auto& bindings = binding.second;
 			VkDescriptorSetLayoutCreateInfo layoutInfo{};

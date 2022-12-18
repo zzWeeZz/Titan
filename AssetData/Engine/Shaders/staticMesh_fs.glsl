@@ -1,10 +1,10 @@
-#version 460
+#version 450
 
 #extension GL_KHR_vulkan_glsl : enable
 
 layout (location = 0) out vec4 FragColor;
 
-layout (location = 0) in PerVertexData
+layout (location = 1) in PerVertexData
 {
 	vec4 color;
 	vec3 fragPosition;
@@ -14,9 +14,9 @@ layout (location = 0) in PerVertexData
 	vec2 texCoord;
 } fragIn;
 
-layout (binding = 1, set = 1) uniform sampler2D u_Albedo;
+layout (binding = 5, set = 0) uniform sampler2D u_Albedo;
 
-layout (binding = 2, set = 1) uniform _lightData
+layout (binding = 6, set = 0) uniform _lightData
 {
 	vec4 direction;
 	vec4 color;
@@ -25,9 +25,13 @@ layout (binding = 2, set = 1) uniform _lightData
 layout (push_constant) uniform constants
 {
     uint meshletCount;
-    uint vertexCount;
-    uint indexCount;
-    uint padd;
+	uint vertexCount;
+	uint indexCount;
+	uint meshletOffset;
+	uint vertexOffset;
+	uint triangleOffset;
+	uint vertexIndexOffset;
+	uint renderDebugState;
 };
 
 void main()
@@ -37,7 +41,7 @@ void main()
 	vec3 lighting = lightStrength * (u_LightData.color.xyz * u_LightData.color.w);
 
 	vec4 color = texture(u_Albedo, fragIn.texCoord);
-	if(padd > 0)
+	if(renderDebugState > 0)
 	{
 		color = fragIn.color;
 		FragColor = pow(color, vec4(1.0 / 2.2));
