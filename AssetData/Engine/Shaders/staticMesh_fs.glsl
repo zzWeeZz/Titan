@@ -27,12 +27,7 @@ layout (push_constant) uniform constants
     uint meshletCount;
 	uint vertexCount;
 	uint indexCount;
-	uint meshletOffset;
-	uint vertexOffset;
-	uint triangleOffset;
-	uint vertexIndexOffset;
 	uint renderDebugState;
-	uint textureId;
 };
 
 void main()

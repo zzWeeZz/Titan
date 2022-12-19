@@ -1,13 +1,13 @@
 ResourceRegistry:
   - 0:
-      - 1ea6a699-a850-49a9-833d-546039f1e558
+      - 9c33b4cf-cd20-49ef-b9d5-de97c0d9b215
       - Assets/Texture/Titan.png
   - 1:
-      - cd4107b9-0a98-4d15-9bcd-7a05fb66429e
+      - 10f14faf-2897-4d38-8ddd-d2e517ea7d49
       - Assets/Texture/Titan.png
   - 2:
-      - 042de8fb-268b-47c1-803b-8475619ba6bf
-      - Assets/Texture/Titan.png
+      - 47198a2e-a8a1-4a8c-97ee-cc7ddd9f802d
+      - Assets/Models/Sponza/Sponza.gltf
   - 3:
-      - 78a94af9-f38e-4838-9249-ff008e340d7c
-      - Assets/Models/Car.glb
+      - b77cbcd1-1ecb-4ad6-81c6-205f469b7479
+      - Assets/Texture/Titan.png

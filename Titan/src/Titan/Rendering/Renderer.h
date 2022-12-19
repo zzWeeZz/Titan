@@ -45,9 +45,11 @@ namespace Titan
 		static void CombineVertexBuffers(VkCommandBuffer& cmd);
 		static void CombineTriangleBuffers(VkCommandBuffer& cmd);
 		static void CombineVertexIndexBuffers(VkCommandBuffer& cmd);
+		static void UpdateMeshBuffer();
 		static void CreateMeshletBuffer();
 		static void CreateVertexBuffer();
 		static void CreateTriangleBuffer();
 		static void CreateVertexIndexBuffer();
+		static void CreateMeshBuffer();
 	};
 }

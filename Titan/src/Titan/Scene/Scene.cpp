@@ -36,8 +36,6 @@ namespace Titan
 			});
 		auto modelAsync = std::async(std::launch::async, [&]()
 			{
-				TN_PROFILE_THREAD("ModelSystemThead");
-				TN_PROFILE_SCOPE("modelSystem");
 				m_Registry.Execute<ModelComponent, TransformComponent>([&](auto& entity, ModelComponent& mdl, TransformComponent& tf)
 					{
 						ModelSystem(mdl, tf);
@@ -45,8 +43,6 @@ namespace Titan
 			});
 		auto lightAsync = std::async(std::launch::async, [&]()
 			{
-				TN_PROFILE_THREAD("LightSystemThead");
-				TN_PROFILE_SCOPE("LightSystem");
 				m_Registry.Execute<LightComponent, TransformComponent>([&](auto& entity, LightComponent& mdl, TransformComponent& tf)
 					{
 						LightSystem(mdl, tf);

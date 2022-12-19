@@ -10,6 +10,8 @@ struct Meshlet
   uint triangleOffset;
   uint vertexCount;
   uint triangleCount;
+  uint meshId;
+	uint padd[3];
 };
 
 layout (std430, binding = 0, set = 1) readonly buffer globalMeshlets
@@ -19,7 +21,7 @@ layout (std430, binding = 0, set = 1) readonly buffer globalMeshlets
 
 taskNV out Task
 {
-  uint      baseID;
+  uint   baseID;
   uint   subIDs[GROUP_SIZE];
 } OUT;
 
@@ -28,16 +30,12 @@ layout (push_constant) uniform constants
     uint meshletCount;
 		uint vertexCount;
 		uint indexCount;
-		uint meshletOffset;
-		uint vertexOffset;
-		uint triangleOffset;
-		uint vertexIndexOffset;
 		uint renderDebugState;
 };
 
 void main()
 {
-    Meshlet meshlet = meshlets[gl_GlobalInvocationID.x + meshletOffset];
+    Meshlet meshlet = meshlets[gl_GlobalInvocationID.x];
 
     bool render = gl_GlobalInvocationID.x < meshletCount;
     
@@ -51,7 +49,7 @@ void main()
         gl_TaskCountNV = tasks;
 
     // where the meshletIDs started from for this task workgroup
-        OUT.baseID = gl_WorkGroupID.x * GROUP_SIZE + meshletOffset;
+        OUT.baseID = gl_WorkGroupID.x * GROUP_SIZE;
     }
 
     uint idxOffset = subgroupBallotExclusiveBitCount(vote);

@@ -14,7 +14,7 @@ layout (triangles, max_vertices = MAX_VERTEX_COUNT, max_primitives = MAX_PRIMITI
 
 taskNV in Task
  {
-  uint      baseID;
+  uint  baseID;
   uint  subIDs[GROUP_SIZE];
 } IN;
 
@@ -28,14 +28,6 @@ layout (location = 1) out PerVertexData
 	vec2 texCoord;
 } v_out[];
 
-
-layout (binding = 0, set = 0) uniform MvpBufferObject
-{
-	mat4 view;
-	mat4 proj;
-	mat4 mdlSpace;
-} u_MvpObject;
-
 struct Vertex
 {
 	vec4 Position;
@@ -45,6 +37,42 @@ struct Vertex
 	vec2 TexCoords;
 	vec2 padding;
 };
+
+struct Meshlet
+{
+  uint vertexOffset;
+  uint triangleOffset;
+  uint vertexCount;
+  uint triangleCount;
+  uint meshId;
+  uint padd[3];
+};
+
+struct Mesh
+{
+	uint meshletOffset;
+	uint vertexOffset;
+	uint triangleOffset;
+	uint vertexIndexOffset;
+	mat4 transform;
+};
+
+layout (binding = 0, set = 0) uniform MvpBufferObject
+{
+	mat4 view;
+	mat4 proj;
+	mat4 mdlSpace;
+} u_MvpObject;
+
+layout (binding = 1, set = 0) readonly buffer _meshes
+{
+	Mesh meshes[];
+};
+
+layout (std430, binding = 1, set = 1) readonly buffer _meshlets
+{
+  Meshlet meshlets[];
+} u_MeshletBuffer;
 
 layout (std430, binding = 2, set = 1) readonly buffer _vertices
 {
@@ -56,19 +84,6 @@ layout (std430, binding = 3, set = 1) readonly buffer _triangles
   uint triangles[];
 } u_TriangleBuffer;
 
-struct Meshlet
-{
-  uint vertexOffset;
-  uint triangleOffset;
-  uint vertexCount;
-  uint triangleCount;
-};
- 
-layout (std430, binding = 1, set = 1) readonly buffer _meshlets
-{
-  Meshlet meshlets[];
-} u_MeshletBuffer;
-
 layout (std430, binding = 4, set = 1) readonly buffer _meshletVertices
 {
   uint meshletVertices[];
@@ -77,16 +92,11 @@ layout (std430, binding = 4, set = 1) readonly buffer _meshletVertices
 const uint g_VertexLoops = (MAX_VERTEX_COUNT +  GROUP_SIZE - 1) / GROUP_SIZE;
 const uint g_PrimReadLoops = (3 * MAX_PRIMITIVE_COUNT + GROUP_SIZE * 4 - 1) / (GROUP_SIZE * 4);
 
-
 layout (push_constant) uniform constants
 {
  	uint meshletCount;
 	uint vertexCount;
 	uint indexCount;
-	uint meshletOffset;
-	uint vertexOffset;
-	uint triangleOffset;
-	uint vertexIndexOffset;
 	uint renderDebugState;
 };
 
@@ -107,17 +117,17 @@ void main()
 	const uint meshletIndex = IN.baseID + IN.subIDs[gl_WorkGroupID.x];
 	const uint threadId = gl_LocalInvocationID.x;
 	Meshlet meshlet = u_MeshletBuffer.meshlets[meshletIndex];
-
-	const uint vertOffset = meshlet.vertexOffset + vertexIndexOffset;
+	Mesh mesh = meshes[meshlet.meshId];
+	const uint vertOffset = meshlet.vertexOffset + mesh.vertexIndexOffset;
 	for(uint loop = 0; loop < g_VertexLoops; ++loop)
 	{
 		uint v = threadId + loop * GROUP_SIZE;
 
 		v = min(v, meshlet.vertexCount - 1);
 		const uint VertexIndex = u_MeshletVertexBuffer.meshletVertices[vertOffset + v];
-		Vertex vertex = u_VertexBuffer.vertices[VertexIndex + vertexOffset];
+		Vertex vertex = u_VertexBuffer.vertices[VertexIndex + mesh.vertexOffset];
 
-		const mat4 mvp = u_MvpObject.proj * u_MvpObject.view * u_MvpObject.mdlSpace;
+		const mat4 mvp = u_MvpObject.proj * u_MvpObject.view * mesh.transform;
 		vec4 fragPosition = mvp * vertex.Position;
 		gl_MeshVerticesNV[v].gl_Position = fragPosition;
 		v_out[v].fragPosition = fragPosition.xyz;
@@ -127,7 +137,7 @@ void main()
 	}
 
 
-	uint primreadBegin = meshlet.triangleOffset + triangleOffset;
+	uint primreadBegin = meshlet.triangleOffset + mesh.triangleOffset;
 	uint primreadIndex = meshlet.triangleCount * 3;
 	uint primreadMax   = primreadIndex;
 	for(uint loop = 0; loop < primreadIndex; ++loop)

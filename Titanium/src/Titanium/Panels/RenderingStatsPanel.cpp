@@ -3,6 +3,7 @@
 #include <ImGui/imgui.h>
 
 #define TN_PROFILE_NO_OPTICK
+#include "Titan/Utils/Chrono.h"
 #include "Titan/Utils/Profiler.h"
 
 #include "Titan/Rendering/Renderer.h"
@@ -45,6 +46,12 @@ namespace Titan
 		ImGui::Text("Meshlets Drawn: ");
 		ImGui::SameLine();
 		ImGui::Text("%d", Profiler::PofileDataGet<size_t>("MeshletCount"));
+		ImGui::Text("FPS: ");
+		ImGui::SameLine();
+		ImGui::Text("%f", 1.f / Chrono::Timestep());
+		ImGui::Text("ms: ");
+		ImGui::SameLine();
+		ImGui::Text("%f", Chrono::Timestep() * 1000.f);
 		ImGui::EndChild();
 		ImGui::End();
 	}

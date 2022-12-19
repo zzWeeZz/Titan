@@ -10,6 +10,8 @@ namespace Titan
 		uint32_t triangleOffset;
 		uint32_t vertexCount;
 		uint32_t triangleCount;
+		uint32_t meshId;
+		uint32_t padd[3];
 	};
 	class Submesh
 	{
