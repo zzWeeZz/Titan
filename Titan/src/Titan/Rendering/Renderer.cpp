@@ -34,10 +34,10 @@
 #include "Titan/Rendering/Descriptors/DescriptorAllocator.h"
 #include "Titan/Rendering/Descriptors/DescriptorLayoutCache.h"
 
-#define MAX_INDIRECT_COMMANDS 10000
+#define MAX_INDIRECT_COMMANDS 20000
 #define MAX_MESHLETS 100000
-#define MAX_VERTICES 10000000
-#define MAX_TRIANGLES 10000000
+#define MAX_VERTICES 20000000
+#define MAX_TRIANGLES 100000000
 #define MAX_TEXTURES 1000
 
 namespace Titan
@@ -152,6 +152,7 @@ namespace Titan
 		CreateVertexBuffer();
 		CreateTriangleBuffer();
 		CreateVertexIndexBuffer();
+
 		SamplerLibrary::Add("Clamp", Filter::Linear, Address::ClampToEdge, MipmapMode::Linear);
 	}
 	
@@ -203,6 +204,7 @@ namespace Titan
 
 		s_Cache->vertexIndexBuffer = GenericBuffer::Create(triangleBufferInfo);
 	}
+
 	void Renderer::NewFrame()
 	{
 		auto& currentFrame = GraphicsContext::GetCurrentFrame();
