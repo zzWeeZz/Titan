@@ -34,7 +34,7 @@ namespace Titan
 			auto& mdl = entity.AddComponent<ModelComponent>();
 			entity.GetComponent<TransformComponent>().scale = { 1,1 ,1 };
 			entity.GetComponent<TransformComponent>().rotation.x = glm::pi<float>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Sponza/Sponza.gltf");
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/rat.glb");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
 		{
@@ -150,6 +150,17 @@ namespace Titan
 		if (Input::Key(Key::Q, InputMode::Down))
 		{
 			m_transformData.position.y += Chrono::Timestep() * 10.f;
+		}
+		if (Input::Key(Key::G, InputMode::Down))
+		{
+			{
+				auto entity = m_ActiveScene->CreateEntity();
+				auto& mdl = entity.AddComponent<ModelComponent>();
+				entity.GetComponent<TransformComponent>().scale = { 0.01 ,0.01 ,0.01 };
+				entity.GetComponent<TransformComponent>().rotation.x = glm::pi<float>();
+				ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Sponza/Sponza.gltf");
+				ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
+			}
 		}
 
 		m_cameraData.View = glm::lookAt(m_transformData.position, m_transformData.position + m_CameraFront, glm::vec3(0, 1, 0));

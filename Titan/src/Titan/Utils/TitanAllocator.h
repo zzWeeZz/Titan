@@ -51,6 +51,7 @@ namespace Titan
 		inline static std::unordered_map<uint32_t, std::function<void()>> s_DestroyFunctions;
 		inline static std::vector<uint32_t> s_AllocateDestructorOrder;
 		inline static std::deque<std::function<void()>> s_DestructionQueue;
+		inline static std::mutex s_AllocationMutex;
 	};
 }
 

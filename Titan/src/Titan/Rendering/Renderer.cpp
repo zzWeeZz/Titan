@@ -404,7 +404,6 @@ namespace Titan
 			s_Cache->cameraData.view = s_Cache->currentCamera.view;
 			s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
 		
-			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 1, 1, &s_Cache->bindlessSets[currentFrame], 0, nullptr);
 
 			TN_PROFILE_SCOPE("Draw scene");
 			/*for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)*/
@@ -444,8 +443,8 @@ namespace Titan
 				s_Cache->constant.renderDebugState = s_RenderDebugState;
 
 				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV | VK_SHADER_STAGE_MESH_BIT_NV | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
-
-				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, 1, &globalSet, 0, nullptr);
+				std::array<VkDescriptorSet, 2> sets = { globalSet, s_Cache->bindlessSets[currentFrame] };
+				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
 			
 
 				PFN_vkCmdDrawMeshTasksIndirectNV func = (PFN_vkCmdDrawMeshTasksIndirectNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksIndirectNV");
@@ -482,7 +481,6 @@ namespace Titan
 
 			submitInfo.signalSemaphoreCount = 1;
 			submitInfo.pSignalSemaphores = signalSemaphores;
-			TN_PROFILE_GPU_EVENT("GPU: Queue submit");
 			TN_VK_CHECK(vkQueueSubmit(device.GetGraphicsQueue(), 1, &submitInfo, swapchain.GetInFlight(currentFrame)));
 		}
 		{

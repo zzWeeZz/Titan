@@ -35,10 +35,14 @@ namespace Titan
 			return;
 		}
 
-		for (size_t i = 0; i < submeshes.size(); ++i)
-		{
-			GenerateMeshlets(submeshes[i]);
-		}
+		std::for_each(std::execution::par, submeshes.begin(), submeshes.end(), [&](Submesh& a)
+			{
+				GenerateMeshlets(a);
+			});
+			/*for (size_t i = 0; i < submeshes.size(); ++i)
+			{
+				GenerateMeshlets(submeshes[i]);
+			}*/
 	}
 	void Hydra::GenerateMeshlets(Submesh& submesh)
 	{
@@ -68,6 +72,8 @@ namespace Titan
 			submesh.GetIndices().data(), submesh.GetIndices().size(),
 			&submesh.GetRawVertices()[0].Position.x, submesh.GetRawVertices().size(), sizeof(RawVertex),
 			maxVertices, maxTriangles, coneWeight);
+
+		
 
 		const meshopt_Meshlet& last = meshlets[meshletCount - 1];
 		meshletVertices.resize(static_cast<size_t>(last.vertex_offset + last.vertex_count));

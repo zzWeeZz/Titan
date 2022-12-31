@@ -2,6 +2,7 @@
 #include "TitanAllocator.h"
 #include "Titan/Rendering/GraphicsContext.h"
 
+#include "Titan/Utils/Utils.h"
 #include "Titan/Utils/Profiler.h"
 
 #if TN_ALLOCATOR_TRACE
@@ -24,6 +25,8 @@ namespace Titan
 
 	void TitanAllocator::Allocate(AllocatedBuffer& allocation, VkBufferCreateInfo* bufferInfo, VmaAllocationCreateInfo* allocationInfo)
 	{
+		std::scoped_lock lock(s_AllocationMutex);
+
 		allocation.id = s_ID;
 		TN_ALLOC_PRINT("TitanAllocator: id {0} Allocating buffer: {1} bytes", allocation.id, bufferInfo->size);
 		allocation.sizeOfBuffer = bufferInfo->size;
@@ -37,13 +40,17 @@ namespace Titan
 
 	void TitanAllocator::Allocate(AllocatedImage& allocation, VkImageCreateInfo* imageInfo, VmaAllocationCreateInfo* allocationInfo)
 	{
+		std::scoped_lock lock(s_AllocationMutex);
+
 		allocation.id = s_ID;
 		TN_VK_CHECK(vmaCreateImage(s_Allocator, imageInfo, allocationInfo, &allocation.Image, &allocation.allocation, nullptr));
 		VmaAllocationInfo allocInfo{};
 		vmaGetAllocationInfo(s_Allocator, allocation.allocation, &allocInfo);
 		allocation.sizeOfBuffer = allocInfo.size;
+		// uses a vector to keep track of the order of the allocations.
 		s_AllocateDestructorOrder.push_back(allocation.id);
 		TN_ALLOC_PRINT("TitanAllocator: id {0} Allocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
+		// inorder to track and manage the allocations that VMA does. and this gives a deallocation function to the map.
 		s_DestroyFunctions[allocation.id] = [&, allocation]() {TN_ALLOC_PRINT("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer); vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation); };
 
 		Profiler::PofileDataAdd("BytesAllocated", allocation.sizeOfBuffer);
@@ -53,6 +60,8 @@ namespace Titan
 
 	void TitanAllocator::DeAllocate(AllocatedBuffer& allocation)
 	{
+		std::scoped_lock lock(s_AllocationMutex);
+
 		TN_ALLOC_PRINT("TitanAllocator: id {0} Deallocating buffer: {1} bytes", allocation.id, allocation.sizeOfBuffer);
 		Profiler::PofileDataSub("BytesAllocated", allocation.sizeOfBuffer);
 		vmaDestroyBuffer(s_Allocator, allocation.buffer, allocation.allocation);
@@ -66,6 +75,8 @@ namespace Titan
 
 	void TitanAllocator::DeAllocate(AllocatedImage& allocation)
 	{
+		std::scoped_lock lock(s_AllocationMutex);
+
 		TN_ALLOC_PRINT("TitanAllocator: id {0} Deallocating image: {1} bytes", allocation.id, allocation.sizeOfBuffer);
 		Profiler::PofileDataSub("BytesAllocated", allocation.sizeOfBuffer);
 		vmaDestroyImage(s_Allocator, allocation.Image, allocation.allocation);
@@ -94,10 +105,15 @@ namespace Titan
 
 	void TitanAllocator::Flush()
 	{
+		std::scoped_lock lock(s_AllocationMutex);
+		// as a fail safe if there is a duplicate in the order.
+		RemoveDuplicates(s_AllocateDestructorOrder);
+
 		for (int32_t Index = static_cast<int32_t>(s_AllocateDestructorOrder.size() - 1u); Index >= 0; Index--)
-		{
+		{	
 			s_DestroyFunctions[s_AllocateDestructorOrder[Index]]();
 		}
+
 		for (auto it = s_DestructionQueue.begin(); it != s_DestructionQueue.end(); ++it)
 		{
 			(*it)();

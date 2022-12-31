@@ -14,7 +14,7 @@ namespace Titan
 			return state == GLFW_PRESS;
 			break;
 		case Titan::InputMode::Pressed:
-			return state == GLFW_PRESS;
+			return state == GLFW_REPEAT;
 			break;
 		case Titan::InputMode::Up:
 			return state == GLFW_RELEASE;
