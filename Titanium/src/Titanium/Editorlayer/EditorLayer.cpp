@@ -156,7 +156,7 @@ namespace Titan
 			{
 				auto entity = m_ActiveScene->CreateEntity();
 				auto& mdl = entity.AddComponent<ModelComponent>();
-				entity.GetComponent<TransformComponent>().scale = { 0.01 ,0.01 ,0.01 };
+				entity.GetComponent<TransformComponent>().scale = { 0.1 ,0.1 ,0.1 };
 				entity.GetComponent<TransformComponent>().rotation.x = glm::pi<float>();
 				ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Sponza/Sponza.gltf");
 				ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");

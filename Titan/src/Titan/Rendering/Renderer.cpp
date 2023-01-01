@@ -562,6 +562,7 @@ namespace Titan
 			copy.srcOffset = 0;
 			copy.size = sizeAndStride;
 			vkCmdCopyBuffer(cmd, srcBuffer, dstMeshletBuffer, 1, &copy);
+
 			const bool isZero = dstOffset == 0;
 			const uint32_t sizeOfMeshlet = static_cast <uint32_t>(sizeof(Meshlet));
 			auto offset = !isZero ? static_cast<uint32_t>(dstOffset) / sizeOfMeshlet : static_cast<uint32_t>(dstOffset);
