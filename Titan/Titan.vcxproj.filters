@@ -318,6 +318,9 @@
     <ClInclude Include="src\Titan\Utils\TitanAllocator.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="src\Titan\Utils\Utils.h">
+      <Filter>src\Titan\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="src\Titan\Utils\VulkanUtils.h">
       <Filter>src\Titan\Utils</Filter>
     </ClInclude>
@@ -657,7 +660,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">

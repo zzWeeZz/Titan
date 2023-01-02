@@ -97,7 +97,7 @@ namespace Titan
 			normalsOffset += indicesOffset;
 
 			// constructs with (std::Vector<vertex>&, std::Vector<uint32_t>&).
-			outSubmeshes.emplace_back(vertices, indices);
+			outSubmeshes.emplace_back(vertices, indices, 0);
 		}
 	}
 }

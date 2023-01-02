@@ -59,6 +59,11 @@ namespace Titan
 		}
 	}
 
+	PerFrameInFlight<AllocatedBuffer> GenericBuffer::GetRawAllocations()
+	{
+		return m_AllocatedBuffers;
+	}
+
 
 	Ref<GenericBuffer> GenericBuffer::Create(const GenericBufferInfo& info)
 	{

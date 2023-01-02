@@ -23,6 +23,7 @@ namespace Titan
 	public:
 		GenericBuffer(const GenericBufferInfo& info);
 		AllocatedBuffer& GetAllocation();
+		PerFrameInFlight<AllocatedBuffer> GetRawAllocations();
 		static Ref<GenericBuffer> Create(const GenericBufferInfo& info);
 	private:
 		bool m_UseFramesInFlight; 

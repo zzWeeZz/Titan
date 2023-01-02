@@ -37,6 +37,6 @@ namespace Titan
 	public:
 		static void Import(const std::filesystem::path& filepath, std::vector<Submesh>& outVertex);
 	private:
-		static void LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, Node* parent, std::vector<Submesh>& outMeshes);
+		static void LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, Node* parent, std::vector<Submesh>& outMeshes, size_t pathHash);
 	};
 }

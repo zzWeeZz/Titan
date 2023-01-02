@@ -10,6 +10,7 @@ namespace Titan
 	public:
 		void Register(const TitanID& id, uint32_t bindIndex);
 		bool Exists(const TitanID& id, uint32_t& atIndex);
+		bool Exists(const TitanID& id);
 		const uint32_t Fetch(const TitanID& id);
 		void Reset();
 	private:

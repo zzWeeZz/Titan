@@ -25,6 +25,7 @@ namespace Titan
 			cmd.submesh = &submesh;
 			cmd.textureId = mdl.textureHandle;
 			cmd.transform = tf.matrix;
+			cmd.dirty = tf.isDirty;
 			Renderer::Submit(cmd);
 		}
 	}

@@ -34,7 +34,7 @@ namespace Titan
 			auto& mdl = entity.AddComponent<ModelComponent>();
 			entity.GetComponent<TransformComponent>().scale = { 1,1 ,1 };
 			entity.GetComponent<TransformComponent>().rotation.x = glm::pi<float>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/rat.glb");
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/DragonAttenuation.gltf");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
 		{
@@ -158,6 +158,7 @@ namespace Titan
 				auto& mdl = entity.AddComponent<ModelComponent>();
 				entity.GetComponent<TransformComponent>().scale = { 0.1 ,0.1 ,0.1 };
 				entity.GetComponent<TransformComponent>().rotation.x = glm::pi<float>();
+				entity.GetComponent<TransformComponent>().isDirty = true;
 				ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Sponza/Sponza.gltf");
 				ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 			}

@@ -17,6 +17,7 @@ namespace Titan
 		Submesh* submesh;
 		glm::mat4 transform;
 		TitanID textureId;
+		bool dirty = false;
 	};
 
 	struct LightCmd

@@ -56,14 +56,16 @@ namespace Titan
 		}
 
 		const tinygltf::Scene& scene = model.scenes[model.defaultScene];
+		std::hash<std::string> strHasher;
+		const size_t pathHash = strHasher(filepath.string());
 		for (size_t i = 0; i < scene.nodes.size(); i++)
 		{
 			const tinygltf::Node& node = model.nodes[scene.nodes[i]];
-			LoadNode(node, model, nullptr, outMeshes);
+			LoadNode(node, model, nullptr, outMeshes, pathHash);
 
 		}
 	}
-	void GLTFImporter::LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, Node* parent, std::vector<Submesh>& outMeshes)
+	void GLTFImporter::LoadNode(const tinygltf::Node& node, const tinygltf::Model& model, Node* parent, std::vector<Submesh>& outMeshes, size_t pathHash)
 	{
 		Node currentNode{};
 
@@ -89,7 +91,7 @@ namespace Titan
 
 		for (size_t i = 0; i < node.children.size(); i++)
 		{
-			LoadNode(model.nodes[node.children[i]], model, &currentNode, outMeshes);
+			LoadNode(model.nodes[node.children[i]], model, &currentNode, outMeshes, pathHash);
 		}
 
 		if (node.mesh > -1)
@@ -203,7 +205,7 @@ namespace Titan
 						TN_CORE_ERROR("Index component not supported!");
 						return;
 					}
-					outMeshes.emplace_back(outVerties, outIndices);
+					outMeshes.emplace_back(outVerties, outIndices, pathHash);
 				}
 			}
 		}

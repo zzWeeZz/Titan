@@ -3,15 +3,19 @@
 
 #include "Titan/Rendering/Buffers/StorageBuffer.h"
 #include "Titan/Rendering/Buffers/GenericBuffer.h"
+
+#include <functional>
+
 namespace Titan
 {
-	Submesh::Submesh(std::vector<RawVertex>& vertices, std::vector<uint32_t>& indices)
+	Submesh::Submesh(std::vector<RawVertex>& vertices, std::vector<uint32_t>& indices, size_t pathHash)
 	{
 		m_RawVertices = vertices;
 		m_Indices = indices;
 		m_Hash = 0;
-		m_Hash += vertices.size();
-		m_Hash += indices.size();
+		std::hash<size_t> hasher;
+		m_Hash += hasher(vertices.size());
+		m_Hash += hasher(indices.size());
 		m_ID = CreateID();
 	}
 	void Submesh::CreateBuffers()

@@ -17,9 +17,7 @@ namespace Titan
 	{
 
 	public:
-		Submesh(std::vector<RawVertex>& vertices, std::vector<uint32_t>& indices);
-		
-
+		Submesh(std::vector<RawVertex>& vertices, std::vector<uint32_t>& indices, size_t pathHash);
 		
 		void CreateBuffers();
 
