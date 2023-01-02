@@ -33,6 +33,9 @@ namespace Titan
 		inline const size_t& GetHash() { return m_Hash; }
 		inline const TitanID& GetID() { return m_ID; }
 	private:
+
+		void QuantizeVertexBuffer(RawVertex& rawVertex, BufferVertex& bufferVertex);
+
 		std::vector<RawVertex> m_RawVertices;
 		std::vector<BufferVertex> m_BufferVertices;
 		std::vector<uint32_t> m_Indices;

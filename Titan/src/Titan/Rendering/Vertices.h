@@ -12,10 +12,10 @@ struct RawVertex
 
 struct BufferVertex
 {
-	glm::vec4 Position = {};
+	glm::vec3 Position = {};
+	glm::u8 Normal[2];
+	glm::u8 Tangent[2];
 	glm::vec4 Color = {};
-	glm::vec4 Normal = {};
-	glm::vec4 Tangent = {};
 	glm::vec2 TexCoords = {};
 	glm::vec2 padding = {};
 };

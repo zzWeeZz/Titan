@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace Titan
 {
 	template<typename T>

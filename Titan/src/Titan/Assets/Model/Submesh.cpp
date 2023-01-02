@@ -5,6 +5,7 @@
 #include "Titan/Rendering/Buffers/GenericBuffer.h"
 
 #include <functional>
+#include <meshoptimizer/src/meshoptimizer.h>
 
 namespace Titan
 {
@@ -23,14 +24,7 @@ namespace Titan
 		m_BufferVertices.resize(m_RawVertices.size());
 		for (size_t i = 0; i < m_RawVertices.size(); ++i)
 		{
-			auto& bufferVert = m_BufferVertices[i];
-			auto& rawVert = m_RawVertices[i];
-
-			bufferVert.Position = glm::vec4(rawVert.Position, 1.f);
-			bufferVert.Normal = glm::vec4(rawVert.Normal, 1.f);
-			bufferVert.Tangent = glm::vec4(rawVert.Tangent, 1.f);
-			bufferVert.Color = glm::vec4(rawVert.Color, 1.f);
-			bufferVert.TexCoords = rawVert.TexCoords;
+			QuantizeVertexBuffer(m_RawVertices[i], m_BufferVertices[i]);
 		}
 
 		GenericBufferInfo vertexBufferInfo{};
@@ -72,5 +66,16 @@ namespace Titan
 		//m_MeshletBuffer = StorageBuffer::Create(info);
 
 		m_Hash += m_Meshlets.size();
+	}
+	void Submesh::QuantizeVertexBuffer(RawVertex& rawVertex, BufferVertex& bufferVertex)
+	{
+
+		
+			
+		bufferVertex.Position = rawVertex.Position;
+		bufferVertex.Normal = glm::vec4(rawVertex.Normal, 1.f);
+		bufferVertex.Tangent = glm::vec4(rawVertex.Tangent, 1.f);
+		bufferVertex.Color = glm::vec4(rawVertex.Color, 1.f);
+		bufferVertex.TexCoords = rawVertex.TexCoords;
 	}
 }
