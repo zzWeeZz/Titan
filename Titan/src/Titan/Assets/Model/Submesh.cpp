@@ -1,11 +1,15 @@
 #include "TNpch.h"
 #include "Submesh.h"
 
+#include <functional>
+
+#include <meshoptimizer/src/meshoptimizer.h>
+
+#include "Titan/Utils/Utils.h"
+
 #include "Titan/Rendering/Buffers/StorageBuffer.h"
 #include "Titan/Rendering/Buffers/GenericBuffer.h"
 
-#include <functional>
-#include <meshoptimizer/src/meshoptimizer.h>
 
 namespace Titan
 {
@@ -73,8 +77,18 @@ namespace Titan
 		
 			
 		bufferVertex.Position = rawVertex.Position;
-		bufferVertex.Normal = glm::vec4(rawVertex.Normal, 1.f);
-		bufferVertex.Tangent = glm::vec4(rawVertex.Tangent, 1.f);
+
+		glm::vec2 encodedNormal = EncodeOctahedronVectors(rawVertex.Normal);
+		bufferVertex.Normal[0] = meshopt_quantizeUnorm(encodedNormal.x, 8);
+		bufferVertex.Normal[1] = meshopt_quantizeUnorm(encodedNormal.y, 8);
+		
+		//glm::vec2 quantizeNormal = glm::vec2(bufferVertex.Normal[0] / (glm::pow(2, 8) - 1), bufferVertex.Normal[1] / (glm::pow(2, 8) - 1));
+		////quantizeNormal = glm::normalize(quantizeNormal);
+		//glm::vec3 decodedNormal;
+		//decodedNormal = DecodeOctahedronVectors(quantizeNormal);
+		encodedNormal = EncodeOctahedronVectors(rawVertex.Tangent);
+		bufferVertex.Tangent[0] = meshopt_quantizeUnorm(encodedNormal.x, 8);
+		bufferVertex.Tangent[1] = meshopt_quantizeUnorm(encodedNormal.y, 8);
 		bufferVertex.Color = glm::vec4(rawVertex.Color, 1.f);
 		bufferVertex.TexCoords = rawVertex.TexCoords;
 	}

@@ -368,6 +368,7 @@ namespace Titan
 		depthClear.depthStencil.depth = 1.f;
 		depthClear.depthStencil.stencil = 0;
 
+
 		const VkRenderingAttachmentInfo colorAttachmentInfo
 		{
 			.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
