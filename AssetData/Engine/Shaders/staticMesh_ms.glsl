@@ -2,6 +2,7 @@
 
 
 #extension GL_NV_mesh_shader: require
+#extension GL_EXT_shader_explicit_arithmetic_types: require
 
 #define  MAX_VERTEX_COUNT 64
 #define  MAX_PRIMITIVE_COUNT 124
@@ -30,10 +31,10 @@ layout (location = 1) out PerVertexData
 
 struct Vertex
 {
-	vec4 Position;
+	vec3 Position;
+	uint8_t Normal[2];
+	uint8_t Tangent[2]; 
 	vec4 Color;
-	vec4 Normal;
-	vec4 Tangent; 
 	vec2 TexCoords;
 	vec2 padding;
 };
@@ -112,6 +113,29 @@ vec3 GetRandomColor(
 				float((hash >> 8) & 255),
 				float((hash >> 16) & 255)) / 255.0;
 }
+
+vec3 DecodeOctahedronVectors(vec2 f)
+{
+	// https://twitter.com/Stubbesaurus/status/937994790553227264
+
+	f = f * 2.0f - 1.0f;
+
+	vec3 n = vec3(f.x, f.y, 1.0 - abs(f.x) - abs(f.y));
+	float t = clamp(-n.z, 0.f, 1.f);
+	if (n.x >= 0.0f && n.y >= 0.0f) // maybe should be && instead of ||
+	{
+		n.x += -t;
+		n.y += -t;
+	}
+	else
+	{
+		n.x += t;
+		n.y += t;
+	}
+
+	return normalize(n);
+}
+
 void main()
 {
 	const uint meshletIndex = IN.baseID + IN.subIDs[gl_WorkGroupID.x];
@@ -128,12 +152,14 @@ void main()
 		Vertex vertex = u_VertexBuffer.vertices[VertexIndex + mesh.vertexOffset];
 
 		const mat4 mvp = u_MvpObject.proj * u_MvpObject.view * mesh.transform;
-		vec4 fragPosition = mvp * vertex.Position;
+		vec4 fragPosition = mvp * vec4(vertex.Position, 1.0f);
 		gl_MeshVerticesNV[v].gl_Position = fragPosition;
 		v_out[v].fragPosition = fragPosition.xyz;
 		v_out[v].color = vec4(GetRandomColor(meshletIndex),1.f);
 		v_out[v].texCoord = vertex.TexCoords;
-		v_out[v].normal = mat3(u_MvpObject.mdlSpace) * vertex.Normal.xyz;
+		vec2 quantizeNormal = vec2(vertex.Normal[0] / (pow(2, 8) - 1), vertex.Normal[1] / (pow(2, 8) - 1));
+		vec3 normal = DecodeOctahedronVectors(quantizeNormal);
+		v_out[v].normal = mat3(u_MvpObject.mdlSpace) * normal;
 	}
 
 

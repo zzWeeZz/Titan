@@ -1,13 +1,13 @@
 ResourceRegistry:
   - 0:
-      - ce876c46-2f13-4e86-9855-1e41386d715d
+      - 7f9cab48-0b88-4305-a624-06dbe75140e8
       - Assets/Texture/Titan.png
   - 1:
-      - c37c6f6b-8c0b-4d9e-a7e8-11ba67953818
+      - cade873c-907c-45b3-bca8-a11bfb98fd80
       - Assets/Texture/Titan.png
   - 2:
-      - 58fc95ce-9d01-40e9-90ec-7033856e9829
-      - Assets/Texture/Titan.png
+      - b3ce9a1e-2fce-49b2-8c77-3f3fbf8c43fd
+      - Assets/Models/Rat.glb
   - 3:
-      - 4996b0d1-815d-4dc3-ad4a-9a2867b8837b
-      - Assets/Models/DragonAttenuation.gltf
+      - a681b65c-8519-442e-9b5c-9a5b64ac3ef7
+      - Assets/Texture/Titan.png

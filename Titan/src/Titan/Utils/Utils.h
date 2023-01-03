@@ -28,7 +28,7 @@ namespace Titan
 	{
 		const glm::vec2 absOfVec = { abs(v.y),abs(v.x) };
 		float fraction = 0;
-		if (v.x >= 0.0 || v.y >= 0.0) // maybe should be && instead of ||
+		if (v.x >= 0.0 && v.y >= 0.0) // maybe should be && instead of ||
 		{
 			fraction = 1.0f;
 		}
