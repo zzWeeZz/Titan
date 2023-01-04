@@ -122,7 +122,7 @@ vec3 DecodeOctahedronVectors(vec2 f)
 
 	vec3 n = vec3(f.x, f.y, 1.0 - abs(f.x) - abs(f.y));
 	float t = clamp(-n.z, 0.f, 1.f);
-	if (n.x >= 0.0f && n.y >= 0.0f) // maybe should be && instead of ||
+	if (n.x >= 0.0f || n.y >= 0.0f) // maybe should be && instead of ||
 	{
 		n.x += -t;
 		n.y += -t;
@@ -136,6 +136,12 @@ vec3 DecodeOctahedronVectors(vec2 f)
 	return normalize(n);
 }
 
+vec3 DecodeNormalEncode(uint8_t data[2])
+{
+		vec2 quantizeNormal = vec2(data[0] / (pow(2, 8) - 1), data[1] / (pow(2, 8) - 1));
+		vec3 normal = DecodeOctahedronVectors(quantizeNormal);
+		return normal;
+}
 void main()
 {
 	const uint meshletIndex = IN.baseID + IN.subIDs[gl_WorkGroupID.x];
@@ -157,8 +163,12 @@ void main()
 		v_out[v].fragPosition = fragPosition.xyz;
 		v_out[v].color = vec4(GetRandomColor(meshletIndex),1.f);
 		v_out[v].texCoord = vertex.TexCoords;
-		vec2 quantizeNormal = vec2(vertex.Normal[0] / (pow(2, 8) - 1), vertex.Normal[1] / (pow(2, 8) - 1));
-		vec3 normal = DecodeOctahedronVectors(quantizeNormal);
+		
+		vec3 normal = DecodeNormalEncode(vertex.Normal);
+		vec3 tangent = DecodeNormalEncode(vertex.Tangent);
+		vec3 biTangent = cross(normal, tangent);
+		mat3 TBN = {tangent, biTangent, normal};
+
 		v_out[v].normal = mat3(u_MvpObject.mdlSpace) * normal;
 	}
 

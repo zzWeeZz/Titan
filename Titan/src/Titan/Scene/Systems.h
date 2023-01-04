@@ -11,8 +11,6 @@ void CalculateMatrixTransformSystem(TransformComponent& tf)
 	const auto scale = glm::scale(glm::mat4(1.0f), tf.scale);
 	tf.matrix = pos * rot * scale;
 	tf.isDirty = tf.prevMatrix != tf.matrix;
-
-	tf.prevMatrix = tf.matrix;
 }
 
 void LightSystem(LightComponent& lgh, TransformComponent& tf)

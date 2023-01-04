@@ -24,6 +24,10 @@ namespace Titan
 		uint32_t gpuDriverVersionMajor;
 		uint32_t gpuDriverVersionMinor;
 		uint32_t gpuDriverVersionPatch;
+		uint32_t gpuMaxDrawTasksCount;
+		uint32_t gpuMaxTaskWorkGroupInvocations;
+		uint32_t gpuMAxMeshOutputVertices;
+		uint32_t gpuMAxMeshOutputPrimatives;
 	};
 
 	class PhysicalDevice

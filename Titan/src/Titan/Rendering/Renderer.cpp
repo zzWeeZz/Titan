@@ -93,6 +93,9 @@ namespace Titan
 		Ref<GenericBuffer> vertexIndexBuffer;
 		Ref<GenericBuffer> meshBuffer;
 		std::unordered_map<uint32_t, MeshCmd> dirtyMeshCommands;
+		PerFrameInFlight<bool> isFrameDirty;
+		PerFrameInFlight<bool> isFrameDirtyValidator;
+		PerFrameInFlight<size_t> meshCountPreviousFrame;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
 	static uint32_t s_RenderDebugState;
@@ -115,6 +118,10 @@ namespace Titan
 		if (meshCmd.dirty)
 		{
 			s_Cache->dirtyMeshCommands[static_cast<uint32_t>(s_Cache->meshCmds.Size() - 1)] = meshCmd;
+			for (size_t i = 0; i < g_FramesInFlight; i++)
+			{
+				s_Cache->isFrameDirty[i] = true;
+			}
 		}
 	}
 
@@ -160,7 +167,7 @@ namespace Titan
 		indirectBufferInfo.allocUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 
 		s_Cache->indirectCmdBuffer = GenericBuffer::Create(indirectBufferInfo);
-	
+
 		CreateMeshletBuffer();
 		CreateVertexBuffer();
 		CreateTriangleBuffer();
@@ -169,7 +176,7 @@ namespace Titan
 
 		SamplerLibrary::Add("Clamp", Filter::Linear, Address::ClampToEdge, MipmapMode::Linear);
 	}
-	
+
 	void Renderer::CreateMeshletBuffer()
 	{
 		GenericBufferInfo meshletBufferInfo{};
@@ -231,7 +238,7 @@ namespace Titan
 		s_Cache->meshBuffer = GenericBuffer::Create(bufferInfo);
 	}
 
-	void Renderer::NewFrame()
+	void Renderer::WaitOnNewFrame()
 	{
 		TN_PROFILE_FUNCTION();
 		auto& currentFrame = GraphicsContext::GetCurrentFrame();
@@ -240,13 +247,36 @@ namespace Titan
 		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		s_Cache->allocators[currentFrame].ResetPools();
 		TitanImGui::FlushDescriptors(currentFrame);
+		bool cleanUp = false;
+		for (size_t i = 0; i < g_FramesInFlight; i++)
+		{
+			if (s_Cache->isFrameDirtyValidator[i])
+			{
+				cleanUp = false;
+				break;
+			}
+			s_Cache->isFrameDirtyValidator[i] = false;
+			cleanUp = true;
+		}
+		if (cleanUp)
+		{
+			for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
+			{
+				auto& cmd = s_Cache->meshCmds[i];
+				cmd.submesh->GetTranform() = cmd.transform;
+			}
+		}
+
+		s_Cache->dirtyMeshCommands.clear();
+		s_Cache->meshCountPreviousFrame[currentFrame] = s_Cache->meshCmds.Size();
+		s_Cache->meshCmds.Reset();
 	}
 
 	void Renderer::Begin()
 	{
 		TN_PROFILE_FUNCTION();
-		Profiler::PofileDataSet("MeshletCount",size_t(0));
-		Profiler::PofileDataSet("TriangleCount",size_t(0));
+		Profiler::PofileDataSet("MeshletCount", size_t(0));
+		Profiler::PofileDataSet("TriangleCount", size_t(0));
 
 		auto& currentFrame = GraphicsContext::GetCurrentFrame();
 		auto& commandBuffer = GraphicsContext::GetDevice().GetCommandBuffer(currentFrame, 0);
@@ -269,7 +299,7 @@ namespace Titan
 		uint32_t imageIndex = index;
 		vkResetCommandBuffer(commandBuffer, 0);
 
-		
+
 
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -353,14 +383,20 @@ namespace Titan
 			void* mappedMemory = nullptr;
 			TitanAllocator::MapMemory(s_Cache->indirectCmdBuffer->GetAllocation(), mappedMemory);
 			VkDrawMeshTasksIndirectCommandNV* drawCommands = (VkDrawMeshTasksIndirectCommandNV*)mappedMemory;
-			
+
 			drawCommands[0].taskCount = static_cast<uint32_t>(meshletCount);
 			drawCommands[0].firstTask = 0;
 			TitanAllocator::UnMapMemory(s_Cache->indirectCmdBuffer->GetAllocation());
 		}
-		if (!s_Cache->dirtyMeshCommands.empty())
+		if (s_Cache->isFrameDirty[currentFrame] || s_Cache->meshCountPreviousFrame[currentFrame] != s_Cache->meshCmds.Size())
 		{
 			UpdateMeshBuffer();
+			s_Cache->isFrameDirty[currentFrame] = false;
+			s_Cache->isFrameDirtyValidator[currentFrame] = false;
+		}
+		else
+		{
+			s_Cache->isFrameDirtyValidator[currentFrame] = true;
 		}
 
 		VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
@@ -407,14 +443,15 @@ namespace Titan
 
 			PipelineLibrary::BindPipline("MeshShaders", commandBuffer);
 			s_Cache->mainFB->Bind(commandBuffer);
-			
+
 			s_Cache->cameraData.proj = s_Cache->currentCamera.proj;
 			s_Cache->cameraData.view = s_Cache->currentCamera.view;
 			s_Cache->lightBuffer->SetData(&s_Cache->lightData, sizeof(LightCmd));
-		
+
 
 			TN_PROFILE_SCOPE("Draw scene");
 			/*for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)*/
+			if (s_Cache->meshCmds.HasData())
 			{
 				auto& mdlCmd = s_Cache->meshCmds[0];
 				auto texture = ResourceRegistry::GetItem<Texture>(mdlCmd.textureId);
@@ -453,7 +490,7 @@ namespace Titan
 				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV | VK_SHADER_STAGE_MESH_BIT_NV | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
 				std::array<VkDescriptorSet, 2> sets = { globalSet, s_Cache->bindlessSets[currentFrame] };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
-			
+
 
 				PFN_vkCmdDrawMeshTasksIndirectNV func = (PFN_vkCmdDrawMeshTasksIndirectNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksIndirectNV");
 				if (func != nullptr)
@@ -508,8 +545,6 @@ namespace Titan
 		}
 
 		currentFrame = (currentFrame + 1) % g_FramesInFlight;
-		s_Cache->meshCmds.Reset();
-		s_Cache->dirtyMeshCommands.clear();
 	}
 
 	bool Renderer::ValidateBindlessBuffers()
@@ -655,26 +690,24 @@ namespace Titan
 	void Renderer::UpdateMeshBuffer()
 	{
 		TN_PROFILE_FUNCTION();
-		for (size_t i = 0; i < g_FramesInFlight; i++)
+
+		void* mappedMem = nullptr;
+		TitanAllocator::MapMemory(s_Cache->meshBuffer->GetAllocation(), mappedMem);
+
+		Mesh* mappedMeshArray = reinterpret_cast<Mesh*>(mappedMem);
+
+		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
 		{
-			void* mappedMem = nullptr;
-			TitanAllocator::MapMemory(s_Cache->meshBuffer->GetRawAllocations()[i], mappedMem);
-
-			Mesh* mappedMeshArray = reinterpret_cast<Mesh*>(mappedMem);
-
-			for (auto& cmd : s_Cache->dirtyMeshCommands)
-			{
-				auto& mesh = mappedMeshArray[cmd.first];
-				auto& mdlCmd = s_Cache->meshCmds[cmd.first];
-				mesh.transform = mdlCmd.transform;
-				mesh.meshletOffset = s_Cache->meshletBindSet.Fetch(mdlCmd.submesh->GetID());
-				mesh.vertexOffset = s_Cache->vertexBindSet.Fetch(mdlCmd.submesh->GetID());
-				mesh.triangleOffset = s_Cache->triangleBindSet.Fetch(mdlCmd.submesh->GetID());
-				mesh.vertexIndexOffset = s_Cache->vertexIndexBindSet.Fetch(mdlCmd.submesh->GetID());
-			}
-
-			TitanAllocator::UnMapMemory(s_Cache->meshBuffer->GetRawAllocations()[i]);
+			auto& mesh = mappedMeshArray[i];
+			auto& mdlCmd = s_Cache->meshCmds[i];
+			mesh.transform = mdlCmd.transform;
+			mesh.meshletOffset = s_Cache->meshletBindSet.Fetch(mdlCmd.submesh->GetID());
+			mesh.vertexOffset = s_Cache->vertexBindSet.Fetch(mdlCmd.submesh->GetID());
+			mesh.triangleOffset = s_Cache->triangleBindSet.Fetch(mdlCmd.submesh->GetID());
+			mesh.vertexIndexOffset = s_Cache->vertexIndexBindSet.Fetch(mdlCmd.submesh->GetID());
 		}
+
+		TitanAllocator::UnMapMemory(s_Cache->meshBuffer->GetAllocation());
 	}
 
 	void Renderer::Shutdown()

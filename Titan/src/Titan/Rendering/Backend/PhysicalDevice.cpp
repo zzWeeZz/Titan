@@ -44,16 +44,25 @@ namespace Titan
         if (candidates.rbegin()->first > 0)
         {
             m_PhysicalDevice = candidates.rbegin()->second;
-			VkPhysicalDeviceProperties deviceProperties;
-			vkGetPhysicalDeviceProperties(m_PhysicalDevice, &deviceProperties);
-            m_GPUInfo.gpuName = deviceProperties.deviceName;
-            m_GPUInfo.apiVersionMajor = VK_VERSION_MAJOR(deviceProperties.apiVersion);
-            m_GPUInfo.apiVersionMinor = VK_VERSION_MINOR(deviceProperties.apiVersion);
-            m_GPUInfo.apiVersionPatch = VK_VERSION_PATCH(deviceProperties.apiVersion);
+			VkPhysicalDeviceMeshShaderPropertiesNV meshShaderProperties{};
+            meshShaderProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_NV;
+			VkPhysicalDeviceProperties2 deviceProperties;
+            deviceProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+            deviceProperties.pNext = &meshShaderProperties;
+			vkGetPhysicalDeviceProperties2(m_PhysicalDevice, &deviceProperties);
+            m_GPUInfo.gpuName = deviceProperties.properties.deviceName;
+            m_GPUInfo.apiVersionMajor = VK_VERSION_MAJOR(deviceProperties.properties.apiVersion);
+            m_GPUInfo.apiVersionMinor = VK_VERSION_MINOR(deviceProperties.properties.apiVersion);
+            m_GPUInfo.apiVersionPatch = VK_VERSION_PATCH(deviceProperties.properties.apiVersion);
 
-			m_GPUInfo.gpuDriverVersionMajor = VK_VERSION_MAJOR(deviceProperties.driverVersion);
-			m_GPUInfo.gpuDriverVersionMinor = VK_VERSION_MINOR(deviceProperties.driverVersion);
-			m_GPUInfo.gpuDriverVersionPatch = VK_VERSION_PATCH(deviceProperties.driverVersion);
+			m_GPUInfo.gpuDriverVersionMajor = VK_VERSION_MAJOR(deviceProperties.properties.driverVersion);
+			m_GPUInfo.gpuDriverVersionMinor = VK_VERSION_MINOR(deviceProperties.properties.driverVersion);
+			m_GPUInfo.gpuDriverVersionPatch = VK_VERSION_PATCH(deviceProperties.properties.driverVersion); 
+
+            m_GPUInfo.gpuMaxDrawTasksCount = meshShaderProperties.maxDrawMeshTasksCount;
+            m_GPUInfo.gpuMaxTaskWorkGroupInvocations = meshShaderProperties.maxTaskWorkGroupInvocations;
+            m_GPUInfo.gpuMAxMeshOutputVertices = meshShaderProperties.maxMeshOutputVertices;
+            m_GPUInfo.gpuMAxMeshOutputPrimatives = meshShaderProperties.maxMeshOutputPrimitives;
         }
     }
     QueueFamilyIndices PhysicalDevice::FindQueueFamilies()

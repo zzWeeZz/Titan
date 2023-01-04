@@ -22,14 +22,20 @@ namespace Titan
 			queueCreateInfos.push_back(queueCreateInfo);
 		}
 
+		VkPhysicalDeviceVulkan12Features device12Features{};
+		device12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+		device12Features.shaderInt8 = VK_TRUE;
 
-		VkPhysicalDeviceFeatures deviceFeatures{};
+		VkPhysicalDeviceFeatures2 deviceFeatures{};
+		deviceFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+		deviceFeatures.pNext = &device12Features;
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 		createInfo.pQueueCreateInfos = queueCreateInfos.data();
-		createInfo.pEnabledFeatures = &deviceFeatures;
+		createInfo.pEnabledFeatures =nullptr;
+		createInfo.pNext = &deviceFeatures;
 
 		createInfo.enabledExtensionCount = 0;
 #ifdef TN_CONFIG_DEBUG

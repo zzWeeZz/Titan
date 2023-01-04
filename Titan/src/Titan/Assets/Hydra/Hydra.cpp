@@ -15,10 +15,14 @@ namespace Titan
 {
 	void Hydra::ImportModel(const std::filesystem::path& filepath, std::vector<Submesh>& submeshes)
 	{
+		submeshes = InternalImportModel(filepath, submeshes);
+	}
+	std::vector<Submesh> Hydra::InternalImportModel(std::filesystem::path filepath, std::vector<Submesh> submeshes)
+	{
 		if (!std::filesystem::exists(filepath))
 		{
 			TN_CORE_ERROR("(Hydra::ImportModel) Could not find file {0}.", filepath.string());
-			return;
+			return submeshes;
 		}
 		const auto& extension = filepath.extension();
 		if (extension == ".fbx")
@@ -32,17 +36,14 @@ namespace Titan
 		else
 		{
 			TN_CORE_ERROR("(Hydra::ImportModel) Extension: [{0}] is not supported model format!");
-			return;
+			return submeshes;
 		}
 
 		std::for_each(std::execution::par, submeshes.begin(), submeshes.end(), [&](Submesh& a)
 			{
 				GenerateMeshlets(a);
 			});
-			/*for (size_t i = 0; i < submeshes.size(); ++i)
-			{
-				GenerateMeshlets(submeshes[i]);
-			}*/
+		return submeshes;
 	}
 	void Hydra::GenerateMeshlets(Submesh& submesh)
 	{

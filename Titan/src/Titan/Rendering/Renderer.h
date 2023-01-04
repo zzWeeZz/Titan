@@ -36,7 +36,7 @@ namespace Titan
 		static void Submit(const LightCmd& lightCmd);
 		static Ref<Framebuffer> GetMainFramebuffer();
 		static void Initialize();
-		static void NewFrame();
+		static void WaitOnNewFrame();
 		static void Begin();
 		static void Shutdown();
 	private:

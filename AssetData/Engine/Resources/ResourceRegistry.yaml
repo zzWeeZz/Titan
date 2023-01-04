@@ -1,13 +1,25 @@
 ResourceRegistry:
   - 0:
-      - 7f9cab48-0b88-4305-a624-06dbe75140e8
+      - 2950db89-40fd-4744-b923-2501f67c086b
       - Assets/Texture/Titan.png
   - 1:
-      - cade873c-907c-45b3-bca8-a11bfb98fd80
+      - 3febfebb-4211-47d2-bc65-6c7d086977fa
       - Assets/Texture/Titan.png
   - 2:
-      - b3ce9a1e-2fce-49b2-8c77-3f3fbf8c43fd
-      - Assets/Models/Rat.glb
+      - d40ee731-6204-4ca3-a0cd-4842afafd226
+      - Assets/Models/Sponza/Sponza.gltf
   - 3:
-      - a681b65c-8519-442e-9b5c-9a5b64ac3ef7
+      - 89d6445e-0e96-46ea-af99-240fa0f055cf
+      - Assets/Models/Rat.glb
+  - 4:
+      - 15ae80c6-be72-4abd-b655-4b93007aa3d0
       - Assets/Texture/Titan.png
+  - 5:
+      - 29b25933-9836-41ae-89fa-124bcbddacb3
+      - Assets/Texture/Titan.png
+  - 6:
+      - d93cd0a5-f8a8-45e3-9a04-29fd3a522509
+      - Assets/Texture/Titan.png
+  - 7:
+      - 715e3a78-34aa-482e-94e0-ad2489df659b
+      - Assets/Models/Sponza/Sponza.gltf

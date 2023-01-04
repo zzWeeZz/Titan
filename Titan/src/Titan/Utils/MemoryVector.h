@@ -10,6 +10,7 @@ namespace Titan
 		
 		T& Emplace();
 		void Reset();
+		bool HasData();
 		T& operator[](const size_t& index);
 		
 		const size_t Size() { return m_VirtualSize; }
@@ -42,6 +43,11 @@ namespace Titan
 	inline void MemoryVector<T>::Reset()
 	{
 		m_VirtualSize = 0;
+	}
+	template<typename T>
+	inline bool MemoryVector<T>::HasData()
+	{
+		return m_VirtualSize > 0;
 	}
 	template<typename T>
 	inline T& MemoryVector<T>::operator[](const size_t& index)

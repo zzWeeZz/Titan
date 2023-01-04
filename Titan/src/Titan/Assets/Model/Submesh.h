@@ -1,5 +1,6 @@
 #pragma once
 #include <Titan/Rendering/Vertices.h>
+#include <glm/glm.hpp>
 namespace Titan
 {
 	class StorageBuffer;
@@ -32,6 +33,7 @@ namespace Titan
 		inline Ref<GenericBuffer> GetMeshletVertexBuffer() { return m_MeshletVertexBuffer; }
 		inline const size_t& GetHash() { return m_Hash; }
 		inline const TitanID& GetID() { return m_ID; }
+		inline glm::mat4& GetTranform() { return m_Transform; }
 	private:
 
 		void QuantizeVertexBuffer(RawVertex& rawVertex, BufferVertex& bufferVertex);
@@ -47,5 +49,6 @@ namespace Titan
 		Ref<GenericBuffer> m_MeshletVertexBuffer;
 		size_t m_Hash; // TODO: this should be some form of structure.
 		TitanID m_ID;
+		glm::mat4 m_Transform;
 	};
 }

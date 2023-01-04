@@ -24,9 +24,10 @@ namespace Titan
 			MeshCmd cmd{};
 			cmd.submesh = &submesh;
 			cmd.textureId = mdl.textureHandle;
+			cmd.dirty = submesh.GetTranform() != tf.matrix;
 			cmd.transform = tf.matrix;
-			cmd.dirty = tf.isDirty;
 			Renderer::Submit(cmd);
 		}
+		tf.prevMatrix = tf.matrix;
 	}
 }
