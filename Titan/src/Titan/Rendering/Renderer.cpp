@@ -62,40 +62,46 @@ namespace Titan
 
 	struct Cache
 	{
-		CameraCmd currentCamera = {};
-		LightCmd lightData = {};
+		// Structs
+		CameraCmd currentCamera;
+		LightCmd lightData;
 		MemoryVector<MeshCmd> meshCmds;
+		CameraData cameraData;
+		ModelData modelData;
+		Constant constant;
 
+		// Vk objects
 		Ref<Framebuffer> mainFB;
 		Ref<VertexBuffer> vbtest;
 		Ref<IndexBuffer> ibtest;
 		Ref<Framebuffer> testFB;
-		CameraData cameraData = {};
 		Ref<UniformBuffer> cameraBuffer;
-		TitanID textureID;
-		ModelData modelData = {};
 		Ref<UniformBuffer> lightBuffer;
-		Constant constant;
-		PerFrameInFlight<DescriptorAllocator> allocators;
-		PerFrameInFlight<DescriptorAllocator> bindlessAllocators;
-		PerFrameInFlight<DescriptorLayoutCache> caches;
-		PerFrameInFlight<DescriptorLayoutCache> bindlessCaches;
-		PerFrameInFlight<VkDescriptorSet> bindlessSets;
-		BindRegistry textureBindSet;
-		BindRegistry meshletBindSet;
-		BindRegistry vertexBindSet;
-		BindRegistry triangleBindSet;
-		BindRegistry vertexIndexBindSet;
+		TitanID textureID;
 		Ref<GenericBuffer> indirectCmdBuffer;
 		Ref<GenericBuffer> meshletBuffer;
 		Ref<GenericBuffer> vertexBuffer;
 		Ref<GenericBuffer> triangleBuffer;
 		Ref<GenericBuffer> vertexIndexBuffer;
 		Ref<GenericBuffer> meshBuffer;
+
+		// In-flight data
+		PerFrameInFlight<DescriptorAllocator> allocators;
+		PerFrameInFlight<DescriptorAllocator> bindlessAllocators;
+		PerFrameInFlight<DescriptorLayoutCache> caches;
+		PerFrameInFlight<DescriptorLayoutCache> bindlessCaches;
+		PerFrameInFlight<VkDescriptorSet> bindlessSets;
 		std::unordered_map<uint32_t, MeshCmd> dirtyMeshCommands;
 		PerFrameInFlight<bool> isFrameDirty;
 		PerFrameInFlight<bool> isFrameDirtyValidator;
 		PerFrameInFlight<size_t> meshCountPreviousFrame;
+
+		// Bind registry
+		BindRegistry textureBindSet;
+		BindRegistry meshletBindSet;
+		BindRegistry vertexBindSet;
+		BindRegistry triangleBindSet;
+		BindRegistry vertexIndexBindSet;
 	};
 	static Scope<Cache> s_Cache = CreateScope<Cache>();
 	static uint32_t s_RenderDebugState;
@@ -247,18 +253,19 @@ namespace Titan
 		vkWaitForFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame), VK_TRUE, UINT64_MAX);
 		s_Cache->allocators[currentFrame].ResetPools();
 		TitanImGui::FlushDescriptors(currentFrame);
-		bool cleanUp = false;
+
+		bool shouldCleanUp = true;
 		for (size_t i = 0; i < g_FramesInFlight; i++)
 		{
 			if (s_Cache->isFrameDirtyValidator[i])
 			{
-				cleanUp = false;
+				shouldCleanUp = false;
 				break;
 			}
 			s_Cache->isFrameDirtyValidator[i] = false;
-			cleanUp = true;
 		}
-		if (cleanUp)
+
+		if (shouldCleanUp)
 		{
 			for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
 			{
@@ -388,7 +395,8 @@ namespace Titan
 			drawCommands[0].firstTask = 0;
 			TitanAllocator::UnMapMemory(s_Cache->indirectCmdBuffer->GetAllocation());
 		}
-		if (s_Cache->isFrameDirty[currentFrame] || s_Cache->meshCountPreviousFrame[currentFrame] != s_Cache->meshCmds.Size())
+		bool shouldUpdateMeshBuffer = s_Cache->isFrameDirty[currentFrame] || s_Cache->meshCountPreviousFrame[currentFrame] != s_Cache->meshCmds.Size();
+		if (shouldUpdateMeshBuffer)
 		{
 			UpdateMeshBuffer();
 			s_Cache->isFrameDirty[currentFrame] = false;
@@ -450,7 +458,6 @@ namespace Titan
 
 
 			TN_PROFILE_SCOPE("Draw scene");
-			/*for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)*/
 			if (s_Cache->meshCmds.HasData())
 			{
 				auto& mdlCmd = s_Cache->meshCmds[0];
