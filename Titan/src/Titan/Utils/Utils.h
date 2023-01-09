@@ -52,8 +52,8 @@ namespace Titan
 			n.x = xyOctWrap.x;
 			n.y = xyOctWrap.y;
 		}
-		n.x = n.x * 0.5 + 0.5;
-		n.y = n.y * 0.5 + 0.5;
+		n.x = n.x * 0.5f + 0.5f;
+		n.y = n.y * 0.5f + 0.5f;
 		xy = { n.x, n.y };
 		return xy;
 	}

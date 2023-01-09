@@ -63,21 +63,17 @@ namespace Titan
 	struct Cache
 	{
 		// Structs
-		CameraCmd currentCamera;
-		LightCmd lightData;
+		CameraCmd currentCamera{};
+		LightCmd lightData{};
 		MemoryVector<MeshCmd> meshCmds;
-		CameraData cameraData;
-		ModelData modelData;
-		Constant constant;
+		CameraData cameraData{};
+		ModelData modelData{};
+		Constant constant{};
 
 		// Vk objects
 		Ref<Framebuffer> mainFB;
-		Ref<VertexBuffer> vbtest;
-		Ref<IndexBuffer> ibtest;
-		Ref<Framebuffer> testFB;
 		Ref<UniformBuffer> cameraBuffer;
 		Ref<UniformBuffer> lightBuffer;
-		TitanID textureID;
 		Ref<GenericBuffer> indirectCmdBuffer;
 		Ref<GenericBuffer> meshletBuffer;
 		Ref<GenericBuffer> vertexBuffer;
@@ -90,11 +86,11 @@ namespace Titan
 		PerFrameInFlight<DescriptorAllocator> bindlessAllocators;
 		PerFrameInFlight<DescriptorLayoutCache> caches;
 		PerFrameInFlight<DescriptorLayoutCache> bindlessCaches;
-		PerFrameInFlight<VkDescriptorSet> bindlessSets;
+		PerFrameInFlight<VkDescriptorSet> bindlessSets{};
 		std::unordered_map<uint32_t, MeshCmd> dirtyMeshCommands;
-		PerFrameInFlight<bool> isFrameDirty;
-		PerFrameInFlight<bool> isFrameDirtyValidator;
-		PerFrameInFlight<size_t> meshCountPreviousFrame;
+		PerFrameInFlight<bool> isFrameDirty{};
+		PerFrameInFlight<bool> isFrameDirtyValidator{};
+		PerFrameInFlight<size_t> meshCountPreviousFrame{};
 
 		// Bind registry
 		BindRegistry textureBindSet;
@@ -143,7 +139,6 @@ namespace Titan
 
 	void Renderer::Initialize()
 	{
-		ResourceRegistry::GetItem<Texture>(s_Cache->textureID)->Initialize("Assets/Texture/Titan.png");
 
 		GraphicsPipelineInfo info{};
 
@@ -701,7 +696,7 @@ namespace Titan
 		void* mappedMem = nullptr;
 		TitanAllocator::MapMemory(s_Cache->meshBuffer->GetAllocation(), mappedMem);
 
-		Mesh* mappedMeshArray = reinterpret_cast<Mesh*>(mappedMem);
+		auto* mappedMeshArray = reinterpret_cast<Mesh*>(mappedMem);
 
 		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
 		{
