@@ -34,7 +34,7 @@ namespace Titan
 			auto& mdl = entity.AddComponent<ModelComponent>();
 			entity.GetComponent<TransformComponent>().scale = { 1,1 ,1 };
 			entity.GetComponent<TransformComponent>().rotation.x = glm::pi<float>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Rat.glb");
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Sponza/Sponza.gltf");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
 		{
@@ -94,9 +94,9 @@ namespace Titan
 		}
 
 		m_PanelHandler.SendCallback();
-		m_PanelHandler.Get<SceneHierarchyPanel>("SceneHierarchy")->EntitySelectedCallback([this](Entity& entity)
+		m_PanelHandler.Get<SceneHierarchyPanel>("SceneHierarchy").lock()->EntitySelectedCallback([this](Entity& entity)
 			{
-				m_PanelHandler.Get<PropertiesPanel>("PropertiesPanel")->Inspect(entity);
+				m_PanelHandler.Get<PropertiesPanel>("PropertiesPanel").lock()->Inspect(entity);
 			});
 
 

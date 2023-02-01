@@ -16,6 +16,7 @@
 
 static void ThreadCallback(std::string message, Titan::Severity severity)
 {
+	severity;
 	TN_CORE_INFO(message);
 }
 

@@ -117,6 +117,10 @@ namespace Titan
 
     void Framebuffer::Validate()
     {
+		m_Rect.extent.width = static_cast<uint32_t>(m_Info.width);
+		m_Rect.extent.height = static_cast<uint32_t>(m_Info.height);
+		m_Rect.offset = { 0,0 };
+
         for (size_t i = 0; i < g_FramesInFlight; ++i)
         {
             for (size_t imageFormatIndex = 0; imageFormatIndex < m_Info.imageFormats.size(); ++imageFormatIndex)

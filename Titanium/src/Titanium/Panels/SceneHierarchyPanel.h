@@ -8,9 +8,9 @@ namespace Titan
 	class SceneHierarchyPanel : public Panel
 	{
 	public:
-		SceneHierarchyPanel(const Ref<Scene>& context);
+		SceneHierarchyPanel(const Ptr<Scene>& context);
 
-		void SetContext(const Ref<Scene>& context);
+		void SetContext(const Ptr<Scene>& context);
 		Entity GetSelectedEntity() const { return m_SelectedEntity; }
 		// Inherited via Panel
 		virtual void OnImGuiDraw() override;
@@ -18,7 +18,7 @@ namespace Titan
 	private:
 		void DrawEntityNode(Entity entity);
 
-		Ref<Scene> m_Context;
+		Ptr<Scene> m_Context;
 		Entity m_SelectedEntity;
 
 		

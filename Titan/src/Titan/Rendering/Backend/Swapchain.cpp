@@ -41,7 +41,7 @@ namespace Titan
 		auto result = vkAcquireNextImageKHR(GraphicsContext::GetDevice().GetHandle(), m_Swapchain, UINT64_MAX, GetImageAvailableSemaphore(GraphicsContext::GetCurrentFrame()), VK_NULL_HANDLE, &imageIndex);
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || m_NeedsToResize)
 		{
-			InternalResize(m_Width, m_Height);
+			InternalResize();
 			m_Width = m_SwapchainExtent.width;
 			m_Height = m_SwapchainExtent.height;
 			m_NeedsToResize = false;
@@ -71,13 +71,13 @@ namespace Titan
 	void Swapchain::CleanUp()
 	{
 		auto& device = GraphicsContext::GetDevice();
-		for (size_t i = 0; i < m_SwapchainFrameBuffers.size(); ++i)
+		for (auto & SwapchainFrameBuffer : m_SwapchainFrameBuffers)
 		{
-			vkDestroyFramebuffer(device.GetHandle(), m_SwapchainFrameBuffers[i], nullptr);
+			vkDestroyFramebuffer(device.GetHandle(), SwapchainFrameBuffer, nullptr);
 		}
-		for (size_t i = 0; i < m_SwapchainViews.size(); ++i)
+		for (auto & SwapchainView : m_SwapchainViews)
 		{
-			vkDestroyImageView(device.GetHandle(), m_SwapchainViews[i], nullptr);
+			vkDestroyImageView(device.GetHandle(), SwapchainView, nullptr);
 		}
 		vkDestroySwapchainKHR(device.GetHandle(), m_Swapchain, nullptr);
 	}
@@ -92,8 +92,9 @@ namespace Titan
 			vkDestroyFence(device.GetHandle(), m_InFlightFences[i], nullptr);
 		}
 	}
-	void Swapchain::Validate(PhysicalDevice& physicalDevice, Device& device, int32_t width, int32_t height)
+	void Swapchain::Validate(PhysicalDevice& physicalDevice, Device& device)
 	{
+		physicalDevice;
 		SwapChainSupportDetails supportDetails;
 		GraphicsContext::QuerySwapchainSupport(supportDetails);
 
@@ -173,11 +174,11 @@ namespace Titan
 			TN_VK_CHECK(vkCreateImageView(GraphicsContext::GetDevice().GetHandle(), &viewCreateInfo, nullptr, &m_SwapchainViews[i]));
 		}
 	}
-	void Swapchain::InternalResize(size_t width, size_t height)
+	void Swapchain::InternalResize()
 	{
 		GraphicsContext::GetDevice().WaitForIdle();
 		CleanUp();
-		Validate(GraphicsContext::GetPhysicalDevice(), GraphicsContext::GetDevice(), (int32_t)width, (int32_t)height);
+		Validate(GraphicsContext::GetPhysicalDevice(), GraphicsContext::GetDevice());
 		CreateFrameBuffer();
 	}
 	void Swapchain::CreateSyncObject()
@@ -260,7 +261,7 @@ namespace Titan
 	{
 		for (const auto& availablePresentMode : availablePresentModes)
 		{
-			if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+			if (availablePresentMode == VK_PRESENT_MODE_FIFO_KHR)
 			{
 				return availablePresentMode;
 			}

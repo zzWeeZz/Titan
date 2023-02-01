@@ -17,7 +17,7 @@
 namespace Snowflake
 {
 	inline std::unordered_map<SnowID, size_t> componentSizes;
-	constexpr uint32_t InvalidEntity = ~0;
+	constexpr uint32_t InvalidEntity = ~0u;
 
 	using Entity = uint32_t;
 	using ByteSet = std::vector<uint8_t>;

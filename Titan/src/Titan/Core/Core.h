@@ -11,6 +11,8 @@ constexpr uint32_t g_FramesInFlight = 3;
 template<typename T>
 using PerFrameInFlight = std::array<T, g_FramesInFlight>;
 
+#define TN_FORCE_INLINE __forceinline
+
 #define TN_BIND_FUNC(X) std::bind(&X, this, std::placeholders::_1)
 
 #define TN_CORE_TRACE(...) ::Titan::Log::GetCoreLogger()->trace(__VA_ARGS__)

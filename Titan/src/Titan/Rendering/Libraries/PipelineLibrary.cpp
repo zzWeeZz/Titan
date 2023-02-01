@@ -3,7 +3,7 @@
 
 namespace Titan
 {
-	Ref<GraphicsPipeline> PipelineLibrary::Get(const std::string& key)
+	Ptr<GraphicsPipeline> PipelineLibrary::Get(const std::string& key)
 	{
 		TN_CORE_ASSERT(s_GraphicsLibrary.contains(key), "Graphics pipeline key: {0}, does not exist in library!", key);
 		return s_GraphicsLibrary[key];

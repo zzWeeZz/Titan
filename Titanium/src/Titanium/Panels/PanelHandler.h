@@ -12,7 +12,7 @@ namespace Titan
 		template<class T>
 		void Add(const std::string& key, Ref<T> panel);
 		template<class T>
-		Ref<T> Get(const std::string& key);
+		Ptr<T> Get(const std::string& key);
 		void SendCallback();
 	private:
 		std::map<std::string, Ref<Panel>> m_Panels;
@@ -23,7 +23,7 @@ namespace Titan
 		m_Panels[key] = std::reinterpret_pointer_cast<Panel>(panel);
 	}
 	template<class T>
-	inline Ref<T> PanelHandler::Get(const std::string& key)
+	inline Ptr<T> PanelHandler::Get(const std::string& key)
 	{
 		if (!m_Panels.contains(key))
 		{

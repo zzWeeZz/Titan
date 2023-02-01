@@ -4,12 +4,12 @@
 
 namespace Titan
 {
-	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
+	SceneHierarchyPanel::SceneHierarchyPanel(const Ptr<Scene>& context)
 	{
 		m_Context = context;
 	}
 
-	void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
+	void SceneHierarchyPanel::SetContext(const Ptr<Scene>& context)
 	{
 		m_Context = context;
 	}
@@ -20,9 +20,9 @@ namespace Titan
 
 		ImGui::Text("Scene: NAME");
 		ImGui::BeginChild("hirarchyPanel");
-		m_Context->m_Registry.ForEach([&](Snowflake::Entity ent)
+		m_Context.lock()->m_Registry.ForEach([&](Snowflake::Entity ent)
 			{
-				Entity entity = { ent, m_Context.get() };
+				Entity entity = { ent, m_Context.lock().get() };
 				DrawEntityNode(entity);
 
 			});
@@ -37,7 +37,7 @@ namespace Titan
 		{
 			if (ImGui::MenuItem("Create Empty Entity"))
 			{
-				m_Context->CreateEntity();
+				m_Context.lock()->CreateEntity();
 			}
 			ImGui::EndPopup();
 		}
@@ -75,7 +75,7 @@ namespace Titan
 		}
 		if (deleted)
 		{
-			m_Context->DestroyEntity(m_SelectedEntity);
+			m_Context.lock()->DestroyEntity(m_SelectedEntity);
 			if (m_SelectedEntity == entity)
 			{
 				m_SelectedEntity = {};

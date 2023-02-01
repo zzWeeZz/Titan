@@ -5,7 +5,7 @@ namespace Titan
 	class PipelineLibrary
 	{
 	public:
-		static Ref<GraphicsPipeline> Get(const std::string& key);
+		static Ptr<GraphicsPipeline> Get(const std::string& key);
 		static void BindPipline(const std::string& key, VkCommandBuffer& cmd);
 		static void Add(const std::string& key, GraphicsPipelineInfo& info);
 	private:

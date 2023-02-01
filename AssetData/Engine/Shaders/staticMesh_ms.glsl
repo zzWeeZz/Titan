@@ -169,7 +169,7 @@ void main()
 		vec3 biTangent = cross(normal, tangent);
 		mat3 TBN = {tangent, biTangent, normal};
 
-		v_out[v].normal = mat3(u_MvpObject.mdlSpace) * normal;
+		v_out[v].normal = mat3(mesh.transform) * normal;
 	}
 
 

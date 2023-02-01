@@ -229,6 +229,7 @@ project "Titan"
     language "C++"
     cppdialect "C++20"
     disablewarnings { "4996", "6285", "26437", "26451", "26498", "26800", "26495", "26439" }
+    warnings "Default"
     debugdir "AssetData/"
     
     pchheader "TNpch.h"

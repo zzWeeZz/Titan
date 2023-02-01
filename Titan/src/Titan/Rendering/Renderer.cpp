@@ -384,7 +384,7 @@ namespace Titan
 
 			void* mappedMemory = nullptr;
 			TitanAllocator::MapMemory(s_Cache->indirectCmdBuffer->GetAllocation(), mappedMemory);
-			VkDrawMeshTasksIndirectCommandNV* drawCommands = (VkDrawMeshTasksIndirectCommandNV*)mappedMemory;
+			auto drawCommands = (VkDrawMeshTasksIndirectCommandNV*)mappedMemory;
 
 			drawCommands[0].taskCount = static_cast<uint32_t>(meshletCount);
 			drawCommands[0].firstTask = 0;
@@ -426,10 +426,8 @@ namespace Titan
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.clearValue = depthClear,
 		};
-		VkRect2D rec{};
-		rec.extent.width = static_cast<uint32_t>(s_Cache->mainFB->GetInfo().width);
-		rec.extent.height = static_cast<uint32_t>(s_Cache->mainFB->GetInfo().height);
-		rec.offset = { 0,0 };
+		const VkRect2D rec = s_Cache->mainFB->GetRect();
+		
 		const VkRenderingInfo render_info{
 			.sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
 			.renderArea = rec,
@@ -489,9 +487,9 @@ namespace Titan
 				s_Cache->constant.meshletCount = static_cast<uint32_t>(meshletCount);
 				s_Cache->constant.renderDebugState = s_RenderDebugState;
 
-				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders")->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV | VK_SHADER_STAGE_MESH_BIT_NV | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
+				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders").lock()->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV | VK_SHADER_STAGE_MESH_BIT_NV | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
 				std::array<VkDescriptorSet, 2> sets = { globalSet, s_Cache->bindlessSets[currentFrame] };
-				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders")->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
+				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders").lock()->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
 
 
 				PFN_vkCmdDrawMeshTasksIndirectNV func = (PFN_vkCmdDrawMeshTasksIndirectNV)vkGetDeviceProcAddr(device.GetHandle(), "vkCmdDrawMeshTasksIndirectNV");

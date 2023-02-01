@@ -266,6 +266,7 @@ namespace Titan
 
 	void GraphicsPipeline::CreatePipelineStages(std::vector<VkShaderStageFlagBits>& stages, std::vector<VkPipelineShaderStageCreateInfo>& pipelineStageInfos, std::vector<Shader>& shaders, const Titan::GraphicsPipelineInfo& info)
 	{
+		info;
 		TN_CORE_ASSERT(stages.size() == shaders.size(), "Shader stages and shader objects are not the same size!");
 
 		for (size_t i = 0; i < stages.size(); ++i)

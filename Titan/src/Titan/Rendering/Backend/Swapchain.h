@@ -48,14 +48,14 @@ namespace Titan
 		// Now Creates the vkSwapchain object.
 		// Creates all swapchain images.
 		// OBS: If a swapchain or its images are still alive in memory they need to be destroyed before calling this function.
-		void Validate(PhysicalDevice& physicalDevice, Device& device, int32_t width = -1, int32_t height = -1);
+		void Validate(PhysicalDevice& physicalDevice, Device& device);
 
 		// Resizes the swapchain after width and height.
 		// 
 		// HOW IT WORKS:
 		// Cleans up the swapchain by deallocating swapchain and its images.
 		// Calls Validate to recreate the swapchain.
-		void InternalResize(size_t width, size_t height);
+		void InternalResize();
 		void CreateSyncObject();
 
 		// Creates a basic VkRenderpass connected to the swapchain.

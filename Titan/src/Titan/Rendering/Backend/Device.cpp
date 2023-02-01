@@ -113,7 +113,6 @@ namespace Titan
 		allocInfo.commandPool = m_CommandPools[0];
 		vkAllocateCommandBuffers(m_Device, &allocInfo, &cmd);
 
-		auto& swapchain = GraphicsContext::GetSwapchain();
 		VkCommandBufferBeginInfo beginInfo{};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; // Optional

@@ -23,14 +23,16 @@ namespace Titan
 	void Scene::OnEditorUpdate()
 	{
 		TN_PROFILE_FUNCTION();
-		m_Registry.ExecuteParallel<TransformComponent>([&](auto& entity, TransformComponent& tf)
+		m_Registry.Execute<TransformComponent>([&](auto& entity, TransformComponent& tf)
 			{
+				entity;
 				CalculateMatrixTransformSystem(tf);
 			});
 		auto cameraAsync = std::async(std::launch::async, [&]()
 			{
 				m_Registry.Execute<CameraComponent, TransformComponent>([&](auto& entity, CameraComponent& C, TransformComponent& tf)
 					{
+						entity;
 						CameraSystem(C, tf);
 					});
 			});
@@ -38,6 +40,7 @@ namespace Titan
 			{
 				m_Registry.Execute<ModelComponent, TransformComponent>([&](auto& entity, ModelComponent& mdl, TransformComponent& tf)
 					{
+						entity;
 						ModelSystem(mdl, tf);
 					});
 			});
@@ -45,6 +48,7 @@ namespace Titan
 			{
 				m_Registry.Execute<LightComponent, TransformComponent>([&](auto& entity, LightComponent& mdl, TransformComponent& tf)
 					{
+						entity;
 						LightSystem(mdl, tf);
 					});
 			});

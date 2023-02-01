@@ -1,6 +1,5 @@
 #pragma once
 #include <memory>
-#include <wrl.h>
 
 namespace Titan
 {
@@ -14,7 +13,7 @@ namespace Titan
 	}
 
 	template<typename T>
-	using WinRef = Microsoft::WRL::ComPtr<T>;
+	using Ptr = std::weak_ptr<T>;
 
 	template<typename T>
 	using Ref = std::shared_ptr<T>;

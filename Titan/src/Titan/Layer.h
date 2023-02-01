@@ -9,7 +9,7 @@ namespace Titan
 		virtual void OnAttach(){}
 		virtual void OnUpdate(){}
 		virtual void OnDetach(){}
-		virtual void OnEvent(Event& e){}
+		virtual void OnEvent(Event& e) { e; }
 
 		inline const std::string& GetName() const { return m_DebugName; }
 

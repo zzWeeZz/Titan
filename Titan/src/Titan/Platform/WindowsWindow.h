@@ -13,7 +13,7 @@ namespace Titan
 	{
 	public:
 		WindowsWindow(const WindowCreateInfo& props);
-
+		~WindowsWindow() override {}
 		void OnUpdate() override;
 
 		inline uint32_t GetWidth() const override { return m_WindowInfo.Width; }
