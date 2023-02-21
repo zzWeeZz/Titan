@@ -60,6 +60,7 @@ namespace Titan
 		std::unique_lock lock(s_GlobalThreadLock);
 
 		s_Tasks.push([tsk] {(*tsk)(); });
+		lock.unlock();
 		s_Condition.notify_one();
 		return ftr;
 	}
