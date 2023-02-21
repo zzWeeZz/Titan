@@ -15,7 +15,7 @@ namespace Titan
 		void Reset();
 	private:
 
-		std::unordered_map<std::string, uint32_t> m_BindMap;
-		std::unordered_map<uint32_t, std::string> m_LookUpMap;
+		std::unordered_map<TitanID, uint32_t> m_BindMap;
+		std::unordered_map<uint32_t, TitanID> m_LookUpMap;
 	};
 }

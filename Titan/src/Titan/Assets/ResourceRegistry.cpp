@@ -22,11 +22,11 @@ void Titan::ResourceRegistry::Dump()
 		out << YAML::BeginMap;
 		if (it.second)
 		{
-			out << YAML::Key << index << YAML::BeginSeq << it.first << it.second->GetPath().string() << YAML::EndSeq;
+			out << YAML::Key << index << YAML::BeginSeq << GetStringOfID(it.first) << it.second->GetPath().string() << YAML::EndSeq;
 		}
 		else
 		{
-			out << YAML::Key << index << YAML::BeginSeq << it.first << "NULL" << YAML::EndSeq;
+			out << YAML::Key << index << YAML::BeginSeq << GetStringOfID(it.first) << "NULL" << YAML::EndSeq;
 		}
 		out << YAML::EndMap;
 		index++;
@@ -51,7 +51,7 @@ void Titan::ResourceRegistry::Load()
 	{
 		auto data = reg[index].as<std::vector<std::string>>();
 
-		s_CachedRegistry[data[0]] = data[1];
+		s_CachedRegistry[GetIDFromString(data[0].c_str())] = data[1];
 
 		index++;
 	}

@@ -50,3 +50,30 @@ namespace Titan
 		}
 	};
 }
+
+namespace std
+{
+	template <>
+	struct hash<Titan::TitanID>
+	{
+		auto operator()(const Titan::TitanID& id) const -> size_t
+		{
+			static std::hash<unsigned long> hasherLong;
+			static std::hash<short> hasherShort;
+			static std::hash<char> hasherChar;
+			size_t hashedID = 0;
+			hashedID ^= (size_t)hasherLong(id.Data1);
+			hashedID ^= (size_t)hasherShort(id.Data2);
+			hashedID ^= (size_t)hasherShort(id.Data3);
+			hashedID ^= (size_t)hasherChar(id.Data4[0]);
+			hashedID ^= (size_t)hasherChar(id.Data4[1]);
+			hashedID ^= (size_t)hasherChar(id.Data4[2]);
+			hashedID ^= (size_t)hasherChar(id.Data4[3]);
+			hashedID ^= (size_t)hasherChar(id.Data4[4]);
+			hashedID ^= (size_t)hasherChar(id.Data4[5]);
+			hashedID ^= (size_t)hasherChar(id.Data4[6]);
+			hashedID ^= (size_t)hasherChar(id.Data4[7]);
+			return hashedID;
+		}
+	};
+}

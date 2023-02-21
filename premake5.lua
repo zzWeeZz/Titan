@@ -32,8 +32,6 @@ externalLinks =
     "OpenFBX",
     "SPIRV-Reflect",
     "MeshOptimizer",
-    -- "Volk",
-    "Titan/vendor/dxil/lib/dxcompiler.lib",
 }
 
 externalDebugLinks = 
@@ -69,6 +67,7 @@ externalDebugLinks =
     "%{VULKAN_SDK}/Lib/SPVRemapperd.lib",
     "%{VULKAN_SDK}/Lib/VkLayer_utils.lib",
     "%{VULKAN_SDK}/Lib/vulkan-1.lib",
+    "%{VULKAN_SDK}/Lib/dxcompiler.lib",
 }
 
 externalReleaseLinks = 
@@ -104,6 +103,7 @@ externalReleaseLinks =
     "%{VULKAN_SDK}/Lib/SPVRemapper.lib",
     "%{VULKAN_SDK}/Lib/VkLayer_utils.lib",
     "%{VULKAN_SDK}/Lib/vulkan-1.lib",
+    "%{VULKAN_SDK}/Lib/dxcompiler.lib",
 }
 
 group "Dependencies"

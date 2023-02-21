@@ -297,9 +297,13 @@ namespace Titan
 			ImGui::EndFrame();
 			return;
 		}
-		vkResetFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame));
-		uint32_t imageIndex = index;
-		vkResetCommandBuffer(commandBuffer, 0);
+		uint32_t imageIndex;
+		{
+			TN_PROFILE_SCOPE("Reset Current Fence");
+			vkResetFences(device.GetHandle(), 1, &swapchain.GetInFlight(currentFrame));
+			 imageIndex = index;
+			vkResetCommandBuffer(commandBuffer, 0);
+		}
 
 
 
@@ -340,12 +344,16 @@ namespace Titan
 			);
 		}
 		size_t meshletCount = 0;
-		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
 		{
-			meshletCount += s_Cache->meshCmds[i].submesh->GetMeshlets().size();
+			TN_PROFILE_SCOPE("Count Meshlets");
+			for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
+			{
+				meshletCount += s_Cache->meshCmds[i].submesh->GetMeshlets().size();
+			}
 		}
 		if (!s_Cache->bindlessSets[currentFrame] || ValidateBindlessBuffers())
 		{
+			TN_PROFILE_SCOPE("Rebuild Bindless structure");
 			CombineMeshlets(commandBuffer);
 			CombineVertexBuffers(commandBuffer);
 			CombineTriangleBuffers(commandBuffer);
@@ -393,6 +401,7 @@ namespace Titan
 		bool shouldUpdateMeshBuffer = s_Cache->isFrameDirty[currentFrame] || s_Cache->meshCountPreviousFrame[currentFrame] != s_Cache->meshCmds.Size();
 		if (shouldUpdateMeshBuffer)
 		{
+			TN_PROFILE_SCOPE("Update Mesh buffer");
 			UpdateMeshBuffer();
 			s_Cache->isFrameDirty[currentFrame] = false;
 			s_Cache->isFrameDirtyValidator[currentFrame] = false;
@@ -549,6 +558,7 @@ namespace Titan
 
 	bool Renderer::ValidateBindlessBuffers()
 	{
+		TN_PROFILE_FUNCTION();
 		for (size_t i = 0; i < s_Cache->meshCmds.Size(); ++i)
 		{
 			auto& mdlCmd = s_Cache->meshCmds[i];

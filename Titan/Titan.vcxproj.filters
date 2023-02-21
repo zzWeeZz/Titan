@@ -22,6 +22,9 @@
     <Filter Include="src\Titan\Assets\Importers\ModelImporters">
       <UniqueIdentifier>{F7FE962F-6319-FAD0-AC3B-0A65189521D8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Assets\Importers\ShaderImporters">
+      <UniqueIdentifier>{5DDE1258-4946-D925-B2B1-ED3B9E38F011}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Assets\Material">
       <UniqueIdentifier>{BC7294B3-2835-C83D-71E5-56CADDE6A01B}</UniqueIdentifier>
     </Filter>
@@ -143,6 +146,12 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.h">
       <Filter>src\Titan\Assets\Importers\ModelImporters</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Importers\ShaderImporters\GLSLImporter.h">
+      <Filter>src\Titan\Assets\Importers\ShaderImporters</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Importers\ShaderImporters\HLSLImporter.h">
+      <Filter>src\Titan\Assets\Importers\ShaderImporters</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Material\Material.h">
       <Filter>src\Titan\Assets\Material</Filter>
@@ -679,6 +688,12 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\Importers\ModelImporters\GLTFImporter.cpp">
       <Filter>src\Titan\Assets\Importers\ModelImporters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Assets\Importers\ShaderImporters\GLSLImporter.cpp">
+      <Filter>src\Titan\Assets\Importers\ShaderImporters</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Assets\Importers\ShaderImporters\HLSLImporter.cpp">
+      <Filter>src\Titan\Assets\Importers\ShaderImporters</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\Material\Material.cpp">
       <Filter>src\Titan\Assets\Material</Filter>

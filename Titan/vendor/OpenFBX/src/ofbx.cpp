@@ -2719,7 +2719,7 @@ static OptionalError<Object*> parseGeometry(const Element& element, bool triangu
 	std::vector<int> original_indices;
 	std::vector<int> to_old_indices;
 	Temporaries tmp;
-	if (!parseDoubleVecData(*vertices_element->first_property, &vertices, &tmp.f))return Error("Failed to parse vertices");
+	if (!parseDoubleVecData(*vertices_element->first_property, &vertices, &tmp.f)) return Error("Failed to parse vertices");
 	if (!parseBinaryArray(*polys_element->first_property, &original_indices)) return Error("Failed to parse indices");
 
 	buildGeometryVertexData(geom, vertices, original_indices, to_old_indices, triangulate);
@@ -2730,16 +2730,13 @@ static OptionalError<Object*> parseGeometry(const Element& element, bool triangu
 	OptionalError<Object*> uvParsingError = parseGeometryUVs(geom, element, original_indices, to_old_indices, &tmp);
 	if (uvParsingError.isError()) return uvParsingError;
 
-	OptionalError<Object*> tangentsParsingError =
-		parseGeometryTangents(geom, element, original_indices, to_old_indices, &tmp);
+	OptionalError<Object*> tangentsParsingError = parseGeometryTangents(geom, element, original_indices, to_old_indices, &tmp);
 	if (tangentsParsingError.isError()) return tangentsParsingError;
 
-	OptionalError<Object*> colorsParsingError =
-		parseGeometryColors(geom, element, original_indices, to_old_indices, &tmp);
+	OptionalError<Object*> colorsParsingError = parseGeometryColors(geom, element, original_indices, to_old_indices, &tmp);
 	if (colorsParsingError.isError()) return colorsParsingError;
 
-	OptionalError<Object*> normalsParsingError =
-		parseGeometryNormals(geom, element, original_indices, to_old_indices, &tmp);
+	OptionalError<Object*> normalsParsingError = parseGeometryNormals(geom, element, original_indices, to_old_indices, &tmp);
 	if (normalsParsingError.isError()) return normalsParsingError;
 
 	return geom;

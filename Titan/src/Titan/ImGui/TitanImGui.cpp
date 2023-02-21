@@ -63,7 +63,7 @@ namespace Titan
 			});
 
 		ImGuiIO& io = ImGui::GetIO();
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable /*| ImGuiConfigFlags_ViewportsEnable*/;
 		io.Fonts->Clear();
 		io.Fonts->AddFontFromFileTTF("Assets/Fonts/OpenSans-Bold.ttf", 16);
 		io.Fonts->AddFontFromFileTTF("Assets/Fonts/OpenSans-Bold.ttf", 16);
