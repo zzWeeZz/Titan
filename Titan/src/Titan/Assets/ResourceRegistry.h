@@ -13,8 +13,8 @@ namespace Titan
 		static void Dump();
 		static void Load();
 	private:
-		inline static std::unordered_map<std::string, Ref<Resource>> s_Registry;
-		inline static std::unordered_map<std::string, std::filesystem::path> s_CachedRegistry;
+		inline static std::unordered_map<TitanID, Ref<Resource>> s_Registry;
+		inline static std::unordered_map<TitanID, std::filesystem::path> s_CachedRegistry;
 	};
 	template<typename T>
 	inline Ref<T> ResourceRegistry::GetItem(TitanID& id)
@@ -23,7 +23,7 @@ namespace Titan
 		{
 			id = CreateID();
 		}
-		auto strId = GetStringOfID(id);
+		const auto strId = (id);
 		if (s_Registry.contains(strId))
 		{
 			return std::reinterpret_pointer_cast<T>(s_Registry[strId]);

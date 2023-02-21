@@ -1,7 +1,6 @@
 #pragma once
 #include "OpenFBX/src/ofbx.h"
 
-
 namespace Titan
 {
 	class Submesh;
