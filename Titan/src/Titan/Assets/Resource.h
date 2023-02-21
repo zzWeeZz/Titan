@@ -6,7 +6,7 @@ namespace Titan
 	{
 	public:
 		Resource(){}
-		virtual void Initialize(const std::filesystem::path& path) = 0;
+		virtual void Initialize(const std::filesystem::path& path) { SetPath(path); };
 		std::filesystem::path GetPath() const { return m_Path; }
 		virtual ~Resource(){}
 	protected:

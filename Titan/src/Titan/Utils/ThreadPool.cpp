@@ -49,7 +49,7 @@ namespace Titan
 			std::stringstream ss;
 			ss << std::this_thread::get_id();
 			Log("Thread: " + ss.str() + " has started working.", Severity::Log);
-			auto tsk = s_Tasks.front();
+			std::function<void()> tsk = s_Tasks.front();
 			s_Tasks.pop();
 			lk.unlock();
 			localInfo.status = ThreadStatus::Working;

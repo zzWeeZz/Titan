@@ -1,16 +1,10 @@
 ResourceRegistry:
   - 0:
-      - b473d7f2-c60a-4296-89b8-91d1cd5967d2
-      - Assets/Models/Sponza/Sponza.gltf
+      - 1f6abb39-6dd8-416c-b423-24289436b6b4
+      - Assets/Models/matBall.fbx
   - 1:
-      - 5b4b7467-70b3-44d8-b603-86b465a44c38
+      - e4975408-8c73-4168-be08-bab510e97536
       - Assets/Texture/Titan.png
   - 2:
-      - 7bc5f43f-e35e-4016-9d4d-d01b9a123d5f
-      - Assets/Models/Sponza/Sponza.gltf
-  - 3:
-      - 91e7f026-5efd-49b1-9537-67cc10b0be41
-      - Assets/Texture/Titan.png
-  - 4:
-      - 78518161-1c1e-416a-813b-0eaa2cda722b
+      - 98b81607-8538-4044-93f0-fd60d65d4bd9
       - Assets/Texture/Titan.png

@@ -7,7 +7,7 @@
 
 namespace Titan
 {
-	struct Shader;
+	class Shader;
 
 	struct GraphicsPipelineInfo
 	{

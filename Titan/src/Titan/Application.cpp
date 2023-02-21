@@ -13,6 +13,7 @@
 #include "Titan/Utils/TitanAllocator.h"
 #include "Titan/Utils/ThreadPool.h"
 #include "Titan/Utils/Chrono.h"
+#include "Titan/Assets/Hydra/Hydra.h"
 
 static void ThreadCallback(std::string message, Titan::Severity severity)
 {
@@ -30,6 +31,7 @@ Titan::Application::Application() : m_Running(true)
 	info.height = s_Window->GetHeight();
 	GraphicsContext::Initialize(info);
 	TitanAllocator::Initialize();
+	Hydra::Initialize();
 	Renderer::Initialize();
 	TitanImGui::Initialize();
 	ResourceRegistry::Initialize();

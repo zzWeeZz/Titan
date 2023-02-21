@@ -117,23 +117,23 @@ namespace Titan
 		{
 			if (pushConstants.empty())
 			{
-				pushConstants.push_back(shader.pushConstants);
+				pushConstants.push_back(shader.GetPushContantRange());
 			}
 			else
 			{
 				for (auto& pc : pushConstants)
 				{
-					if (shader.pushConstants.size == 0)
+					if (shader.GetPushContantRange().size == 0)
 					{
 						continue;
 					}
-					if (shader.pushConstants.size == pc.size)
+					if (shader.GetPushContantRange().size == pc.size)
 					{
-						pc.stageFlags |= shader.pushConstants.stageFlags;
+						pc.stageFlags |= shader.GetPushContantRange().stageFlags;
 					}
 					else
 					{
-						pushConstants.push_back(shader.pushConstants);
+						pushConstants.push_back(shader.GetPushContantRange());
 					}
 				}
 			}
@@ -208,7 +208,7 @@ namespace Titan
 		std::unordered_map<uint32_t, std::vector<VkDescriptorSetLayoutBinding>> bindingMap;
 		for (auto& shader : shaders)
 		{
-			auto& layout = shader.layouts;
+			auto& layout = shader.GetLayoutBindings();
 			for (auto& set : layout)
 			{
 				auto& setBindings = bindingMap[set.first];
@@ -278,7 +278,7 @@ namespace Titan
 			shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 			shaderStageInfo.stage = stage;
 			shaderStageInfo.pName = "main";
-			shaderStageInfo.module = CreateShaderModule(shader.spvBinary);
+			shaderStageInfo.module = CreateShaderModule(shader.GetSpirv());
 		}
 	}
 

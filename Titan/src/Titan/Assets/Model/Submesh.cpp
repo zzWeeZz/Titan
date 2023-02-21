@@ -82,10 +82,6 @@ namespace Titan
 		bufferVertex.Normal[0] = static_cast<glm::u8>(meshopt_quantizeUnorm(encodedNormal.x, 8));
 		bufferVertex.Normal[1] = static_cast<glm::u8>(meshopt_quantizeUnorm(encodedNormal.y, 8));
 		
-		//glm::vec2 quantizeNormal = glm::vec2(bufferVertex.Normal[0] / (glm::pow(2, 8) - 1), bufferVertex.Normal[1] / (glm::pow(2, 8) - 1));
-		////quantizeNormal = glm::normalize(quantizeNormal);
-		//glm::vec3 decodedNormal;
-		//decodedNormal = DecodeOctahedronVectors(quantizeNormal);
 		encodedNormal = EncodeOctahedronVectors(rawVertex.Tangent);
 		bufferVertex.Tangent[0] = static_cast<glm::u8>(meshopt_quantizeUnorm(encodedNormal.x, 8));
 		bufferVertex.Tangent[1] = static_cast<glm::u8>(meshopt_quantizeUnorm(encodedNormal.y, 8));

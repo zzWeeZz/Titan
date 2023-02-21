@@ -33,6 +33,7 @@
 #include "Titan/Rendering/Descriptors/DescriptorBuilder.h"
 #include "Titan/Rendering/Descriptors/DescriptorAllocator.h"
 #include "Titan/Rendering/Descriptors/DescriptorLayoutCache.h"
+#include "Titan/Rendering/Libraries/ShaderLibrary.h"
 
 #define MAX_INDIRECT_COMMANDS 20000
 #define MAX_MESHLETS 100000
@@ -141,6 +142,8 @@ namespace Titan
 	{
 
 		GraphicsPipelineInfo info{};
+
+		ShaderLibrary::Get("Engine/Shaders/Test_ps.hlsl");
 
 		info.topology = Topology::TriangleList;
 		info.imageFormats = { ImageFormat::R8G8B8A8_UN, ImageFormat::D32_SF_S8_UI };

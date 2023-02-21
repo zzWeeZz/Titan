@@ -46,7 +46,7 @@ namespace Titan
             m_PhysicalDevice = candidates.rbegin()->second;
 			VkPhysicalDeviceMeshShaderPropertiesNV meshShaderProperties{};
             meshShaderProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_NV;
-			VkPhysicalDeviceProperties2 deviceProperties;
+			VkPhysicalDeviceProperties2 deviceProperties = {};
             deviceProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
             deviceProperties.pNext = &meshShaderProperties;
 			vkGetPhysicalDeviceProperties2(m_PhysicalDevice, &deviceProperties);

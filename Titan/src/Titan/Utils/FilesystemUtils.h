@@ -1,9 +1,6 @@
 #pragma once
 namespace Titan
 {
-
-
-
 	class FilesystemUtils
 	{
 	public:

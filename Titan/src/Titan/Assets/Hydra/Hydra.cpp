@@ -9,15 +9,25 @@
 
 #include "Titan/Assets/Importers/ModelImporters/FBXImporter.h"
 #include "Titan/Assets/Importers/ModelImporters/GLTFImporter.h"
+#include "Titan/Assets/Importers/ShaderImporters/GLSLImporter.h"
+#include "Titan/Assets/Importers/ShaderImporters/HLSLImporter.h"
 
 
 namespace Titan
 {
+	void Hydra::Initialize()
+	{
+		HLSLImporter::Initialize();
+	}
 	void Hydra::ImportModel(const std::filesystem::path& filepath, std::vector<Submesh>& submeshes)
 	{
 		submeshes = InternalImportModel(filepath, submeshes);
 	}
-	std::vector<Submesh> Hydra::InternalImportModel(std::filesystem::path filepath, std::vector<Submesh> submeshes)
+	void Hydra::ImportShader(const std::filesystem::path& filepath, Shader& shader)
+	{
+		shader = InternalImportShader(filepath, shader);
+	}
+	std::vector<Submesh> Hydra::InternalImportModel(std::filesystem::path filepath, std::vector<Submesh>& submeshes)
 	{
 		if (!std::filesystem::exists(filepath))
 		{
@@ -45,6 +55,7 @@ namespace Titan
 			});
 		return submeshes;
 	}
+
 	void Hydra::GenerateMeshlets(Submesh& submesh)
 	{
 		std::vector<uint32_t> indices(submesh.GetIndices().size());
@@ -74,7 +85,7 @@ namespace Titan
 			&submesh.GetRawVertices()[0].Position.x, submesh.GetRawVertices().size(), sizeof(RawVertex),
 			maxVertices, maxTriangles, coneWeight);
 
-		
+
 
 		const meshopt_Meshlet& last = meshlets[meshletCount - 1];
 		meshletVertices.resize(static_cast<size_t>(last.vertex_offset + last.vertex_count));
@@ -101,5 +112,29 @@ namespace Titan
 		}
 		TN_CORE_INFO("meshlets generated");
 		submesh.CreateBuffers();
+	}
+
+	Shader Hydra::InternalImportShader(std::filesystem::path filepath, Shader& shader)
+	{
+		if (!std::filesystem::exists(filepath))
+		{
+			TN_CORE_ERROR("(Hydra::ImportShader) Could not find file {0}.", filepath.string());
+			return shader;
+		}
+		const auto& extension = filepath.extension();
+		if (extension == ".glsl")
+		{
+			GLSLImporter::Import(filepath, shader);
+		}
+		else if (extension == ".hlsl")
+		{
+			HLSLImporter::Import(filepath, shader);
+		}
+		else
+		{
+			TN_CORE_ERROR("(Hydra::ImportShader) Extension: [{0}] is not supported shader format!");
+			return shader;
+		}
+		return shader;
 	}
 }
