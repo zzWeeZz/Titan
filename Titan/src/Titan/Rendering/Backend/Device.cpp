@@ -22,13 +22,19 @@ namespace Titan
 			queueCreateInfos.push_back(queueCreateInfo);
 		}
 
-		VkPhysicalDeviceVulkan12Features device12Features{};
+
+
+		/*VkPhysicalDeviceVulkan12Features device12Features{};
 		device12Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
-		device12Features.shaderInt8 = VK_TRUE;
+		device12Features.shaderInt8 = VK_TRUE;*/
+
+		VkPhysicalDeviceVulkan11Features device11Freatures{};
+		device11Freatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+		//device11Freatures.pNext = &device12Features;
 
 		VkPhysicalDeviceFeatures2 deviceFeatures{};
 		deviceFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-		deviceFeatures.pNext = &device12Features;
+		deviceFeatures.pNext = &device11Freatures;
 
 		VkDeviceCreateInfo createInfo{};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -57,7 +63,7 @@ namespace Titan
 		const VkPhysicalDeviceMaintenance4Features maintenance4Feature
 		{
 		.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES,
-		.maintenance4 = VK_TRUE
+		.maintenance4 = VK_TRUE	
 		};
 
 		const VkPhysicalDeviceMeshShaderFeaturesNV meshShaderPropFeature

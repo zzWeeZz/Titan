@@ -31,6 +31,9 @@
     <Filter Include="src\Titan\Assets\Model">
       <UniqueIdentifier>{1EF22850-0AEC-51A2-F358-E8B2DFF1B70E}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Titan\Assets\Shaders">
+      <UniqueIdentifier>{375D80BB-2382-CF3B-4CCD-B4CB3851CE59}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Titan\Assets\Texture">
       <UniqueIdentifier>{BE5D2403-AA82-7383-D3CD-5813BF5172A1}</UniqueIdentifier>
     </Filter>
@@ -170,6 +173,9 @@
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\ResourceRegistry.h">
       <Filter>src\Titan\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Titan\Assets\Shaders\Shader.h">
+      <Filter>src\Titan\Assets\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="src\Titan\Assets\Texture\Texture.h">
       <Filter>src\Titan\Assets\Texture</Filter>
@@ -669,7 +675,6 @@
     <ClInclude Include="vendor\vma\vk_mem_alloc.h">
       <Filter>vendor\vma</Filter>
     </ClInclude>
-    <ClInclude Include="src\Titan\Assets\Shaders\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TNpch.cpp">
@@ -707,6 +712,9 @@
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\ResourceRegistry.cpp">
       <Filter>src\Titan\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Titan\Assets\Shaders\Shader.cpp">
+      <Filter>src\Titan\Assets\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="src\Titan\Assets\Texture\Texture.cpp">
       <Filter>src\Titan\Assets\Texture</Filter>
@@ -852,9 +860,5 @@
     <ClCompile Include="vendor\ImGui\misc\freetype\imgui_freetype.cpp">
       <Filter>vendor\ImGui\misc\freetype</Filter>
     </ClCompile>
-    <ClCompile Include="src\Titan\Assets\Shaders\Shader.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

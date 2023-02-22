@@ -35,19 +35,31 @@ namespace Titan
 		switch (spvModule.shader_stage)
 		{
 		case SPV_REFLECT_SHADER_STAGE_COMPUTE_BIT:
+		{
 			m_Stage = VK_SHADER_STAGE_COMPUTE_BIT;
-
+			break;
+		}
 		case SPV_REFLECT_SHADER_STAGE_TASK_BIT_NV:
+		{
 			m_Stage = VK_SHADER_STAGE_TASK_BIT_NV;
-
+			break;
+		}
 		case SPV_REFLECT_SHADER_STAGE_MESH_BIT_NV:
+		{
 			m_Stage = VK_SHADER_STAGE_MESH_BIT_NV;
+			break;
+		}
 
 		case SPV_REFLECT_SHADER_STAGE_VERTEX_BIT:
+		{
 			m_Stage = VK_SHADER_STAGE_VERTEX_BIT;
-
+			break;
+		}
 		case SPV_REFLECT_SHADER_STAGE_FRAGMENT_BIT:
+		{
 			m_Stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+			break;
+		}
 		}
 
 		if (spvModule.push_constant_block_count > 0 && spvModule.push_constant_blocks != nullptr)

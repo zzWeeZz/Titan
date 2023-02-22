@@ -1,10 +1,58 @@
 ResourceRegistry:
   - 0:
-      - 1f6abb39-6dd8-416c-b423-24289436b6b4
-      - Assets/Models/matBall.fbx
+      - 10bad475-702e-4d3f-b0d3-5c18c7b0fb82
+      - Assets/Models/Sponza/Sponza.gltf
   - 1:
-      - e4975408-8c73-4168-be08-bab510e97536
+      - a5ed069b-47b1-44dd-9de4-5f9c6700c26f
       - Assets/Texture/Titan.png
   - 2:
-      - 98b81607-8538-4044-93f0-fd60d65d4bd9
+      - c9177e94-caba-4d56-8f78-9a107ad0daed
+      - Assets/Texture/Titan.png
+  - 3:
+      - ce08d7b4-a6ff-4d11-8b3b-2311f0ca223b
+      - Assets/Models/matBall.fbx
+  - 4:
+      - 5d693afd-7769-4bff-81ca-ae311b273de0
+      - Assets/Texture/Titan.png
+  - 5:
+      - 21acf77a-32f6-46f6-9e9b-e339ae2222f3
+      - Assets/Models/Sponza/Sponza.gltf
+  - 6:
+      - e0939159-e26d-4b3f-aff8-a2f705221133
+      - Assets/Texture/Titan.png
+  - 7:
+      - e57ec1ac-79c1-4fd7-9422-11a00442598f
+      - Assets/Models/Sponza/Sponza.gltf
+  - 8:
+      - a72c71a3-c1ab-4273-b5ac-af1f495fd4ed
+      - Assets/Texture/Titan.png
+  - 9:
+      - 1dce399b-fd85-40f8-b03c-b8f89f89e04c
+      - Assets/Models/Sponza/Sponza.gltf
+  - 10:
+      - e61244d6-8280-4a6f-9146-477948c55446
+      - Assets/Texture/Titan.png
+  - 11:
+      - 88c1e12b-b76f-4c90-b9b3-74859109b15e
+      - Assets/Models/Sponza/Sponza.gltf
+  - 12:
+      - 6d21294e-221f-4f62-90c2-d952393c7d87
+      - Assets/Texture/Titan.png
+  - 13:
+      - 65c657ba-1d06-4fbc-b2cf-0891ba64ce71
+      - Assets/Models/Sponza/Sponza.gltf
+  - 14:
+      - 1d80a408-8539-4461-a9ed-f24860e222fe
+      - Assets/Texture/Titan.png
+  - 15:
+      - ba168eee-9cda-42f2-a3df-fe8096efe204
+      - Assets/Models/Sponza/Sponza.gltf
+  - 16:
+      - 94d05bfb-71f4-44ac-aafa-8b9dbd222a00
+      - Assets/Texture/Titan.png
+  - 17:
+      - 649aa8bd-494f-4c3a-97df-7cf618901d92
+      - Assets/Models/Sponza/Sponza.gltf
+  - 18:
+      - c8477178-0c95-47c0-868d-9d514c38763f
       - Assets/Texture/Titan.png
