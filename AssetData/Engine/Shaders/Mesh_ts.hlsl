@@ -14,7 +14,7 @@ struct Meshlet
     uint padd[3];
 };
 
-StructuredBuffer<Meshlet> u_Meshlets : register(b0, space1);
+StructuredBuffer<Meshlet> u_Meshlets : register(t0, space1);
 
 
 struct TaskOutput
@@ -25,9 +25,9 @@ struct TaskOutput
 
 struct TaskInput
 {
-    uint dispatchID : SV_DispatchThreadID;
-    uint groupID : SV_GroupID;
-    uint groupThreadID : SV_GroupThreadID;
+    uint3 dispatchID : SV_DispatchThreadID;
+    uint3 groupID : SV_GroupID;
+    uint3 groupThreadID : SV_GroupThreadID;
 };
 
 struct Constant
@@ -39,32 +39,32 @@ struct Constant
 };
 
 [[vk::push_constant]] Constant u_Constant;
-
+groupshared TaskOutput output;
 [numthreads(GROUP_SIZE, 1, 1)]
-TaskOutput main(in TaskInput input)
+void main(in TaskInput input)
 {
-    TaskOutput output = (TaskOutput) 0;
     Meshlet meshlet = u_Meshlets[input.dispatchID.x];
 
     bool render = input.dispatchID.x < u_Constant.meshletCount;
     
-    uint4 vote = WaveActiveBallot(render);
-    uint tasks = subgroupBallotBitCount(vote);
+    //uint4 vote = WaveActiveBallot(render);
+    uint tasks = WaveActiveCountBits(render);
 
     if (input.groupThreadID.x == 0)
     {
     // write the number of surviving meshlets, i.e. 
     // mesh workgroups to spawn
-        DispatchMesh(tasks, 1u, 1u);
+        output.baseID = input.groupID.x * GROUP_SIZE;
+        uint idxOffset = WavePrefixCountBits(render);
+        output.subID[idxOffset] = uint(input.groupThreadID.x);
+        DispatchMesh(tasks, 1, 1, output);
 
     // where the meshletIDs started from for this task workgroup
-        output.baseID = input.groupID.x * GROUP_SIZE;
     }
 
-    uint idxOffset = subgroupBallotExclusiveBitCount(vote);
-    if (render)
-    {
-        output.subID[idxOffset] = uint(input.groupThreadID.x);
-    }
-    return output;
+    //uint idxOffset = WavePrefixCountBits(render);
+    //if (render)
+    //{
+    //    output.subID[idxOffset] = uint(input.groupThreadID.x);
+    //}
 }

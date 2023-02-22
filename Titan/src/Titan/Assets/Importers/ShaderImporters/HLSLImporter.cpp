@@ -59,6 +59,7 @@ namespace Titan
 		arguments.push_back(target.c_str());
 
 		arguments.push_back(L"-spirv");
+		arguments.push_back(L"-fspv-target-env=vulkan1.3");
 
 		arguments.push_back(DXC_ARG_WARNINGS_ARE_ERRORS);
 		arguments.push_back(DXC_ARG_DEBUG);
