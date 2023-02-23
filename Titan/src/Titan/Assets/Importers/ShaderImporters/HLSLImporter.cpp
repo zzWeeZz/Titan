@@ -13,13 +13,14 @@ namespace Titan
 	}
 	Shader HLSLImporter::Compile(const std::filesystem::path& path, Shader& shader)
 	{
+		TN_CORE_INFO("Compiling Hlsl file: {0}... ", path.filename().string());
 		ShaderType type = GetShaderTypeFromFile(path);
 
 		std::vector<LPCWSTR> arguments;
 		arguments.emplace_back(L"-E");
 		arguments.emplace_back(L"main");
 
-		std::wstring target = L"";
+		std::wstring target;
 
 		switch (type)
 		{
@@ -83,6 +84,7 @@ namespace Titan
 		if (pErrors && pErrors->GetStringLength() > 0)
 		{
 			TN_CORE_ERROR("HLSL crashed, {}", (char*)pErrors->GetBufferPointer());
+			return shader;
 		}
 		IDxcBlob* blob = nullptr;
 		compileResult->GetResult(&blob);

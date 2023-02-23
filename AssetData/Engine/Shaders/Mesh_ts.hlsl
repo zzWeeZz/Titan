@@ -14,7 +14,7 @@ struct Meshlet
     uint padd[3];
 };
 
-StructuredBuffer<Meshlet> u_Meshlets : register(t0, space1);
+[[vk::binding(0, 1)]] StructuredBuffer<Meshlet> u_Meshlets : register(t0, space1);
 
 
 struct TaskOutput
@@ -25,9 +25,9 @@ struct TaskOutput
 
 struct TaskInput
 {
-    uint3 dispatchID : SV_DispatchThreadID;
-    uint3 groupID : SV_GroupID;
-    uint3 groupThreadID : SV_GroupThreadID;
+    uint3 dispatchID : SV_DispatchThreadID; // gl_GlobalInvocationID
+    uint3 groupID : SV_GroupID; // gl_WorkGroupID
+    uint3 groupThreadID : SV_GroupThreadID; // gl_LocalInvocationID
 };
 
 struct Constant
@@ -47,7 +47,6 @@ void main(in TaskInput input)
 
     bool render = input.dispatchID.x < u_Constant.meshletCount;
     
-    //uint4 vote = WaveActiveBallot(render);
     uint tasks = WaveActiveCountBits(render);
 
     if (input.groupThreadID.x == 0)
@@ -55,16 +54,15 @@ void main(in TaskInput input)
     // write the number of surviving meshlets, i.e. 
     // mesh workgroups to spawn
         output.baseID = input.groupID.x * GROUP_SIZE;
-        uint idxOffset = WavePrefixCountBits(render);
-        output.subID[idxOffset] = uint(input.groupThreadID.x);
-        DispatchMesh(tasks, 1, 1, output);
+
 
     // where the meshletIDs started from for this task workgroup
     }
-
-    //uint idxOffset = WavePrefixCountBits(render);
-    //if (render)
-    //{
-    //    output.subID[idxOffset] = uint(input.groupThreadID.x);
-    //}
+    if (render)
+    {
+        uint idxOffset = WavePrefixCountBits(render);
+        output.subID[idxOffset] = uint(input.groupThreadID.x);
+    }
+    DispatchMesh(tasks, 1, 1, output);
+    
 }

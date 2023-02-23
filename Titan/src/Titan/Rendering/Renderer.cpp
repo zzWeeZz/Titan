@@ -143,13 +143,11 @@ namespace Titan
 
 		GraphicsPipelineInfo info{};
 
-		ShaderLibrary::Get("Engine/Shaders/Test_ps.hlsl");
-
 		info.topology = Topology::TriangleList;
 		info.imageFormats = { ImageFormat::R8G8B8A8_UN, ImageFormat::D32_SF_S8_UI };
 
 		info.tsPath = "Engine/Shaders/Mesh_ts.hlsl";
-		info.msPath = "Engine/Shaders/StaticMesh_ms.glsl";
+		info.msPath = "Engine/Shaders/Mesh_ms.hlsl";
 		info.fsPath = "Engine/Shaders/staticMesh_fs.glsl";
 		PipelineLibrary::Add("MeshShaders", info);
 
@@ -384,7 +382,7 @@ namespace Titan
 				bindlessVertexIndexInfo.range = s_Cache->vertexIndexBuffer->GetAllocation().sizeOfBuffer;
 
 				DescriptorBuilder::Begin(&s_Cache->bindlessCaches[currentFrame], &s_Cache->bindlessAllocators[currentFrame])
-					.BindBuffer(0, &bindlessInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_TASK_BIT_NV)
+					//.BindBuffer(0, &bindlessInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_TASK_BIT_NV)
 					.BindBuffer(1, &bindlessInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(2, &bindlessVertexInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
 					.BindBuffer(3, &bindlessTriangleInfo, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_MESH_BIT_NV)
@@ -499,7 +497,7 @@ namespace Titan
 				s_Cache->constant.meshletCount = static_cast<uint32_t>(meshletCount);
 				s_Cache->constant.renderDebugState = s_RenderDebugState;
 
-				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders").lock()->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV | VK_SHADER_STAGE_MESH_BIT_NV | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
+				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders").lock()->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV  | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
 				std::array<VkDescriptorSet, 2> sets = { globalSet, s_Cache->bindlessSets[currentFrame] };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders").lock()->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
 

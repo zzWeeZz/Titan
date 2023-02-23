@@ -1,0 +1,176 @@
+
+#ifndef MAX_VERTEX_COUNT 
+#define  MAX_VERTEX_COUNT 64
+#endif
+#ifndef MAX_PRIMITIVE_COUNT 
+#define  MAX_PRIMITIVE_COUNT 124
+#endif
+
+float3 DecodeOctahedronVectors(in float2 f)
+{
+    f = f * 2.0 - 1.0;
+ 
+    // https://twitter.com/Stubbesaurus/status/937994790553227264
+    float3 n = float3(f.x, f.y, 1.0 - abs(f.x) - abs(f.y));
+    float t = saturate(-n.z);
+    n.xy += n.xy >= 0.0 ? -t : t;
+    return normalize(n);
+}
+
+float3 DecodeNormalEncode(uint data[2])
+{
+    const float2 quantizeNormal = float2(data[0] / ((2 * 2 * 2 * 2 * 2 * 2 * 2 * 2) - 1), data[1] / ((2 * 2 * 2 * 2 * 2 * 2 * 2 * 2) - 1));
+    const float3 normal = DecodeOctahedronVectors(quantizeNormal);
+    return normal;
+}
+
+struct Meshlet
+{
+    uint vertexOffset;
+    uint triangleOffset;
+    uint vertexCount;
+    uint triangleCount;
+    uint meshId;
+    uint padd[3];
+};
+
+struct Vertex
+{
+    float3 Position;
+    uint Normal[2];
+    uint Tangent[2];
+    float4 Color;
+    float2 TexCoords;
+    float2 padding;
+};
+
+struct Mesh
+{
+    uint meshletOffset;
+    uint vertexOffset;
+    uint triangleOffset;
+    uint vertexIndexOffset;
+    float4x4 transform;
+};
+
+struct MeshIn
+{
+    uint baseID;
+    uint subIDs[32];
+};
+
+struct MeshOut
+{
+    float4 position : SV_Position;
+    float4 color : Color;
+    float3 fragPosition : FragPosition;
+    float3 normal : Normal;
+    float3 tangent : TANGENT;
+    float3 biTangent : BINORMAL;
+    float2 texCoord : TEXCOORD;
+};
+
+struct ComputeInput
+{
+    uint3 dispatchID : SV_DispatchThreadID; // gl_GlobalInvocationID
+    uint3 groupID : SV_GroupID; // gl_WorkGroupID
+    uint3 groupThreadID : SV_GroupThreadID; // gl_LocalInvocationID
+};
+
+struct MVPBufferObject
+{
+    float4x4 view;
+    float4x4 proj;
+    float4x4 mdl;
+};
+
+uint3 UnpackPrimitive(uint primitive)
+{
+    // Unpacks a 10 bits per index triangle from a 32-bit uint.
+    return uint3(primitive & 0x3FF, (primitive >> 10) & 0x3FF, (primitive >> 20) & 0x3FF);
+}
+
+float3 GetRandomColor(
+	uint _seed)
+{
+    uint hash = (_seed ^ 61) ^ (_seed >> 16);
+    hash = hash + (hash << 3);
+    hash = hash ^ (hash >> 4);
+    hash = hash * 0x27d4eb2d;
+    hash = hash ^ (hash >> 15);
+    return float3(float(hash & 255),
+				float((hash >> 8) & 255),
+				float((hash >> 16) & 255)) / 255.0;
+}
+
+
+ConstantBuffer<MVPBufferObject> u_Mvp : register(b0, space0);
+
+StructuredBuffer<Mesh> u_Meshes : register(t1, space0);
+StructuredBuffer<Meshlet> u_Meshlets : register(t1, space1);
+StructuredBuffer<Vertex> u_Vertices : register(t2, space1);
+StructuredBuffer<uint> u_Triangles : register(t3, space1);
+StructuredBuffer<uint> u_MeshletVertices : register(t4, space1);
+
+
+
+[numthreads(1,1,1)]
+[OutputTopology("triangle")]
+void main(
+    in payload MeshIn input, ComputeInput computeInput, // INPUT
+    [[vk::location(1)]] out vertices MeshOut vertsOut[MAX_VERTEX_COUNT], out indices uint3 primsOut[MAX_PRIMITIVE_COUNT] // OUTPUT
+)
+{
+    const uint g_VertexLoops = (MAX_VERTEX_COUNT + 1 - 1) / 1;
+    const uint g_PrimReadLoops = (3 * MAX_PRIMITIVE_COUNT + 1 * 4 - 1) / (1 * 4);
+    
+    const uint meshletIndex = input.baseID + input.subIDs[computeInput.groupID.x];
+    const uint threadID = computeInput.groupThreadID.x;
+    
+    Meshlet meshlet = u_Meshlets[meshletIndex];
+    Mesh mesh = u_Meshes[meshlet.meshId];
+    
+    const uint vertexOffset = meshlet.vertexOffset + mesh.vertexIndexOffset;
+    const float4x4 mvp = mul(u_Mvp.proj, mul(u_Mvp.view, mesh.transform));
+    if (threadID == 0)
+    {
+        SetMeshOutputCounts(meshlet.vertexCount, meshlet.triangleCount);
+    }
+    
+    for (uint loop = 0; loop < g_VertexLoops; ++loop)
+    {
+        uint v = threadID + loop * 1;
+
+        v = min(v, meshlet.vertexCount - 1);
+        const uint VertexIndex = u_MeshletVertices[vertexOffset + v];
+        Vertex vertex = u_Vertices[VertexIndex + mesh.vertexOffset];
+
+		
+        float4 fragPosition = mul(mvp, float4(vertex.Position, 1.0f));
+        vertsOut[v].position = fragPosition;
+        vertsOut[v].fragPosition = fragPosition.xyz;
+        vertsOut[v].color = float4(GetRandomColor(meshletIndex), 1.f);
+        vertsOut[v].texCoord = vertex.TexCoords;
+		
+        const float3 normal = DecodeNormalEncode(vertex.Normal);
+        const float3 tangent = DecodeNormalEncode(vertex.Tangent);
+        const float3 biTangent = cross(normal, tangent);
+        float3x3 TBN = { tangent, biTangent, normal };
+
+        vertsOut[v].normal = mul((float3x3)mesh.transform,normal);
+    }
+
+    uint primreadBegin = meshlet.triangleOffset + mesh.triangleOffset;
+    uint primreadIndex = meshlet.triangleCount * 3;
+    uint primreadMax = primreadIndex;
+    for (uint i = 0; i < primreadIndex; ++i)
+    {
+        uint p = threadID + loop * 1;
+        p = min(p, primreadMax);
+        uint topology = u_Triangles[primreadBegin + loop];
+
+        primsOut[p] = UnpackPrimitive(topology);       
+    }
+
+    
+}

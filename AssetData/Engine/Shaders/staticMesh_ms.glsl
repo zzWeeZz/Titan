@@ -149,6 +149,7 @@ void main()
 	Meshlet meshlet = u_MeshletBuffer.meshlets[meshletIndex];
 	Mesh mesh = meshes[meshlet.meshId];
 	const uint vertOffset = meshlet.vertexOffset + mesh.vertexIndexOffset;
+	const mat4 mvp = u_MvpObject.proj * u_MvpObject.view * mesh.transform;
 	for(uint loop = 0; loop < g_VertexLoops; ++loop)
 	{
 		uint v = threadId + loop * GROUP_SIZE;
@@ -157,7 +158,7 @@ void main()
 		const uint VertexIndex = u_MeshletVertexBuffer.meshletVertices[vertOffset + v];
 		Vertex vertex = u_VertexBuffer.vertices[VertexIndex + mesh.vertexOffset];
 
-		const mat4 mvp = u_MvpObject.proj * u_MvpObject.view * mesh.transform;
+		
 		vec4 fragPosition = mvp * vec4(vertex.Position, 1.0f);
 		gl_MeshVerticesNV[v].gl_Position = fragPosition;
 		v_out[v].fragPosition = fragPosition.xyz;

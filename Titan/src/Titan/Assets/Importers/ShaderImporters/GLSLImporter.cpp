@@ -12,6 +12,7 @@ namespace Titan
 
 	Shader GLSLImporter::Compile(const std::filesystem::path& path)
 	{
+		TN_CORE_INFO("Compiling Glsl file: {0}... ", path.filename().string());
 		std::filesystem::path binaryPath = FilesystemUtils::TempEntry;
 		binaryPath /= "shaders";
 
