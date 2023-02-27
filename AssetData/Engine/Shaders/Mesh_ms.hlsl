@@ -111,8 +111,8 @@ float3 GetRandomColor(
 
 
 ConstantBuffer<MVPBufferObject> u_Mvp : register(b0, space0);
-
 StructuredBuffer<Mesh> u_Meshes : register(t1, space0);
+
 StructuredBuffer<Meshlet> u_Meshlets : register(t1, space1);
 StructuredBuffer<Vertex> u_Vertices : register(t2, space1);
 StructuredBuffer<uint> u_Triangles : register(t3, space1);
@@ -120,7 +120,7 @@ StructuredBuffer<uint> u_MeshletVertices : register(t4, space1);
 
 uint GetVertexIndex(Meshlet meshlet, uint localIndex)
 {
-    localIndex = meshlet.vertexOffset + localIndex;
+    localIndex = localIndex;
     
     return u_MeshletVertices[localIndex];
 
@@ -144,14 +144,13 @@ void main(
     
     const uint vertexOffset = meshlet.vertexOffset + mesh.vertexIndexOffset;
     const float4x4 mvp = mul(u_Mvp.proj, mul(u_Mvp.view, mesh.transform));
- 
-    SetMeshOutputCounts(meshlet.vertexCount, meshlet.triangleCount);
+    //SetMeshOutputCounts(meshlet.vertexCount, meshlet.triangleCount);
     
     if (computeInput.groupIndex < meshlet.vertexCount)
     {
         uint readIndex = computeInput.groupIndex % meshlet.vertexCount;
         
-        uint vertexIndex = GetVertexIndex(meshlet, readIndex);
+        uint vertexIndex = GetVertexIndex(meshlet, readIndex + vertexOffset);
         
         
         Vertex vertex = u_Vertices[vertexIndex + mesh.vertexOffset];
@@ -175,9 +174,10 @@ void main(
     if (computeInput.groupIndex < meshlet.triangleCount)
     {
         uint readIndex = computeInput.groupIndex % meshlet.triangleCount;
-
-        uint topology = u_Triangles[readIndex];
-        primsOut[computeInput.groupIndex] = UnpackPrimitive(topology);
+        uint x = u_Triangles[/*meshlet.triangleOffset + mesh.triangleOffset + */readIndex];
+        uint y = u_Triangles[/*meshlet.triangleOffset + mesh.triangleOffset + */readIndex + 1];
+        uint z = u_Triangles[/*meshlet.triangleOffset + mesh.triangleOffset + */readIndex + 2];
+        primsOut[computeInput.groupIndex] = uint3(x, y, z);
         
     }
 }
