@@ -5,7 +5,9 @@
 #ifndef MAX_PRIMITIVE_COUNT 
 #define  MAX_PRIMITIVE_COUNT 124
 #endif
-
+#define MAX(x, y) (x > y ? x : y)
+#define ROUNDUP(x, y) ((x + y - 1) & ~(y - 1))
+#define MS_GROUP_SIZE ROUNDUP(MAX(MAX_VERTEX_COUNT, MAX_PRIMITIVE_COUNT), 32)
 float3 DecodeOctahedronVectors(in float2 f)
 {
     f = f * 2.0 - 1.0;
@@ -62,12 +64,12 @@ struct MeshIn
 struct MeshOut
 {
     float4 position : SV_Position;
-    float4 color : Color;
-    float3 fragPosition : FragPosition;
-    float3 normal : Normal;
-    float3 tangent : TANGENT;
-    float3 biTangent : BINORMAL;
-    float2 texCoord : TEXCOORD;
+    [[vk::location(0)]] float4 color : Color;
+    [[vk::location(1)]] float3 fragPosition : FragPosition;
+    [[vk::location(2)]] float3 normal : Normal;
+    [[vk::location(3)]] float3 tangent : TANGENT;
+    [[vk::location(4)]] float3 biTangent : BINORMAL;
+    [[vk::location(5)]] float2 texCoord : TEXCOORD;
 };
 
 struct ComputeInput
@@ -75,6 +77,7 @@ struct ComputeInput
     uint3 dispatchID : SV_DispatchThreadID; // gl_GlobalInvocationID
     uint3 groupID : SV_GroupID; // gl_WorkGroupID
     uint3 groupThreadID : SV_GroupThreadID; // gl_LocalInvocationID
+    uint groupIndex : SV_GroupIndex;
 };
 
 struct MVPBufferObject
@@ -83,6 +86,7 @@ struct MVPBufferObject
     float4x4 proj;
     float4x4 mdl;
 };
+
 
 uint3 UnpackPrimitive(uint primitive)
 {
@@ -104,6 +108,8 @@ float3 GetRandomColor(
 }
 
 
+
+
 ConstantBuffer<MVPBufferObject> u_Mvp : register(b0, space0);
 
 StructuredBuffer<Mesh> u_Meshes : register(t1, space0);
@@ -112,9 +118,15 @@ StructuredBuffer<Vertex> u_Vertices : register(t2, space1);
 StructuredBuffer<uint> u_Triangles : register(t3, space1);
 StructuredBuffer<uint> u_MeshletVertices : register(t4, space1);
 
+uint GetVertexIndex(Meshlet meshlet, uint localIndex)
+{
+    localIndex = meshlet.vertexOffset + localIndex;
+    
+    return u_MeshletVertices[localIndex];
 
+}
 
-[numthreads(1,1,1)]
+[numthreads(MS_GROUP_SIZE, 1, 1)]
 [OutputTopology("triangle")]
 void main(
     in payload MeshIn input, ComputeInput computeInput, // INPUT
@@ -132,45 +144,40 @@ void main(
     
     const uint vertexOffset = meshlet.vertexOffset + mesh.vertexIndexOffset;
     const float4x4 mvp = mul(u_Mvp.proj, mul(u_Mvp.view, mesh.transform));
-    if (threadID == 0)
-    {
-        SetMeshOutputCounts(meshlet.vertexCount, meshlet.triangleCount);
-    }
+ 
+    SetMeshOutputCounts(meshlet.vertexCount, meshlet.triangleCount);
     
-    for (uint loop = 0; loop < g_VertexLoops; ++loop)
+    if (computeInput.groupIndex < meshlet.vertexCount)
     {
-        uint v = threadID + loop * 1;
-
-        v = min(v, meshlet.vertexCount - 1);
-        const uint VertexIndex = u_MeshletVertices[vertexOffset + v];
-        Vertex vertex = u_Vertices[VertexIndex + mesh.vertexOffset];
-
-		
+        uint readIndex = computeInput.groupIndex % meshlet.vertexCount;
+        
+        uint vertexIndex = GetVertexIndex(meshlet, readIndex);
+        
+        
+        Vertex vertex = u_Vertices[vertexIndex + mesh.vertexOffset];
+        
+        
         float4 fragPosition = mul(mvp, float4(vertex.Position, 1.0f));
-        vertsOut[v].position = fragPosition;
-        vertsOut[v].fragPosition = fragPosition.xyz;
-        vertsOut[v].color = float4(GetRandomColor(meshletIndex), 1.f);
-        vertsOut[v].texCoord = vertex.TexCoords;
+        vertsOut[computeInput.groupIndex].position = fragPosition;
+        vertsOut[computeInput.groupIndex].fragPosition = fragPosition.xyz;
+        vertsOut[computeInput.groupIndex].color = float4(GetRandomColor(meshletIndex), 1.f);
+        vertsOut[computeInput.groupIndex].texCoord = vertex.TexCoords;
 		
         const float3 normal = DecodeNormalEncode(vertex.Normal);
         const float3 tangent = DecodeNormalEncode(vertex.Tangent);
         const float3 biTangent = cross(normal, tangent);
         float3x3 TBN = { tangent, biTangent, normal };
 
-        vertsOut[v].normal = mul((float3x3)mesh.transform,normal);
+        vertsOut[computeInput.groupIndex].normal = mul((float3x3) mesh.transform, normal);
+        
     }
-
-    uint primreadBegin = meshlet.triangleOffset + mesh.triangleOffset;
-    uint primreadIndex = meshlet.triangleCount * 3;
-    uint primreadMax = primreadIndex;
-    for (uint i = 0; i < primreadIndex; ++i)
-    {
-        uint p = threadID + loop * 1;
-        p = min(p, primreadMax);
-        uint topology = u_Triangles[primreadBegin + loop];
-
-        primsOut[p] = UnpackPrimitive(topology);       
-    }
-
     
+    if (computeInput.groupIndex < meshlet.triangleCount)
+    {
+        uint readIndex = computeInput.groupIndex % meshlet.triangleCount;
+
+        uint topology = u_Triangles[readIndex];
+        primsOut[computeInput.groupIndex] = UnpackPrimitive(topology);
+        
+    }
 }

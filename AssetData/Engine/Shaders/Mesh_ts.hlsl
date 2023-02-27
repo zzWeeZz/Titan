@@ -40,6 +40,8 @@ struct Constant
 
 [[vk::push_constant]] Constant u_Constant;
 groupshared TaskOutput output;
+
+
 [numthreads(GROUP_SIZE, 1, 1)]
 void main(in TaskInput input)
 {
@@ -48,21 +50,21 @@ void main(in TaskInput input)
     bool render = input.dispatchID.x < u_Constant.meshletCount;
     
     uint tasks = WaveActiveCountBits(render);
-
+   
     if (input.groupThreadID.x == 0)
     {
     // write the number of surviving meshlets, i.e. 
     // mesh workgroups to spawn
         output.baseID = input.groupID.x * GROUP_SIZE;
 
-
     // where the meshletIDs started from for this task workgroup
     }
+  
     if (render)
     {
         uint idxOffset = WavePrefixCountBits(render);
         output.subID[idxOffset] = uint(input.groupThreadID.x);
     }
+   
     DispatchMesh(tasks, 1, 1, output);
-    
 }

@@ -148,7 +148,7 @@ namespace Titan
 
 		info.tsPath = "Engine/Shaders/Mesh_ts.hlsl";
 		info.msPath = "Engine/Shaders/Mesh_ms.hlsl";
-		info.fsPath = "Engine/Shaders/staticMesh_fs.glsl";
+		info.fsPath = "Engine/Shaders/Mesh_ps.hlsl";
 		PipelineLibrary::Add("MeshShaders", info);
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
@@ -497,7 +497,7 @@ namespace Titan
 				s_Cache->constant.meshletCount = static_cast<uint32_t>(meshletCount);
 				s_Cache->constant.renderDebugState = s_RenderDebugState;
 
-				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders").lock()->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV  | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
+				vkCmdPushConstants(commandBuffer, PipelineLibrary::Get("MeshShaders").lock()->GetLayout(), VK_SHADER_STAGE_TASK_BIT_NV /*| VK_SHADER_STAGE_MESH_BIT_NV */| VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(Constant), &s_Cache->constant);
 				std::array<VkDescriptorSet, 2> sets = { globalSet, s_Cache->bindlessSets[currentFrame] };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, PipelineLibrary::Get("MeshShaders").lock()->GetLayout(), 0, static_cast<uint32_t>(sets.size()), sets.data(), 0, nullptr);
 

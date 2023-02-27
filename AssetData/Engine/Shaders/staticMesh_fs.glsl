@@ -6,7 +6,6 @@ layout (location = 0) out vec4 FragColor;
 
 layout (location = 1) in PerVertexData
 {
-	vec4 position;
 	vec4 color;
 	vec3 fragPosition;
 	vec3 normal;

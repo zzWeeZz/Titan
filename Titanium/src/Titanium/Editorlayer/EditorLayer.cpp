@@ -28,13 +28,12 @@ namespace Titan
 		m_PanelHandler.Add<SceneHierarchyPanel>("SceneHierarchy", std::make_shared<SceneHierarchyPanel>(m_ActiveScene));
 		m_PanelHandler.Add<PropertiesPanel>("PropertiesPanel", std::make_shared<PropertiesPanel>());
 		m_PanelHandler.Add<RenderingStatsPanel>("RenderingPanel", std::make_shared<RenderingStatsPanel>());
-		ResourceRegistry::GetItem<Texture>(m_TextureId)->Initialize("Assets/Texture/Titan.png");
 		{
 			auto entity = m_ActiveScene->CreateEntity();
 			auto& mdl = entity.AddComponent<ModelComponent>();
 			entity.GetComponent<TransformComponent>().scale = { 1,1 ,1 };
 			entity.GetComponent<TransformComponent>().rotation.x = glm::pi<float>();
-			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/Quad.glb");
+			ResourceRegistry::GetItem<ModelHandle>(mdl.modelHandle)->Initialize("Assets/Models/rat.glb");
 			ResourceRegistry::GetItem<Texture>(mdl.textureHandle)->Initialize("Assets/Texture/Titan.png");
 		}
 		{
