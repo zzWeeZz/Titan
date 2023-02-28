@@ -4,21 +4,21 @@
 #define GROUP_SIZE 32
 layout (local_size_x = GROUP_SIZE) in;
 
-struct Meshlet
-{
-  uint vertexOffset;
-  uint triangleOffset;
-  uint vertexCount;
-  uint triangleCount;
-  uint meshId;
-	uint padd[3];
-};
-
-layout (std430, binding = 0, set = 1) readonly buffer globalMeshlets
-{
-  Meshlet meshlets[];
-};
-
+//struct Meshlet
+//{
+//  uint vertexOffset;
+//  uint triangleOffset;
+//  uint vertexCount;
+//  uint triangleCount;
+//  uint meshId;
+//	uint padd[3];
+//};
+//
+//layout (std430, binding = 0, set = 1) readonly buffer globalMeshlets
+//{
+//  Meshlet meshlets[];
+//};
+//
 taskNV out Task
 {
   uint   baseID;
@@ -35,7 +35,7 @@ layout (push_constant) uniform constants
 
 void main()
 {
-    Meshlet meshlet = meshlets[gl_GlobalInvocationID.x];
+    //Meshlet meshlet = meshlets[gl_GlobalInvocationID.x];
 
     bool render = gl_GlobalInvocationID.x < meshletCount;
     

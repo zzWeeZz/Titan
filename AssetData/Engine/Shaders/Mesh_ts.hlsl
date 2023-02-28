@@ -19,8 +19,8 @@ struct Meshlet
 
 struct TaskOutput
 {
-    uint baseID;
-    uint subID[GROUP_SIZE];
+    [[vk::location(0)]] uint baseID : BASEID;
+    [[vk::location(1)]] uint laneID[GROUP_SIZE] : SUBID;
 };
 
 struct TaskInput
@@ -50,7 +50,6 @@ void main(in TaskInput input)
     bool render = input.dispatchID.x < u_Constant.meshletCount;
     
     uint tasks = WaveActiveCountBits(render);
-   
     if (input.groupThreadID.x == 0)
     {
     // write the number of surviving meshlets, i.e. 
@@ -62,9 +61,9 @@ void main(in TaskInput input)
   
     if (render)
     {
-        uint idxOffset = WavePrefixCountBits(render);
-        output.subID[idxOffset] = uint(input.groupThreadID.x);
+        uint idxOffset = WavePrefixCountBits(render) ;
+        output.laneID[idxOffset] = uint(input.groupThreadID.x);
     }
    
-    DispatchMesh(tasks, 1, 1, output);
+    DispatchMesh(1, 1, 1, output);
 }

@@ -57,8 +57,8 @@ struct Mesh
 
 struct MeshIn
 {
-    uint baseID;
-    uint subIDs[32];
+    [[vk::location(0)]] uint baseID : BASEID;
+    [[vk::location(1)]] uint subIDs[32] : SUBID;
 };
 
 struct MeshOut
@@ -120,64 +120,72 @@ StructuredBuffer<uint> u_MeshletVertices : register(t4, space1);
 
 uint GetVertexIndex(Meshlet meshlet, uint localIndex)
 {
-    localIndex = localIndex;
-    
     return u_MeshletVertices[localIndex];
-
 }
 
 [numthreads(MS_GROUP_SIZE, 1, 1)]
 [OutputTopology("triangle")]
 void main(
     in payload MeshIn input, ComputeInput computeInput, // INPUT
-    [[vk::location(1)]] out vertices MeshOut vertsOut[MAX_VERTEX_COUNT], out indices uint3 primsOut[MAX_PRIMITIVE_COUNT] // OUTPUT
+    out vertices MeshOut vertsOut[MAX_VERTEX_COUNT], out indices uint3 primsOut[MAX_PRIMITIVE_COUNT] // OUTPUT
 )
 {
-    const uint g_VertexLoops = (MAX_VERTEX_COUNT + 1 - 1) / 1;
-    const uint g_PrimReadLoops = (3 * MAX_PRIMITIVE_COUNT + 1 * 4 - 1) / (1 * 4);
-    
+    const uint meshletVertInterations = ((MAX_VERTEX_COUNT + MS_GROUP_SIZE - 1) / MS_GROUP_SIZE);
+    const uint meshletPrimIterations = ((MAX_PRIMITIVE_COUNT + MS_GROUP_SIZE - 1) / MS_GROUP_SIZE);
     const uint meshletIndex = input.baseID + input.subIDs[computeInput.groupID.x];
     const uint threadID = computeInput.groupThreadID.x;
     
-    Meshlet meshlet = u_Meshlets[meshletIndex];
-    Mesh mesh = u_Meshes[meshlet.meshId];
+    Meshlet meshlet = u_Meshlets[0];
+    Mesh mesh = u_Meshes[0];
     
-    const uint vertexOffset = meshlet.vertexOffset + mesh.vertexIndexOffset;
     const float4x4 mvp = mul(u_Mvp.proj, mul(u_Mvp.view, mesh.transform));
-    //SetMeshOutputCounts(meshlet.vertexCount, meshlet.triangleCount);
     
-    if (computeInput.groupIndex < meshlet.vertexCount)
+    uint triCount = meshlet.triangleCount + 1;
+    uint vertCount = meshlet.vertexCount + 1;
+    
+
+    SetMeshOutputCounts(36, meshlet.triangleCount);
+   
+    [unroll]
+    for (uint i = 0; i < 1; ++i)
     {
-        uint readIndex = computeInput.groupIndex % meshlet.vertexCount;
+        uint vertID = computeInput.groupThreadID.x + i * MS_GROUP_SIZE;
+
+        uint vertLoad = min(vertID, meshlet.vertexCount);
         
-        uint vertexIndex = GetVertexIndex(meshlet, readIndex + vertexOffset);
+        uint vertexIndex = u_MeshletVertices[meshlet.vertexOffset + vertLoad];
         
-        
-        Vertex vertex = u_Vertices[vertexIndex + mesh.vertexOffset];
-        
+        Vertex vertex = u_Vertices[vertexIndex];
         
         float4 fragPosition = mul(mvp, float4(vertex.Position, 1.0f));
-        vertsOut[computeInput.groupIndex].position = fragPosition;
-        vertsOut[computeInput.groupIndex].fragPosition = fragPosition.xyz;
-        vertsOut[computeInput.groupIndex].color = float4(GetRandomColor(meshletIndex), 1.f);
-        vertsOut[computeInput.groupIndex].texCoord = vertex.TexCoords;
+        vertsOut[vertID].position = fragPosition;
+        vertsOut[vertID].fragPosition = fragPosition.xyz;
+        vertsOut[vertID].color = float4(GetRandomColor(meshletIndex), 1.f);
+        vertsOut[vertID].texCoord = vertex.TexCoords;
 		
         const float3 normal = DecodeNormalEncode(vertex.Normal);
         const float3 tangent = DecodeNormalEncode(vertex.Tangent);
         const float3 biTangent = cross(normal, tangent);
         float3x3 TBN = { tangent, biTangent, normal };
 
-        vertsOut[computeInput.groupIndex].normal = mul((float3x3) mesh.transform, normal);
+        vertsOut[vertID].normal = mul((float3x3) mesh.transform, normal);
         
     }
-    
-    if (computeInput.groupIndex < meshlet.triangleCount)
+
+    [unroll]
+    for (uint p = 0; p < meshletPrimIterations; ++p)
     {
-        uint readIndex = computeInput.groupIndex % meshlet.triangleCount;
-        uint x = u_Triangles[/*meshlet.triangleOffset + mesh.triangleOffset + */readIndex];
-        uint y = u_Triangles[/*meshlet.triangleOffset + mesh.triangleOffset + */readIndex + 1];
-        uint z = u_Triangles[/*meshlet.triangleOffset + mesh.triangleOffset + */readIndex + 2];
-        primsOut[computeInput.groupIndex] = uint3(x, y, z);
+        uint prim = computeInput.groupThreadID.x + p * MS_GROUP_SIZE;
+        uint readPrim = min(prim, meshlet.triangleCount);
+
+        uint3 indices = uint3(
+        u_Triangles[meshlet.triangleOffset + readPrim * 3 + 0],
+        u_Triangles[meshlet.triangleOffset + readPrim * 3 + 1],
+        u_Triangles[meshlet.triangleOffset + readPrim * 3 + 2]);
         
+        if (prim <= meshlet.triangleCount)
+        {
+            primsOut[prim] = indices;
+        }
     }
 }

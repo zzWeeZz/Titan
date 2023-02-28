@@ -7,7 +7,7 @@
 #define  MAX_VERTEX_COUNT 64
 #define  MAX_PRIMITIVE_COUNT 124
 
-#define GROUP_SIZE 1
+#define GROUP_SIZE 32
 
 layout (local_size_x = GROUP_SIZE) in;
 layout (triangles, max_vertices = MAX_VERTEX_COUNT, max_primitives = MAX_PRIMITIVE_COUNT) out;
@@ -93,13 +93,13 @@ layout (std430, binding = 4, set = 1) readonly buffer _meshletVertices
 const uint g_VertexLoops = (MAX_VERTEX_COUNT +  GROUP_SIZE - 1) / GROUP_SIZE;
 const uint g_PrimReadLoops = (3 * MAX_PRIMITIVE_COUNT + GROUP_SIZE * 4 - 1) / (GROUP_SIZE * 4);
 
-layout (push_constant) uniform constants
-{
- 	uint meshletCount;
-	uint vertexCount;
-	uint indexCount;
-	uint renderDebugState;
-};
+//layout (push_constant) uniform constants
+//{
+// 	uint meshletCount;
+//	uint vertexCount;
+//	uint indexCount;
+//	uint renderDebugState;
+//};
 
 vec3 GetRandomColor(
 	uint _seed)

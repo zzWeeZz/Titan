@@ -146,9 +146,9 @@ namespace Titan
 		info.topology = Topology::TriangleList;
 		info.imageFormats = { ImageFormat::R8G8B8A8_UN, ImageFormat::D32_SF_S8_UI };
 
-		info.tsPath = "Engine/Shaders/Mesh_ts.hlsl";
-		info.msPath = "Engine/Shaders/Mesh_ms.hlsl";
-		info.fsPath = "Engine/Shaders/Mesh_ps.hlsl";
+		info.tsPath = "Engine/Shaders/staticMesh_ts.glsl";
+		info.msPath = "Engine/Shaders/staticMesh_ms.glsl";
+		info.fsPath = "Engine/Shaders/staticMesh_fs.glsl";
 		PipelineLibrary::Add("MeshShaders", info);
 
 		s_Cache->cameraBuffer = UniformBuffer::Create({ &s_Cache->cameraData, sizeof(CameraData) });
